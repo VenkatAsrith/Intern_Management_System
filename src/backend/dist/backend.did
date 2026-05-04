@@ -1,0 +1,201 @@
+type UpdatePerformancePayload = 
+ record {
+   adminNotes: text;
+   attendanceScore: float64;
+   communicationScore: float64;
+   initiativeScore: float64;
+   month: nat;
+   overallScore: float64;
+   taskScore: float64;
+   year: nat;
+ };
+type UpdateInternPayload = 
+ record {
+   adminNotes: text;
+   department: text;
+   email: text;
+   experienceLevel: ExperienceLevel;
+   joiningDate: int;
+   name: text;
+   phone: text;
+   profilePicCid: opt text;
+   space: Space;
+   status: Status;
+ };
+type Status = 
+ variant {
+   Active;
+   Completed;
+   OnHold;
+ };
+type Space = 
+ variant {
+   Learning;
+   Marketing;
+   Org;
+ };
+type Performance = 
+ record {
+   adminNotes: text;
+   attendanceScore: float64;
+   communicationScore: float64;
+   createdAt: int;
+   id: text;
+   initiativeScore: float64;
+   internId: text;
+   month: nat;
+   overallScore: float64;
+   taskScore: float64;
+   year: nat;
+ };
+type ListInternsFilter = 
+ record {
+   space: opt Space;
+   status: opt Status;
+ };
+type Intern = 
+ record {
+   adminNotes: text;
+   certificateOpened: bool;
+   certificateOpenedAt: opt int;
+   certificateSent: bool;
+   certificateSentAt: opt int;
+   completionLetterOpened: bool;
+   completionLetterOpenedAt: opt int;
+   completionLetterSent: bool;
+   completionLetterSentAt: opt int;
+   createdAt: int;
+   department: text;
+   email: text;
+   experienceLevel: ExperienceLevel;
+   id: text;
+   joiningDate: int;
+   lastContactedAt: opt int;
+   lastWhatsAppedAt: opt int;
+   name: text;
+   offerLetterOpened: bool;
+   offerLetterOpenedAt: opt int;
+   offerLetterSent: bool;
+   offerLetterSentAt: opt int;
+   phone: text;
+   profilePicCid: opt text;
+   space: Space;
+   status: Status;
+   updatedAt: int;
+ };
+type ExperienceLevel = 
+ variant {
+   Junior;
+   Mid;
+   Senior;
+ };
+type DashboardStats = 
+ record {
+   activeInterns: nat;
+   avgPerformance: float64;
+   documentsSentThisMonth: nat;
+   learningCount: nat;
+   marketingCount: nat;
+   orgCount: nat;
+   totalInterns: nat;
+ };
+type CreatePerformancePayload = 
+ record {
+   adminNotes: text;
+   attendanceScore: float64;
+   communicationScore: float64;
+   initiativeScore: float64;
+   internId: text;
+   month: nat;
+   overallScore: float64;
+   taskScore: float64;
+   year: nat;
+ };
+type CreateInternPayload = 
+ record {
+   adminNotes: text;
+   department: text;
+   email: text;
+   experienceLevel: ExperienceLevel;
+   joiningDate: int;
+   name: text;
+   phone: text;
+   profilePicCid: opt text;
+   space: Space;
+   status: Status;
+ };
+type Activity = 
+ record {
+   action: text;
+   details: text;
+   id: text;
+   internId: text;
+   performedBy: text;
+   timestamp: int;
+ };
+service : {
+  addPerformance: (sessionToken: text, payload: CreatePerformancePayload) ->
+   (variant {
+      err: text;
+      ok: Performance;
+    });
+  createIntern: (sessionToken: text, payload: CreateInternPayload) ->
+   (variant {
+      err: text;
+      ok: Intern;
+    });
+  deleteIntern: (sessionToken: text, id: text) ->
+   (variant {
+      err: text;
+      ok: bool;
+    });
+  deletePerformance: (sessionToken: text, id: text) ->
+   (variant {
+      err: text;
+      ok: bool;
+    });
+  getActivities: (internId: opt text) -> (vec Activity) query;
+  getDashboardStats: () -> (DashboardStats) query;
+  getIntern: (id: text) -> (opt Intern) query;
+  initSampleData: () -> (nat);
+  listInterns: (filter: ListInternsFilter) -> (vec Intern) query;
+  listPerformances: (internId: text) -> (vec Performance) query;
+  logWhatsApp: (sessionToken: text, internId: text) ->
+   (variant {
+      err: text;
+      ok: bool;
+    });
+  login: (username: text, password: text) ->
+   (variant {
+      err: text;
+      ok: record {
+            displayName: text;
+            sessionToken: text;
+          };
+    });
+  logout: (sessionToken: text) -> ();
+  seedSampleData: () -> ();
+  updateDocumentState: (sessionToken: text, internId: text, docType: 
+   text, action: text) -> (variant {
+                             err: text;
+                             ok: bool;
+                           });
+  updateIntern: (sessionToken: text, id: text, payload:
+   UpdateInternPayload) -> (variant {
+                              err: text;
+                              ok: Intern;
+                            });
+  updatePerformance: (sessionToken: text, id: text, payload:
+   UpdatePerformancePayload) -> (variant {
+                                   err: text;
+                                   ok: Performance;
+                                 });
+  validateSession: (sessionToken: text) ->
+   (variant {
+      err: text;
+      ok: record {
+            displayName: text;
+            username: text;
+          };
+    }) query;
+}

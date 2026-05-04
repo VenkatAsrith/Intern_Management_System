@@ -1,0 +1,92 @@
+// Version: 1.0.0
+type Activity__891213489 =
+  {
+    action : Text;
+    details : Text;
+    id : Text;
+    internId : Text;
+    performedBy : Text;
+    timestamp : Int
+  };
+type Data__791452850<K, V> =
+  {var count : Nat__490723111; kvs : [var ?(K, V)]};
+type ExperienceLevel__3557808 = {#Junior; #Mid; #Senior};
+type Intern__707342932 =
+  {
+    adminNotes : Text;
+    certificateOpened : Bool;
+    certificateOpenedAt : ?Int;
+    certificateSent : Bool;
+    certificateSentAt : ?Int;
+    completionLetterOpened : Bool;
+    completionLetterOpenedAt : ?Int;
+    completionLetterSent : Bool;
+    completionLetterSentAt : ?Int;
+    createdAt : Int;
+    department : Text;
+    email : Text;
+    experienceLevel : ExperienceLevel__3557808;
+    id : Text;
+    joiningDate : Int;
+    lastContactedAt : ?Int;
+    lastWhatsAppedAt : ?Int;
+    name : Text;
+    offerLetterOpened : Bool;
+    offerLetterOpenedAt : ?Int;
+    offerLetterSent : Bool;
+    offerLetterSentAt : ?Int;
+    phone : Text;
+    profilePicCid : ?Text;
+    space : Space__27052120;
+    status : Status__802400896;
+    updatedAt : Int
+  };
+type Internal__8484328<K, V> =
+  {children : [var ?Node__46230540<K, V>]; data : Data__791452850<K, V>};
+type Leaf__809889148<K, V> = {data : Data__791452850<K, V>};
+type Nat__490723111 = Nat__920180692;
+type Nat__920180692 = Nat;
+type Node__46230540<K, V> =
+  {#internal : Internal__8484328<K, V>; #leaf : Leaf__809889148<K, V>};
+type Performance__767774655 =
+  {
+    adminNotes : Text;
+    attendanceScore : Float;
+    communicationScore : Float;
+    createdAt : Int;
+    id : Text;
+    initiativeScore : Float;
+    internId : Text;
+    month : Nat;
+    overallScore : Float;
+    taskScore : Float;
+    year : Nat
+  };
+type SessionInfo__536145658 = {displayName : Text; username : Text};
+type Space__27052120 = {#Learning; #Marketing; #Org};
+type Status__802400896 = {#Active; #Completed; #OnHold};
+actor {
+  stable activities :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?Activity__891213489]];
+      var elementIndex : Nat__490723111
+    };
+  stable idCounter : {var n : Nat};
+  stable interns :
+    {
+      var root : Node__46230540<Text, Intern__707342932>;
+      var size : Nat__490723111
+    };
+  stable performances :
+    {
+      var root : Node__46230540<Text, Performance__767774655>;
+      var size : Nat__490723111
+    };
+  stable var seeded : Bool;
+  stable sessions :
+    {
+      var root : Node__46230540<Text, SessionInfo__536145658>;
+      var size : Nat__490723111
+    }
+};
