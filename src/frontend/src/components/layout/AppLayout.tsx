@@ -1,7 +1,9 @@
+import { GlobalSearch } from "@/components/GlobalSearch";
+import { NotificationCenter } from "@/components/NotificationCenter";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { Outlet, useLocation } from "@tanstack/react-router";
-import { Bell, LogOut, Menu } from "lucide-react";
+import { LogOut, Menu } from "lucide-react";
 import { useState } from "react";
 import { Sidebar } from "./Sidebar";
 
@@ -57,15 +59,8 @@ export function AppLayout() {
           </div>
 
           <div className="flex items-center gap-2">
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 text-muted-foreground"
-              aria-label="Notifications"
-            >
-              <Bell className="h-4 w-4" />
-            </Button>
+            <GlobalSearch />
+            <NotificationCenter />
             {displayName && (
               <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-muted rounded-lg">
                 <div className="w-2 h-2 rounded-full bg-primary" />

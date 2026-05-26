@@ -8,6 +8,112 @@
 
 import { IDL } from '@icp-sdk/core/candid';
 
+export const ActivityType = IDL.Variant({
+  'whatsappMessage' : IDL.Null,
+  'callScheduled' : IDL.Null,
+  'statusChange' : IDL.Null,
+  'proposalUploaded' : IDL.Null,
+  'noteAdded' : IDL.Null,
+  'documentShared' : IDL.Null,
+  'commentAdded' : IDL.Null,
+  'invoiceGenerated' : IDL.Null,
+  'quickMeeting' : IDL.Null,
+  'quickEmail' : IDL.Null,
+  'quickCall' : IDL.Null,
+});
+export const ClientActivity = IDL.Record({
+  'id' : IDL.Text,
+  'clientId' : IDL.Text,
+  'activityType' : ActivityType,
+  'metadata' : IDL.Opt(IDL.Text),
+  'description' : IDL.Text,
+  'adminName' : IDL.Text,
+  'timestamp' : IDL.Int,
+});
+export const ClientComment = IDL.Record({
+  'id' : IDL.Text,
+  'clientId' : IDL.Text,
+  'content' : IDL.Text,
+  'authorName' : IDL.Text,
+  'timestamp' : IDL.Int,
+  'parentId' : IDL.Opt(IDL.Text),
+  'isPinned' : IDL.Bool,
+});
+export const ContactPerson = IDL.Record({
+  'id' : IDL.Text,
+  'name' : IDL.Text,
+  'role' : IDL.Text,
+  'email' : IDL.Text,
+  'isPrimary' : IDL.Bool,
+  'addedAt' : IDL.Int,
+  'phone' : IDL.Text,
+});
+export const ClientStatus = IDL.Variant({
+  'discoveryCallDone' : IDL.Null,
+  'closedWon' : IDL.Null,
+  'leadCaptured' : IDL.Null,
+  'proposalSent' : IDL.Null,
+  'contacted' : IDL.Null,
+  'negotiation' : IDL.Null,
+  'onHold' : IDL.Null,
+  'closedLost' : IDL.Null,
+});
+export const StatusHistoryEntry = IDL.Record({
+  'status' : ClientStatus,
+  'note' : IDL.Text,
+  'adminName' : IDL.Text,
+  'timestamp' : IDL.Int,
+});
+export const PriorityLevel = IDL.Variant({
+  'low' : IDL.Null,
+  'high' : IDL.Null,
+  'urgent' : IDL.Null,
+  'medium' : IDL.Null,
+});
+export const Client = IDL.Record({
+  'id' : IDL.Text,
+  'dealProbability' : IDL.Nat,
+  'contacts' : IDL.Vec(ContactPerson),
+  'source' : IDL.Text,
+  'serviceInterested' : IDL.Text,
+  'pipelineValue' : IDL.Opt(IDL.Float64),
+  'gstNumber' : IDL.Opt(IDL.Text),
+  'lastActivity' : IDL.Opt(IDL.Int),
+  'designation' : IDL.Text,
+  'createdAt' : IDL.Int,
+  'createdBy' : IDL.Text,
+  'tags' : IDL.Vec(IDL.Text),
+  'leadScore' : IDL.Nat,
+  'lastActivityDate' : IDL.Opt(IDL.Int),
+  'statusHistory' : IDL.Vec(StatusHistoryEntry),
+  'email' : IDL.Text,
+  'website' : IDL.Text,
+  'proposalExpiry' : IDL.Opt(IDL.Int),
+  'proposalVersion' : IDL.Nat,
+  'whatsappNumber' : IDL.Text,
+  'customFields' : IDL.Vec(IDL.Tuple(IDL.Text, IDL.Text)),
+  'updatedAt' : IDL.Int,
+  'closedAt' : IDL.Opt(IDL.Int),
+  'wonLostReason' : IDL.Opt(IDL.Text),
+  'nextMeetingDate' : IDL.Opt(IDL.Int),
+  'companyName' : IDL.Text,
+  'leadSource' : IDL.Text,
+  'priorityLevel' : PriorityLevel,
+  'dealValue' : IDL.Float64,
+  'companySize' : IDL.Text,
+  'proposalStatus' : IDL.Opt(IDL.Text),
+  'healthScore' : IDL.Nat,
+  'phone' : IDL.Text,
+  'engagementScore' : IDL.Nat,
+  'industryType' : IDL.Text,
+  'contactPersonName' : IDL.Text,
+  'assignedTeamMember' : IDL.Text,
+  'location' : IDL.Text,
+  'activityCount' : IDL.Nat,
+  'currentStatus' : ClientStatus,
+  'closedReason' : IDL.Opt(IDL.Text),
+  'followUpDate' : IDL.Opt(IDL.Int),
+});
 export const CreatePerformancePayload = IDL.Record({
   'month' : IDL.Nat,
   'overallScore' : IDL.Float64,
@@ -31,6 +137,36 @@ export const Performance = IDL.Record({
   'taskScore' : IDL.Float64,
   'communicationScore' : IDL.Float64,
   'adminNotes' : IDL.Text,
+});
+export const Announcement = IDL.Record({
+  'id' : IDL.Text,
+  'title' : IDL.Text,
+  'content' : IDL.Text,
+  'createdAt' : IDL.Int,
+  'createdBy' : IDL.Text,
+  'isActive' : IDL.Bool,
+});
+export const CreateClientRequest = IDL.Record({
+  'source' : IDL.Text,
+  'serviceInterested' : IDL.Text,
+  'gstNumber' : IDL.Opt(IDL.Text),
+  'designation' : IDL.Text,
+  'tags' : IDL.Vec(IDL.Text),
+  'email' : IDL.Text,
+  'website' : IDL.Text,
+  'whatsappNumber' : IDL.Text,
+  'nextMeetingDate' : IDL.Opt(IDL.Int),
+  'companyName' : IDL.Text,
+  'leadSource' : IDL.Text,
+  'priorityLevel' : PriorityLevel,
+  'dealValue' : IDL.Float64,
+  'companySize' : IDL.Text,
+  'phone' : IDL.Text,
+  'industryType' : IDL.Text,
+  'contactPersonName' : IDL.Text,
+  'assignedTeamMember' : IDL.Text,
+  'location' : IDL.Text,
+  'followUpDate' : IDL.Opt(IDL.Int),
 });
 export const Status = IDL.Variant({
   'OnHold' : IDL.Null,
@@ -59,23 +195,49 @@ export const CreateInternPayload = IDL.Record({
   'department' : IDL.Text,
   'adminNotes' : IDL.Text,
 });
+export const InternPipelineStage = IDL.Variant({
+  'offerSent' : IDL.Null,
+  'active' : IDL.Null,
+  'offerRejected' : IDL.Null,
+  'offerAccepted' : IDL.Null,
+  'alumni' : IDL.Null,
+  'applied' : IDL.Null,
+  'completed' : IDL.Null,
+  'performanceReview' : IDL.Null,
+  'interviewDone' : IDL.Null,
+  'interviewScheduled' : IDL.Null,
+  'onboarding' : IDL.Null,
+  'decisionPending' : IDL.Null,
+  'screened' : IDL.Null,
+});
 export const Intern = IDL.Record({
   'id' : IDL.Text,
+  'dob' : IDL.Opt(IDL.Text),
   'status' : Status,
   'experienceLevel' : ExperienceLevel,
   'profilePicCid' : IDL.Opt(IDL.Text),
+  'performanceTier' : IDL.Opt(IDL.Text),
+  'actualEndDate' : IDL.Opt(IDL.Text),
   'offerLetterSentAt' : IDL.Opt(IDL.Int),
+  'domain' : IDL.Opt(IDL.Text),
+  'stipendAmount' : IDL.Opt(IDL.Float64),
+  'mentorAssigned' : IDL.Opt(IDL.Text),
   'name' : IDL.Text,
   'createdAt' : IDL.Int,
+  'emergencyContact' : IDL.Opt(IDL.Text),
   'joiningDate' : IDL.Int,
   'certificateOpened' : IDL.Bool,
   'completionLetterOpened' : IDL.Bool,
+  'isActive' : IDL.Bool,
   'email' : IDL.Text,
   'lastWhatsAppedAt' : IDL.Opt(IDL.Int),
   'certificateOpenedAt' : IDL.Opt(IDL.Int),
   'space' : Space,
   'updatedAt' : IDL.Int,
+  'pipelineStage' : InternPipelineStage,
   'offerLetterSent' : IDL.Bool,
+  'gender' : IDL.Opt(IDL.Text),
+  'degreeYear' : IDL.Opt(IDL.Text),
   'certificateSentAt' : IDL.Opt(IDL.Int),
   'completionLetterSentAt' : IDL.Opt(IDL.Int),
   'completionLetterSent' : IDL.Bool,
@@ -87,6 +249,68 @@ export const Intern = IDL.Record({
   'adminNotes' : IDL.Text,
   'offerLetterOpened' : IDL.Bool,
   'certificateSent' : IDL.Bool,
+  'college' : IDL.Opt(IDL.Text),
+  'expectedEndDate' : IDL.Opt(IDL.Text),
+  'ppoCandidate' : IDL.Bool,
+  'startDate' : IDL.Opt(IDL.Text),
+  'internshipType' : IDL.Opt(IDL.Text),
+});
+export const InvoiceLineItem = IDL.Record({
+  'rate' : IDL.Float64,
+  'description' : IDL.Text,
+  'quantity' : IDL.Float64,
+  'amount' : IDL.Float64,
+});
+export const InvoicePaymentStatus = IDL.Variant({
+  'paid' : IDL.Null,
+  'sent' : IDL.Null,
+  'overdue' : IDL.Null,
+  'draft' : IDL.Null,
+  'viewed' : IDL.Null,
+  'partial' : IDL.Null,
+});
+export const PaymentStatus = IDL.Variant({
+  'cancelled' : IDL.Null,
+  'pending' : IDL.Null,
+  'paid' : IDL.Null,
+  'overdue' : IDL.Null,
+});
+export const Invoice = IDL.Record({
+  'id' : IDL.Text,
+  'tax' : IDL.Float64,
+  'status' : InvoicePaymentStatus,
+  'lineItems' : IDL.Vec(InvoiceLineItem),
+  'total' : IDL.Float64,
+  'clientId' : IDL.Text,
+  'paymentStatus' : PaymentStatus,
+  'createdAt' : IDL.Int,
+  'createdBy' : IDL.Text,
+  'dueDate' : IDL.Opt(IDL.Int),
+  'amountPaid' : IDL.Nat,
+  'invoiceNumber' : IDL.Text,
+  'notes' : IDL.Opt(IDL.Text),
+  'subtotal' : IDL.Float64,
+});
+export const NotificationType = IDL.Variant({
+  'taskAssigned' : IDL.Null,
+  'invoiceDue' : IDL.Null,
+  'attendanceAnomaly' : IDL.Null,
+  'taskOverdue' : IDL.Null,
+  'announcement' : IDL.Null,
+  'leaveApproved' : IDL.Null,
+  'leaveRejected' : IDL.Null,
+  'stageChanged' : IDL.Null,
+  'overdueFollowUp' : IDL.Null,
+});
+export const Notification = IDL.Record({
+  'id' : IDL.Text,
+  'title' : IDL.Text,
+  'userId' : IDL.Text,
+  'notificationType' : NotificationType,
+  'createdAt' : IDL.Int,
+  'isRead' : IDL.Bool,
+  'message' : IDL.Text,
+  'relatedId' : IDL.Opt(IDL.Text),
 });
 export const Activity = IDL.Record({
   'id' : IDL.Text,
@@ -95,6 +319,28 @@ export const Activity = IDL.Record({
   'performedBy' : IDL.Text,
   'timestamp' : IDL.Int,
   'details' : IDL.Text,
+});
+export const AnalyticsData = IDL.Record({
+  'weightedForecast' : IDL.Nat,
+  'conversionRates' : IDL.Vec(IDL.Tuple(IDL.Text, IDL.Nat)),
+  'totalPipeline' : IDL.Nat,
+  'avgDealCycleDays' : IDL.Nat,
+  'winRate' : IDL.Nat,
+  'wonLostBreakdown' : IDL.Vec(IDL.Tuple(IDL.Text, IDL.Nat)),
+});
+export const MonthlyAnalyticsEntry = IDL.Record({
+  'month' : IDL.Text,
+  'approved' : IDL.Nat,
+  'newLeads' : IDL.Nat,
+  'rejected' : IDL.Nat,
+});
+export const ClientAnalytics = IDL.Record({
+  'rejectedLeads' : IDL.Nat,
+  'totalClients' : IDL.Nat,
+  'monthlyData' : IDL.Vec(MonthlyAnalyticsEntry),
+  'activeLeads' : IDL.Nat,
+  'approvedDeals' : IDL.Nat,
+  'revenuePipeline' : IDL.Float64,
 });
 export const DashboardStats = IDL.Record({
   'marketingCount' : IDL.Nat,
@@ -105,9 +351,37 @@ export const DashboardStats = IDL.Record({
   'learningCount' : IDL.Nat,
   'avgPerformance' : IDL.Float64,
 });
+export const InternPipelineStageHistory = IDL.Record({
+  'changedAt' : IDL.Int,
+  'changedBy' : IDL.Text,
+  'stage' : InternPipelineStage,
+  'notes' : IDL.Text,
+});
 export const ListInternsFilter = IDL.Record({
   'status' : IDL.Opt(Status),
   'space' : IDL.Opt(Space),
+});
+export const UpdateClientRequest = IDL.Record({
+  'source' : IDL.Opt(IDL.Text),
+  'serviceInterested' : IDL.Opt(IDL.Text),
+  'gstNumber' : IDL.Opt(IDL.Text),
+  'designation' : IDL.Opt(IDL.Text),
+  'tags' : IDL.Opt(IDL.Vec(IDL.Text)),
+  'email' : IDL.Opt(IDL.Text),
+  'website' : IDL.Opt(IDL.Text),
+  'whatsappNumber' : IDL.Opt(IDL.Text),
+  'nextMeetingDate' : IDL.Opt(IDL.Int),
+  'companyName' : IDL.Opt(IDL.Text),
+  'leadSource' : IDL.Opt(IDL.Text),
+  'priorityLevel' : IDL.Opt(PriorityLevel),
+  'dealValue' : IDL.Opt(IDL.Float64),
+  'companySize' : IDL.Opt(IDL.Text),
+  'phone' : IDL.Opt(IDL.Text),
+  'industryType' : IDL.Opt(IDL.Text),
+  'contactPersonName' : IDL.Opt(IDL.Text),
+  'assignedTeamMember' : IDL.Opt(IDL.Text),
+  'location' : IDL.Opt(IDL.Text),
+  'followUpDate' : IDL.Opt(IDL.Int),
 });
 export const UpdateInternPayload = IDL.Record({
   'status' : Status,
@@ -133,14 +407,83 @@ export const UpdatePerformancePayload = IDL.Record({
 });
 
 export const idlService = IDL.Service({
+  'addClientActivity' : IDL.Func(
+      [IDL.Text, ActivityType, IDL.Text, IDL.Opt(IDL.Text)],
+      [IDL.Variant({ 'ok' : ClientActivity, 'err' : IDL.Text })],
+      [],
+    ),
+  'addClientComment' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Opt(IDL.Text)],
+      [IDL.Variant({ 'ok' : ClientComment, 'err' : IDL.Text })],
+      [],
+    ),
+  'addContact' : IDL.Func(
+      [IDL.Text, ContactPerson],
+      [IDL.Variant({ 'ok' : Client, 'err' : IDL.Text })],
+      [],
+    ),
   'addPerformance' : IDL.Func(
       [IDL.Text, CreatePerformancePayload],
       [IDL.Variant({ 'ok' : Performance, 'err' : IDL.Text })],
       [],
     ),
+  'captureWonLostReason' : IDL.Func(
+      [IDL.Text, IDL.Text],
+      [IDL.Variant({ 'ok' : Client, 'err' : IDL.Text })],
+      [],
+    ),
+  'createAnnouncement' : IDL.Func(
+      [
+        IDL.Record({
+          'title' : IDL.Text,
+          'content' : IDL.Text,
+          'createdBy' : IDL.Text,
+        }),
+      ],
+      [IDL.Variant({ 'ok' : Announcement, 'err' : IDL.Text })],
+      [],
+    ),
+  'createClient' : IDL.Func(
+      [CreateClientRequest],
+      [IDL.Variant({ 'ok' : Client, 'err' : IDL.Text })],
+      [],
+    ),
   'createIntern' : IDL.Func(
       [IDL.Text, CreateInternPayload],
       [IDL.Variant({ 'ok' : Intern, 'err' : IDL.Text })],
+      [],
+    ),
+  'createInvoice' : IDL.Func(
+      [IDL.Text, IDL.Vec(InvoiceLineItem), IDL.Float64, IDL.Opt(IDL.Text)],
+      [IDL.Variant({ 'ok' : Invoice, 'err' : IDL.Text })],
+      [],
+    ),
+  'createNotification' : IDL.Func(
+      [
+        IDL.Record({
+          'title' : IDL.Text,
+          'userId' : IDL.Text,
+          'notificationType' : NotificationType,
+          'message' : IDL.Text,
+          'relatedId' : IDL.Opt(IDL.Text),
+        }),
+      ],
+      [IDL.Variant({ 'ok' : Notification, 'err' : IDL.Text })],
+      [],
+    ),
+  'deleteAnnouncement' : IDL.Func(
+      [IDL.Text],
+      [IDL.Variant({ 'ok' : IDL.Null, 'err' : IDL.Text })],
+      [],
+    ),
+  'deleteClient' : IDL.Func(
+      [IDL.Text],
+      [IDL.Variant({ 'ok' : IDL.Null, 'err' : IDL.Text })],
+      [],
+    ),
+  'deleteClientComment' : IDL.Func(
+      [IDL.Text],
+      [IDL.Variant({ 'ok' : IDL.Null, 'err' : IDL.Text })],
       [],
     ),
   'deleteIntern' : IDL.Func(
@@ -158,11 +501,66 @@ export const idlService = IDL.Service({
       [IDL.Vec(Activity)],
       ['query'],
     ),
+  'getAnalyticsDashboard' : IDL.Func([], [AnalyticsData], ['query']),
+  'getCRMFunnelData' : IDL.Func(
+      [],
+      [IDL.Vec(IDL.Tuple(IDL.Text, IDL.Nat))],
+      ['query'],
+    ),
+  'getClient' : IDL.Func(
+      [IDL.Text],
+      [IDL.Variant({ 'ok' : Client, 'err' : IDL.Text })],
+      ['query'],
+    ),
+  'getClientActivities' : IDL.Func(
+      [IDL.Text],
+      [IDL.Vec(ClientActivity)],
+      ['query'],
+    ),
+  'getClientAnalytics' : IDL.Func([], [ClientAnalytics], ['query']),
+  'getClientComments' : IDL.Func(
+      [IDL.Text],
+      [IDL.Vec(ClientComment)],
+      ['query'],
+    ),
+  'getClientInvoices' : IDL.Func([IDL.Text], [IDL.Vec(Invoice)], ['query']),
   'getDashboardStats' : IDL.Func([], [DashboardStats], ['query']),
+  'getDealCycleTime' : IDL.Func([], [IDL.Nat], ['query']),
   'getIntern' : IDL.Func([IDL.Text], [IDL.Opt(Intern)], ['query']),
+  'getLostDealAnalysis' : IDL.Func(
+      [],
+      [IDL.Vec(IDL.Tuple(IDL.Text, IDL.Nat, IDL.Nat))],
+      ['query'],
+    ),
+  'getStageHistory' : IDL.Func(
+      [IDL.Text],
+      [IDL.Vec(InternPipelineStageHistory)],
+      ['query'],
+    ),
+  'getWinRateByMember' : IDL.Func(
+      [],
+      [IDL.Vec(IDL.Tuple(IDL.Text, IDL.Nat, IDL.Nat))],
+      ['query'],
+    ),
   'initSampleData' : IDL.Func([], [IDL.Nat], []),
+  'listAnnouncements' : IDL.Func(
+      [IDL.Bool],
+      [IDL.Vec(Announcement)],
+      ['query'],
+    ),
+  'listClients' : IDL.Func([], [IDL.Vec(Client)], ['query']),
   'listInterns' : IDL.Func([ListInternsFilter], [IDL.Vec(Intern)], ['query']),
+  'listNotifications' : IDL.Func(
+      [IDL.Text],
+      [IDL.Vec(Notification)],
+      ['query'],
+    ),
   'listPerformances' : IDL.Func([IDL.Text], [IDL.Vec(Performance)], ['query']),
+  'logQuickActivity' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text],
+      [IDL.Variant({ 'ok' : Client, 'err' : IDL.Text })],
+      [],
+    ),
   'logWhatsApp' : IDL.Func(
       [IDL.Text, IDL.Text],
       [IDL.Variant({ 'ok' : IDL.Bool, 'err' : IDL.Text })],
@@ -182,7 +580,47 @@ export const idlService = IDL.Service({
       [],
     ),
   'logout' : IDL.Func([IDL.Text], [], []),
+  'markAllAsRead' : IDL.Func(
+      [IDL.Text],
+      [IDL.Variant({ 'ok' : IDL.Nat, 'err' : IDL.Text })],
+      [],
+    ),
+  'markAsRead' : IDL.Func(
+      [IDL.Text],
+      [IDL.Variant({ 'ok' : IDL.Null, 'err' : IDL.Text })],
+      [],
+    ),
+  'pinClientComment' : IDL.Func(
+      [IDL.Text, IDL.Bool],
+      [IDL.Variant({ 'ok' : ClientComment, 'err' : IDL.Text })],
+      [],
+    ),
+  'removeContact' : IDL.Func(
+      [IDL.Text, IDL.Text],
+      [IDL.Variant({ 'ok' : Client, 'err' : IDL.Text })],
+      [],
+    ),
   'seedSampleData' : IDL.Func([], [], []),
+  'updateClient' : IDL.Func(
+      [IDL.Text, UpdateClientRequest],
+      [IDL.Variant({ 'ok' : Client, 'err' : IDL.Text })],
+      [],
+    ),
+  'updateClientComment' : IDL.Func(
+      [IDL.Text, IDL.Text],
+      [IDL.Variant({ 'ok' : ClientComment, 'err' : IDL.Text })],
+      [],
+    ),
+  'updateClientStatus' : IDL.Func(
+      [IDL.Text, ClientStatus, IDL.Text],
+      [IDL.Variant({ 'ok' : Client, 'err' : IDL.Text })],
+      [],
+    ),
+  'updateContact' : IDL.Func(
+      [IDL.Text, IDL.Text, ContactPerson],
+      [IDL.Variant({ 'ok' : Client, 'err' : IDL.Text })],
+      [],
+    ),
   'updateDocumentState' : IDL.Func(
       [IDL.Text, IDL.Text, IDL.Text, IDL.Text],
       [IDL.Variant({ 'ok' : IDL.Bool, 'err' : IDL.Text })],
@@ -193,9 +631,52 @@ export const idlService = IDL.Service({
       [IDL.Variant({ 'ok' : Intern, 'err' : IDL.Text })],
       [],
     ),
+  'updateInternExtendedProfile' : IDL.Func(
+      [
+        IDL.Text,
+        IDL.Text,
+        IDL.Opt(IDL.Text),
+        IDL.Opt(IDL.Text),
+        IDL.Opt(IDL.Text),
+        IDL.Opt(IDL.Text),
+        IDL.Opt(IDL.Text),
+        IDL.Opt(IDL.Text),
+        IDL.Opt(IDL.Text),
+        IDL.Opt(IDL.Text),
+        IDL.Opt(IDL.Text),
+        IDL.Opt(IDL.Text),
+        IDL.Opt(IDL.Text),
+        IDL.Opt(IDL.Float64),
+        IDL.Bool,
+        IDL.Opt(IDL.Text),
+        IDL.Bool,
+      ],
+      [IDL.Variant({ 'ok' : Intern, 'err' : IDL.Text })],
+      [],
+    ),
+  'updateInternPipelineStage' : IDL.Func(
+      [IDL.Text, IDL.Text, InternPipelineStage, IDL.Text],
+      [IDL.Variant({ 'ok' : Intern, 'err' : IDL.Text })],
+      [],
+    ),
+  'updateInvoicePaymentStatus' : IDL.Func(
+      [IDL.Text, PaymentStatus],
+      [IDL.Variant({ 'ok' : Invoice, 'err' : IDL.Text })],
+      [],
+    ),
+  'updateInvoiceStatus' : IDL.Func(
+      [IDL.Text, IDL.Text, InvoicePaymentStatus, IDL.Opt(IDL.Nat)],
+      [IDL.Variant({ 'ok' : Invoice, 'err' : IDL.Text })],
+      [],
+    ),
   'updatePerformance' : IDL.Func(
       [IDL.Text, IDL.Text, UpdatePerformancePayload],
       [IDL.Variant({ 'ok' : Performance, 'err' : IDL.Text })],
+      [],
+    ),
+  'updateProposalStatus' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Nat],
+      [IDL.Variant({ 'ok' : Client, 'err' : IDL.Text })],
       [],
     ),
   'validateSession' : IDL.Func(
@@ -216,6 +697,112 @@ export const idlService = IDL.Service({
 export const idlInitArgs = [];
 
 export const idlFactory = ({ IDL }) => {
+  const ActivityType = IDL.Variant({
+    'whatsappMessage' : IDL.Null,
+    'callScheduled' : IDL.Null,
+    'statusChange' : IDL.Null,
+    'proposalUploaded' : IDL.Null,
+    'noteAdded' : IDL.Null,
+    'documentShared' : IDL.Null,
+    'commentAdded' : IDL.Null,
+    'invoiceGenerated' : IDL.Null,
+    'quickMeeting' : IDL.Null,
+    'quickEmail' : IDL.Null,
+    'quickCall' : IDL.Null,
+  });
+  const ClientActivity = IDL.Record({
+    'id' : IDL.Text,
+    'clientId' : IDL.Text,
+    'activityType' : ActivityType,
+    'metadata' : IDL.Opt(IDL.Text),
+    'description' : IDL.Text,
+    'adminName' : IDL.Text,
+    'timestamp' : IDL.Int,
+  });
+  const ClientComment = IDL.Record({
+    'id' : IDL.Text,
+    'clientId' : IDL.Text,
+    'content' : IDL.Text,
+    'authorName' : IDL.Text,
+    'timestamp' : IDL.Int,
+    'parentId' : IDL.Opt(IDL.Text),
+    'isPinned' : IDL.Bool,
+  });
+  const ContactPerson = IDL.Record({
+    'id' : IDL.Text,
+    'name' : IDL.Text,
+    'role' : IDL.Text,
+    'email' : IDL.Text,
+    'isPrimary' : IDL.Bool,
+    'addedAt' : IDL.Int,
+    'phone' : IDL.Text,
+  });
+  const ClientStatus = IDL.Variant({
+    'discoveryCallDone' : IDL.Null,
+    'closedWon' : IDL.Null,
+    'leadCaptured' : IDL.Null,
+    'proposalSent' : IDL.Null,
+    'contacted' : IDL.Null,
+    'negotiation' : IDL.Null,
+    'onHold' : IDL.Null,
+    'closedLost' : IDL.Null,
+  });
+  const StatusHistoryEntry = IDL.Record({
+    'status' : ClientStatus,
+    'note' : IDL.Text,
+    'adminName' : IDL.Text,
+    'timestamp' : IDL.Int,
+  });
+  const PriorityLevel = IDL.Variant({
+    'low' : IDL.Null,
+    'high' : IDL.Null,
+    'urgent' : IDL.Null,
+    'medium' : IDL.Null,
+  });
+  const Client = IDL.Record({
+    'id' : IDL.Text,
+    'dealProbability' : IDL.Nat,
+    'contacts' : IDL.Vec(ContactPerson),
+    'source' : IDL.Text,
+    'serviceInterested' : IDL.Text,
+    'pipelineValue' : IDL.Opt(IDL.Float64),
+    'gstNumber' : IDL.Opt(IDL.Text),
+    'lastActivity' : IDL.Opt(IDL.Int),
+    'designation' : IDL.Text,
+    'createdAt' : IDL.Int,
+    'createdBy' : IDL.Text,
+    'tags' : IDL.Vec(IDL.Text),
+    'leadScore' : IDL.Nat,
+    'lastActivityDate' : IDL.Opt(IDL.Int),
+    'statusHistory' : IDL.Vec(StatusHistoryEntry),
+    'email' : IDL.Text,
+    'website' : IDL.Text,
+    'proposalExpiry' : IDL.Opt(IDL.Int),
+    'proposalVersion' : IDL.Nat,
+    'whatsappNumber' : IDL.Text,
+    'customFields' : IDL.Vec(IDL.Tuple(IDL.Text, IDL.Text)),
+    'updatedAt' : IDL.Int,
+    'closedAt' : IDL.Opt(IDL.Int),
+    'wonLostReason' : IDL.Opt(IDL.Text),
+    'nextMeetingDate' : IDL.Opt(IDL.Int),
+    'companyName' : IDL.Text,
+    'leadSource' : IDL.Text,
+    'priorityLevel' : PriorityLevel,
+    'dealValue' : IDL.Float64,
+    'companySize' : IDL.Text,
+    'proposalStatus' : IDL.Opt(IDL.Text),
+    'healthScore' : IDL.Nat,
+    'phone' : IDL.Text,
+    'engagementScore' : IDL.Nat,
+    'industryType' : IDL.Text,
+    'contactPersonName' : IDL.Text,
+    'assignedTeamMember' : IDL.Text,
+    'location' : IDL.Text,
+    'activityCount' : IDL.Nat,
+    'currentStatus' : ClientStatus,
+    'closedReason' : IDL.Opt(IDL.Text),
+    'followUpDate' : IDL.Opt(IDL.Int),
+  });
   const CreatePerformancePayload = IDL.Record({
     'month' : IDL.Nat,
     'overallScore' : IDL.Float64,
@@ -239,6 +826,36 @@ export const idlFactory = ({ IDL }) => {
     'taskScore' : IDL.Float64,
     'communicationScore' : IDL.Float64,
     'adminNotes' : IDL.Text,
+  });
+  const Announcement = IDL.Record({
+    'id' : IDL.Text,
+    'title' : IDL.Text,
+    'content' : IDL.Text,
+    'createdAt' : IDL.Int,
+    'createdBy' : IDL.Text,
+    'isActive' : IDL.Bool,
+  });
+  const CreateClientRequest = IDL.Record({
+    'source' : IDL.Text,
+    'serviceInterested' : IDL.Text,
+    'gstNumber' : IDL.Opt(IDL.Text),
+    'designation' : IDL.Text,
+    'tags' : IDL.Vec(IDL.Text),
+    'email' : IDL.Text,
+    'website' : IDL.Text,
+    'whatsappNumber' : IDL.Text,
+    'nextMeetingDate' : IDL.Opt(IDL.Int),
+    'companyName' : IDL.Text,
+    'leadSource' : IDL.Text,
+    'priorityLevel' : PriorityLevel,
+    'dealValue' : IDL.Float64,
+    'companySize' : IDL.Text,
+    'phone' : IDL.Text,
+    'industryType' : IDL.Text,
+    'contactPersonName' : IDL.Text,
+    'assignedTeamMember' : IDL.Text,
+    'location' : IDL.Text,
+    'followUpDate' : IDL.Opt(IDL.Int),
   });
   const Status = IDL.Variant({
     'OnHold' : IDL.Null,
@@ -267,23 +884,49 @@ export const idlFactory = ({ IDL }) => {
     'department' : IDL.Text,
     'adminNotes' : IDL.Text,
   });
+  const InternPipelineStage = IDL.Variant({
+    'offerSent' : IDL.Null,
+    'active' : IDL.Null,
+    'offerRejected' : IDL.Null,
+    'offerAccepted' : IDL.Null,
+    'alumni' : IDL.Null,
+    'applied' : IDL.Null,
+    'completed' : IDL.Null,
+    'performanceReview' : IDL.Null,
+    'interviewDone' : IDL.Null,
+    'interviewScheduled' : IDL.Null,
+    'onboarding' : IDL.Null,
+    'decisionPending' : IDL.Null,
+    'screened' : IDL.Null,
+  });
   const Intern = IDL.Record({
     'id' : IDL.Text,
+    'dob' : IDL.Opt(IDL.Text),
     'status' : Status,
     'experienceLevel' : ExperienceLevel,
     'profilePicCid' : IDL.Opt(IDL.Text),
+    'performanceTier' : IDL.Opt(IDL.Text),
+    'actualEndDate' : IDL.Opt(IDL.Text),
     'offerLetterSentAt' : IDL.Opt(IDL.Int),
+    'domain' : IDL.Opt(IDL.Text),
+    'stipendAmount' : IDL.Opt(IDL.Float64),
+    'mentorAssigned' : IDL.Opt(IDL.Text),
     'name' : IDL.Text,
     'createdAt' : IDL.Int,
+    'emergencyContact' : IDL.Opt(IDL.Text),
     'joiningDate' : IDL.Int,
     'certificateOpened' : IDL.Bool,
     'completionLetterOpened' : IDL.Bool,
+    'isActive' : IDL.Bool,
     'email' : IDL.Text,
     'lastWhatsAppedAt' : IDL.Opt(IDL.Int),
     'certificateOpenedAt' : IDL.Opt(IDL.Int),
     'space' : Space,
     'updatedAt' : IDL.Int,
+    'pipelineStage' : InternPipelineStage,
     'offerLetterSent' : IDL.Bool,
+    'gender' : IDL.Opt(IDL.Text),
+    'degreeYear' : IDL.Opt(IDL.Text),
     'certificateSentAt' : IDL.Opt(IDL.Int),
     'completionLetterSentAt' : IDL.Opt(IDL.Int),
     'completionLetterSent' : IDL.Bool,
@@ -295,6 +938,68 @@ export const idlFactory = ({ IDL }) => {
     'adminNotes' : IDL.Text,
     'offerLetterOpened' : IDL.Bool,
     'certificateSent' : IDL.Bool,
+    'college' : IDL.Opt(IDL.Text),
+    'expectedEndDate' : IDL.Opt(IDL.Text),
+    'ppoCandidate' : IDL.Bool,
+    'startDate' : IDL.Opt(IDL.Text),
+    'internshipType' : IDL.Opt(IDL.Text),
+  });
+  const InvoiceLineItem = IDL.Record({
+    'rate' : IDL.Float64,
+    'description' : IDL.Text,
+    'quantity' : IDL.Float64,
+    'amount' : IDL.Float64,
+  });
+  const InvoicePaymentStatus = IDL.Variant({
+    'paid' : IDL.Null,
+    'sent' : IDL.Null,
+    'overdue' : IDL.Null,
+    'draft' : IDL.Null,
+    'viewed' : IDL.Null,
+    'partial' : IDL.Null,
+  });
+  const PaymentStatus = IDL.Variant({
+    'cancelled' : IDL.Null,
+    'pending' : IDL.Null,
+    'paid' : IDL.Null,
+    'overdue' : IDL.Null,
+  });
+  const Invoice = IDL.Record({
+    'id' : IDL.Text,
+    'tax' : IDL.Float64,
+    'status' : InvoicePaymentStatus,
+    'lineItems' : IDL.Vec(InvoiceLineItem),
+    'total' : IDL.Float64,
+    'clientId' : IDL.Text,
+    'paymentStatus' : PaymentStatus,
+    'createdAt' : IDL.Int,
+    'createdBy' : IDL.Text,
+    'dueDate' : IDL.Opt(IDL.Int),
+    'amountPaid' : IDL.Nat,
+    'invoiceNumber' : IDL.Text,
+    'notes' : IDL.Opt(IDL.Text),
+    'subtotal' : IDL.Float64,
+  });
+  const NotificationType = IDL.Variant({
+    'taskAssigned' : IDL.Null,
+    'invoiceDue' : IDL.Null,
+    'attendanceAnomaly' : IDL.Null,
+    'taskOverdue' : IDL.Null,
+    'announcement' : IDL.Null,
+    'leaveApproved' : IDL.Null,
+    'leaveRejected' : IDL.Null,
+    'stageChanged' : IDL.Null,
+    'overdueFollowUp' : IDL.Null,
+  });
+  const Notification = IDL.Record({
+    'id' : IDL.Text,
+    'title' : IDL.Text,
+    'userId' : IDL.Text,
+    'notificationType' : NotificationType,
+    'createdAt' : IDL.Int,
+    'isRead' : IDL.Bool,
+    'message' : IDL.Text,
+    'relatedId' : IDL.Opt(IDL.Text),
   });
   const Activity = IDL.Record({
     'id' : IDL.Text,
@@ -303,6 +1008,28 @@ export const idlFactory = ({ IDL }) => {
     'performedBy' : IDL.Text,
     'timestamp' : IDL.Int,
     'details' : IDL.Text,
+  });
+  const AnalyticsData = IDL.Record({
+    'weightedForecast' : IDL.Nat,
+    'conversionRates' : IDL.Vec(IDL.Tuple(IDL.Text, IDL.Nat)),
+    'totalPipeline' : IDL.Nat,
+    'avgDealCycleDays' : IDL.Nat,
+    'winRate' : IDL.Nat,
+    'wonLostBreakdown' : IDL.Vec(IDL.Tuple(IDL.Text, IDL.Nat)),
+  });
+  const MonthlyAnalyticsEntry = IDL.Record({
+    'month' : IDL.Text,
+    'approved' : IDL.Nat,
+    'newLeads' : IDL.Nat,
+    'rejected' : IDL.Nat,
+  });
+  const ClientAnalytics = IDL.Record({
+    'rejectedLeads' : IDL.Nat,
+    'totalClients' : IDL.Nat,
+    'monthlyData' : IDL.Vec(MonthlyAnalyticsEntry),
+    'activeLeads' : IDL.Nat,
+    'approvedDeals' : IDL.Nat,
+    'revenuePipeline' : IDL.Float64,
   });
   const DashboardStats = IDL.Record({
     'marketingCount' : IDL.Nat,
@@ -313,9 +1040,37 @@ export const idlFactory = ({ IDL }) => {
     'learningCount' : IDL.Nat,
     'avgPerformance' : IDL.Float64,
   });
+  const InternPipelineStageHistory = IDL.Record({
+    'changedAt' : IDL.Int,
+    'changedBy' : IDL.Text,
+    'stage' : InternPipelineStage,
+    'notes' : IDL.Text,
+  });
   const ListInternsFilter = IDL.Record({
     'status' : IDL.Opt(Status),
     'space' : IDL.Opt(Space),
+  });
+  const UpdateClientRequest = IDL.Record({
+    'source' : IDL.Opt(IDL.Text),
+    'serviceInterested' : IDL.Opt(IDL.Text),
+    'gstNumber' : IDL.Opt(IDL.Text),
+    'designation' : IDL.Opt(IDL.Text),
+    'tags' : IDL.Opt(IDL.Vec(IDL.Text)),
+    'email' : IDL.Opt(IDL.Text),
+    'website' : IDL.Opt(IDL.Text),
+    'whatsappNumber' : IDL.Opt(IDL.Text),
+    'nextMeetingDate' : IDL.Opt(IDL.Int),
+    'companyName' : IDL.Opt(IDL.Text),
+    'leadSource' : IDL.Opt(IDL.Text),
+    'priorityLevel' : IDL.Opt(PriorityLevel),
+    'dealValue' : IDL.Opt(IDL.Float64),
+    'companySize' : IDL.Opt(IDL.Text),
+    'phone' : IDL.Opt(IDL.Text),
+    'industryType' : IDL.Opt(IDL.Text),
+    'contactPersonName' : IDL.Opt(IDL.Text),
+    'assignedTeamMember' : IDL.Opt(IDL.Text),
+    'location' : IDL.Opt(IDL.Text),
+    'followUpDate' : IDL.Opt(IDL.Int),
   });
   const UpdateInternPayload = IDL.Record({
     'status' : Status,
@@ -341,14 +1096,83 @@ export const idlFactory = ({ IDL }) => {
   });
   
   return IDL.Service({
+    'addClientActivity' : IDL.Func(
+        [IDL.Text, ActivityType, IDL.Text, IDL.Opt(IDL.Text)],
+        [IDL.Variant({ 'ok' : ClientActivity, 'err' : IDL.Text })],
+        [],
+      ),
+    'addClientComment' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Opt(IDL.Text)],
+        [IDL.Variant({ 'ok' : ClientComment, 'err' : IDL.Text })],
+        [],
+      ),
+    'addContact' : IDL.Func(
+        [IDL.Text, ContactPerson],
+        [IDL.Variant({ 'ok' : Client, 'err' : IDL.Text })],
+        [],
+      ),
     'addPerformance' : IDL.Func(
         [IDL.Text, CreatePerformancePayload],
         [IDL.Variant({ 'ok' : Performance, 'err' : IDL.Text })],
         [],
       ),
+    'captureWonLostReason' : IDL.Func(
+        [IDL.Text, IDL.Text],
+        [IDL.Variant({ 'ok' : Client, 'err' : IDL.Text })],
+        [],
+      ),
+    'createAnnouncement' : IDL.Func(
+        [
+          IDL.Record({
+            'title' : IDL.Text,
+            'content' : IDL.Text,
+            'createdBy' : IDL.Text,
+          }),
+        ],
+        [IDL.Variant({ 'ok' : Announcement, 'err' : IDL.Text })],
+        [],
+      ),
+    'createClient' : IDL.Func(
+        [CreateClientRequest],
+        [IDL.Variant({ 'ok' : Client, 'err' : IDL.Text })],
+        [],
+      ),
     'createIntern' : IDL.Func(
         [IDL.Text, CreateInternPayload],
         [IDL.Variant({ 'ok' : Intern, 'err' : IDL.Text })],
+        [],
+      ),
+    'createInvoice' : IDL.Func(
+        [IDL.Text, IDL.Vec(InvoiceLineItem), IDL.Float64, IDL.Opt(IDL.Text)],
+        [IDL.Variant({ 'ok' : Invoice, 'err' : IDL.Text })],
+        [],
+      ),
+    'createNotification' : IDL.Func(
+        [
+          IDL.Record({
+            'title' : IDL.Text,
+            'userId' : IDL.Text,
+            'notificationType' : NotificationType,
+            'message' : IDL.Text,
+            'relatedId' : IDL.Opt(IDL.Text),
+          }),
+        ],
+        [IDL.Variant({ 'ok' : Notification, 'err' : IDL.Text })],
+        [],
+      ),
+    'deleteAnnouncement' : IDL.Func(
+        [IDL.Text],
+        [IDL.Variant({ 'ok' : IDL.Null, 'err' : IDL.Text })],
+        [],
+      ),
+    'deleteClient' : IDL.Func(
+        [IDL.Text],
+        [IDL.Variant({ 'ok' : IDL.Null, 'err' : IDL.Text })],
+        [],
+      ),
+    'deleteClientComment' : IDL.Func(
+        [IDL.Text],
+        [IDL.Variant({ 'ok' : IDL.Null, 'err' : IDL.Text })],
         [],
       ),
     'deleteIntern' : IDL.Func(
@@ -366,14 +1190,69 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(Activity)],
         ['query'],
       ),
+    'getAnalyticsDashboard' : IDL.Func([], [AnalyticsData], ['query']),
+    'getCRMFunnelData' : IDL.Func(
+        [],
+        [IDL.Vec(IDL.Tuple(IDL.Text, IDL.Nat))],
+        ['query'],
+      ),
+    'getClient' : IDL.Func(
+        [IDL.Text],
+        [IDL.Variant({ 'ok' : Client, 'err' : IDL.Text })],
+        ['query'],
+      ),
+    'getClientActivities' : IDL.Func(
+        [IDL.Text],
+        [IDL.Vec(ClientActivity)],
+        ['query'],
+      ),
+    'getClientAnalytics' : IDL.Func([], [ClientAnalytics], ['query']),
+    'getClientComments' : IDL.Func(
+        [IDL.Text],
+        [IDL.Vec(ClientComment)],
+        ['query'],
+      ),
+    'getClientInvoices' : IDL.Func([IDL.Text], [IDL.Vec(Invoice)], ['query']),
     'getDashboardStats' : IDL.Func([], [DashboardStats], ['query']),
+    'getDealCycleTime' : IDL.Func([], [IDL.Nat], ['query']),
     'getIntern' : IDL.Func([IDL.Text], [IDL.Opt(Intern)], ['query']),
+    'getLostDealAnalysis' : IDL.Func(
+        [],
+        [IDL.Vec(IDL.Tuple(IDL.Text, IDL.Nat, IDL.Nat))],
+        ['query'],
+      ),
+    'getStageHistory' : IDL.Func(
+        [IDL.Text],
+        [IDL.Vec(InternPipelineStageHistory)],
+        ['query'],
+      ),
+    'getWinRateByMember' : IDL.Func(
+        [],
+        [IDL.Vec(IDL.Tuple(IDL.Text, IDL.Nat, IDL.Nat))],
+        ['query'],
+      ),
     'initSampleData' : IDL.Func([], [IDL.Nat], []),
+    'listAnnouncements' : IDL.Func(
+        [IDL.Bool],
+        [IDL.Vec(Announcement)],
+        ['query'],
+      ),
+    'listClients' : IDL.Func([], [IDL.Vec(Client)], ['query']),
     'listInterns' : IDL.Func([ListInternsFilter], [IDL.Vec(Intern)], ['query']),
+    'listNotifications' : IDL.Func(
+        [IDL.Text],
+        [IDL.Vec(Notification)],
+        ['query'],
+      ),
     'listPerformances' : IDL.Func(
         [IDL.Text],
         [IDL.Vec(Performance)],
         ['query'],
+      ),
+    'logQuickActivity' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text],
+        [IDL.Variant({ 'ok' : Client, 'err' : IDL.Text })],
+        [],
       ),
     'logWhatsApp' : IDL.Func(
         [IDL.Text, IDL.Text],
@@ -394,7 +1273,47 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'logout' : IDL.Func([IDL.Text], [], []),
+    'markAllAsRead' : IDL.Func(
+        [IDL.Text],
+        [IDL.Variant({ 'ok' : IDL.Nat, 'err' : IDL.Text })],
+        [],
+      ),
+    'markAsRead' : IDL.Func(
+        [IDL.Text],
+        [IDL.Variant({ 'ok' : IDL.Null, 'err' : IDL.Text })],
+        [],
+      ),
+    'pinClientComment' : IDL.Func(
+        [IDL.Text, IDL.Bool],
+        [IDL.Variant({ 'ok' : ClientComment, 'err' : IDL.Text })],
+        [],
+      ),
+    'removeContact' : IDL.Func(
+        [IDL.Text, IDL.Text],
+        [IDL.Variant({ 'ok' : Client, 'err' : IDL.Text })],
+        [],
+      ),
     'seedSampleData' : IDL.Func([], [], []),
+    'updateClient' : IDL.Func(
+        [IDL.Text, UpdateClientRequest],
+        [IDL.Variant({ 'ok' : Client, 'err' : IDL.Text })],
+        [],
+      ),
+    'updateClientComment' : IDL.Func(
+        [IDL.Text, IDL.Text],
+        [IDL.Variant({ 'ok' : ClientComment, 'err' : IDL.Text })],
+        [],
+      ),
+    'updateClientStatus' : IDL.Func(
+        [IDL.Text, ClientStatus, IDL.Text],
+        [IDL.Variant({ 'ok' : Client, 'err' : IDL.Text })],
+        [],
+      ),
+    'updateContact' : IDL.Func(
+        [IDL.Text, IDL.Text, ContactPerson],
+        [IDL.Variant({ 'ok' : Client, 'err' : IDL.Text })],
+        [],
+      ),
     'updateDocumentState' : IDL.Func(
         [IDL.Text, IDL.Text, IDL.Text, IDL.Text],
         [IDL.Variant({ 'ok' : IDL.Bool, 'err' : IDL.Text })],
@@ -405,9 +1324,52 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Variant({ 'ok' : Intern, 'err' : IDL.Text })],
         [],
       ),
+    'updateInternExtendedProfile' : IDL.Func(
+        [
+          IDL.Text,
+          IDL.Text,
+          IDL.Opt(IDL.Text),
+          IDL.Opt(IDL.Text),
+          IDL.Opt(IDL.Text),
+          IDL.Opt(IDL.Text),
+          IDL.Opt(IDL.Text),
+          IDL.Opt(IDL.Text),
+          IDL.Opt(IDL.Text),
+          IDL.Opt(IDL.Text),
+          IDL.Opt(IDL.Text),
+          IDL.Opt(IDL.Text),
+          IDL.Opt(IDL.Text),
+          IDL.Opt(IDL.Float64),
+          IDL.Bool,
+          IDL.Opt(IDL.Text),
+          IDL.Bool,
+        ],
+        [IDL.Variant({ 'ok' : Intern, 'err' : IDL.Text })],
+        [],
+      ),
+    'updateInternPipelineStage' : IDL.Func(
+        [IDL.Text, IDL.Text, InternPipelineStage, IDL.Text],
+        [IDL.Variant({ 'ok' : Intern, 'err' : IDL.Text })],
+        [],
+      ),
+    'updateInvoicePaymentStatus' : IDL.Func(
+        [IDL.Text, PaymentStatus],
+        [IDL.Variant({ 'ok' : Invoice, 'err' : IDL.Text })],
+        [],
+      ),
+    'updateInvoiceStatus' : IDL.Func(
+        [IDL.Text, IDL.Text, InvoicePaymentStatus, IDL.Opt(IDL.Nat)],
+        [IDL.Variant({ 'ok' : Invoice, 'err' : IDL.Text })],
+        [],
+      ),
     'updatePerformance' : IDL.Func(
         [IDL.Text, IDL.Text, UpdatePerformancePayload],
         [IDL.Variant({ 'ok' : Performance, 'err' : IDL.Text })],
+        [],
+      ),
+    'updateProposalStatus' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Nat],
+        [IDL.Variant({ 'ok' : Client, 'err' : IDL.Text })],
         [],
       ),
     'validateSession' : IDL.Func(

@@ -4,50 +4,103 @@
 
 @layer base {
   :root {
-    --font-display: "Inter", "General Sans", sans-serif;
-    --font-body: "Inter", "General Sans", sans-serif;
+    --font-display: "Inter", sans-serif;
+    --font-body: "Inter", sans-serif;
     --font-mono: "Geist Mono", monospace;
     --radius: 0.625rem;
 
-    --background: 0.995 0 0;
-    --foreground: 0.12 0 0;
-    --card: 0.99 0 0;
-    --card-foreground: 0.12 0 0;
-    --popover: 0.99 0 0;
-    --popover-foreground: 0.12 0 0;
+    --background: 0.06 0 0;
+    --foreground: 1.0 0 0;
+    --card: 0.065 0 0;
+    --card-foreground: 1.0 0 0;
+    --popover: 0.12 0 0;
+    --popover-foreground: 1.0 0 0;
 
-    --primary: 0.65 0.15 35;
-    --primary-foreground: 0.98 0 0;
+    --primary: 0.54 0.25 21;
+    --primary-foreground: 1.0 0 0;
 
-    --secondary: 0.9 0 0;
-    --secondary-foreground: 0.2 0 0;
-    --muted: 0.9 0 0;
+    --secondary: 0.12 0 0;
+    --secondary-foreground: 0.9 0 0;
+    --muted: 0.12 0 0;
     --muted-foreground: 0.65 0 0;
 
-    --accent: 0.65 0.15 35;
-    --accent-foreground: 0.98 0 0;
+    --accent: 0.54 0.25 21;
+    --accent-foreground: 1.0 0 0;
 
-    --destructive: 0.55 0.22 25;
-    --destructive-foreground: 0.98 0 0;
+    --destructive: 0.65 0.19 22;
+    --destructive-foreground: 1.0 0 0;
 
-    --border: 0.88 0 0;
-    --input: 0.92 0 0;
-    --ring: 0.65 0.15 35;
+    --border: 0.15 0 0;
+    --input: 0.15 0 0;
+    --ring: 0.54 0.25 21;
 
     --chart-1: 0.54 0.25 21;
-    --chart-2: 0.6 0.12 185;
-    --chart-3: 0.4 0.07 227;
-    --chart-4: 0.83 0.19 84;
-    --chart-5: 0.77 0.19 70;
+    --chart-2: 0.7 0.17 162;
+    --chart-3: 0.77 0.19 70;
+    --chart-4: 0.63 0.27 304;
+    --chart-5: 0.65 0.25 16;
 
-    --sidebar: 0.995 0 0;
-    --sidebar-foreground: 0.12 0 0;
-    --sidebar-primary: 0.65 0.15 35;
-    --sidebar-primary-foreground: 0.98 0 0;
-    --sidebar-accent: 0.9 0 0;
-    --sidebar-accent-foreground: 0.2 0 0;
-    --sidebar-border: 0.88 0 0;
-    --sidebar-ring: 0.65 0.15 35;
+    --sidebar: 0.065 0 0;
+    --sidebar-foreground: 1.0 0 0;
+    --sidebar-primary: 0.54 0.25 21;
+    --sidebar-primary-foreground: 1.0 0 0;
+    --sidebar-accent: 0.12 0 0;
+    --sidebar-accent-foreground: 0.9 0 0;
+    --sidebar-border: 0.15 0 0;
+    --sidebar-ring: 0.54 0.25 21;
+
+    --pipeline-need-to-talk: 0.6 0.18 250;
+    --pipeline-just-talked: 0.58 0.2 280;
+    --pipeline-in-progress: 0.75 0.19 90;
+    --pipeline-approved: 0.65 0.19 140;
+    --pipeline-rejected: 0.55 0.22 25;
+
+    --intern-applied: 0.65 0 0;
+    --intern-screened: 0.68 0.22 280;
+    --intern-interview-scheduled: 0.62 0.22 260;
+    --intern-decision-pending: 0.78 0.19 60;
+    --intern-offer-sent: 0.7 0.18 50;
+    --intern-onboarding: 0.72 0.2 170;
+    --intern-active: 0.54 0.25 21;
+    --intern-completed: 0.6 0.05 240;
+    --intern-alumni: 0.55 0 0;
+    --task-draft: 0.65 0 0;
+    --task-submitted: 0.68 0.22 280;
+    --task-under-review: 0.75 0.19 90;
+    --task-approved: 0.72 0.22 140;
+    --task-revision: 0.55 0.22 25;
+    --attendance-present: 0.72 0.22 140;
+    --attendance-absent: 0.55 0.22 25;
+    --attendance-leave-request: 0.75 0.19 90;
+    --attendance-approved: 0.72 0.22 140;
+    --attendance-rejected: 0.55 0.22 25;
+    --lms-not-started: 0.65 0 0;
+    --lms-in-progress: 0.75 0.19 90;
+    --lms-completed: 0.72 0.22 140;
+    --lms-certificate: 0.54 0.25 21;
+    --client-lead-captured: 0.65 0.2 250;
+    --client-contacted: 0.7 0.22 280;
+    --client-discovery-call: 0.8 0.22 90;
+    --client-proposal-sent: 0.85 0.22 60;
+    --client-negotiation: 0.75 0.22 160;
+    --client-won: 0.72 0.22 140;
+    --client-lost: 0.65 0.19 22;
+    --client-on-hold: 0.65 0 0;
+
+    --intern-interview-done: 0.58 0.25 300;
+    --intern-offer-accepted: 0.65 0.22 140;
+    --intern-offer-rejected: 0.55 0.22 25;
+    --intern-performance-review: 0.82 0.18 85;
+
+    --lead-score-cold: 0.55 0.18 250;
+    --lead-score-warm: 0.65 0.2 55;
+    --lead-score-hot: 0.54 0.25 21;
+    --deal-probability-low: 0.55 0.18 250;
+    --deal-probability-medium: 0.75 0.19 90;
+    --deal-probability-high: 0.54 0.25 21;
+    --health-score-at-risk: 0.65 0.19 22;
+    --health-score-stable: 0.75 0.19 90;
+    --health-score-thriving: 0.72 0.22 140;
   }
 
   .dark {
@@ -90,6 +143,59 @@
     --sidebar-accent-foreground: 0.9 0 0;
     --sidebar-border: 0.15 0 0;
     --sidebar-ring: 0.54 0.25 21;
+
+    --pipeline-need-to-talk: 0.65 0.2 250;
+    --pipeline-just-talked: 0.68 0.22 280;
+    --pipeline-in-progress: 0.8 0.22 90;
+    --pipeline-approved: 0.72 0.22 140;
+    --pipeline-rejected: 0.65 0.19 22;
+
+    --intern-applied: 0.65 0 0;
+    --intern-screened: 0.7 0.22 280;
+    --intern-interview-scheduled: 0.65 0.22 260;
+    --intern-decision-pending: 0.85 0.22 60;
+    --intern-offer-sent: 0.75 0.18 50;
+    --intern-onboarding: 0.75 0.2 170;
+    --intern-active: 0.54 0.25 21;
+    --intern-completed: 0.65 0.05 240;
+    --intern-alumni: 0.6 0 0;
+    --task-draft: 0.65 0 0;
+    --task-submitted: 0.7 0.22 280;
+    --task-under-review: 0.8 0.22 90;
+    --task-approved: 0.72 0.22 140;
+    --task-revision: 0.65 0.19 22;
+    --attendance-present: 0.72 0.22 140;
+    --attendance-absent: 0.65 0.19 22;
+    --attendance-leave-request: 0.8 0.22 90;
+    --attendance-approved: 0.72 0.22 140;
+    --attendance-rejected: 0.65 0.19 22;
+    --lms-not-started: 0.65 0 0;
+    --lms-in-progress: 0.8 0.22 90;
+    --lms-completed: 0.72 0.22 140;
+    --lms-certificate: 0.54 0.25 21;
+    --client-lead-captured: 0.65 0.2 250;
+    --client-contacted: 0.7 0.22 280;
+    --client-discovery-call: 0.8 0.22 90;
+    --client-proposal-sent: 0.85 0.22 60;
+    --client-negotiation: 0.75 0.22 160;
+    --client-won: 0.72 0.22 140;
+    --client-lost: 0.65 0.19 22;
+    --client-on-hold: 0.65 0 0;
+
+    --intern-interview-done: 0.6 0.25 300;
+    --intern-offer-accepted: 0.72 0.22 140;
+    --intern-offer-rejected: 0.65 0.19 22;
+    --intern-performance-review: 0.85 0.18 85;
+
+    --lead-score-cold: 0.55 0.18 250;
+    --lead-score-warm: 0.65 0.2 55;
+    --lead-score-hot: 0.54 0.25 21;
+    --deal-probability-low: 0.55 0.18 250;
+    --deal-probability-medium: 0.75 0.19 90;
+    --deal-probability-high: 0.54 0.25 21;
+    --health-score-at-risk: 0.65 0.19 22;
+    --health-score-stable: 0.75 0.19 90;
+    --health-score-thriving: 0.72 0.22 140;
   }
 
   * {
@@ -104,16 +210,15 @@
   @font-face {
     font-family: "General Sans";
     src: url("/assets/fonts/GeneralSans.woff2") format("woff2");
-    font-weight: 400;
-    font-style: normal;
+    font-display: swap;
   }
 
   @font-face {
     font-family: "Geist Mono";
     src: url("/assets/fonts/GeistMono.woff2") format("woff2");
-    font-weight: 400;
-    font-style: normal;
+    font-display: swap;
   }
+
   .transition-smooth {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
@@ -121,4 +226,55 @@
 
 html {
   color-scheme: dark;
+}
+
+.status-badge {
+  @apply inline-flex items-center justify-center px-2 py-1 rounded-md text-xs font-semibold whitespace-nowrap;
+}
+
+.status-badge-intern-applied {
+  background-color: oklch(var(--intern-applied) / 0.2);
+  color: oklch(var(--intern-applied));
+  border: 1px solid oklch(var(--intern-applied) / 0.3);
+}
+
+.status-badge-task-draft {
+  background-color: oklch(var(--task-draft) / 0.2);
+  color: oklch(var(--task-draft));
+  border: 1px solid oklch(var(--task-draft) / 0.3);
+}
+
+.status-badge-attendance-present {
+  background-color: oklch(var(--attendance-present) / 0.2);
+  color: oklch(var(--attendance-present));
+  border: 1px solid oklch(var(--attendance-present) / 0.3);
+}
+
+.status-badge-lms-in-progress {
+  background-color: oklch(var(--lms-in-progress) / 0.2);
+  color: oklch(var(--lms-in-progress));
+  border: 1px solid oklch(var(--lms-in-progress) / 0.3);
+}
+
+.notification-badge {
+  @apply absolute top-0 right-0 inline-flex items-center justify-center w-5 h-5 rounded-full bg-accent text-accent-foreground text-xs font-bold;
+}
+
+.kanban-card {
+  @apply bg-card border border-border rounded-lg p-3 shadow-pipeline hover:shadow-elevated transition-smooth cursor-grab active:cursor-grabbing;
+}
+
+.kanban-column {
+  background-color: oklch(var(--card) / 0.3);
+  border: 1px solid oklch(var(--border));
+  border-radius: 0.5rem;
+  padding: 1rem;
+  min-height: 24rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.pipeline-header {
+  @apply flex items-center justify-between pb-3 border-b-2 border-border mb-4;
 }

@@ -1,9 +1,10 @@
 import { useAuth } from "@/hooks/use-auth";
 import { convertIntern, useBackend } from "@/lib/backend";
-import type { DocumentField } from "@/types";
+import type { InternPipelineStage, InternPipelineStageHistory } from "@/types";
 import type {
   BackendCreateInternPayload,
   BackendUpdateInternPayload,
+  DocumentField,
   Intern,
   InternFilter,
 } from "@/types";
@@ -177,6 +178,60 @@ export function useSeedSampleData() {
       qc.invalidateQueries({ queryKey: ["interns"] });
       qc.invalidateQueries({ queryKey: ["dashboard"] });
     },
+  });
+}
+
+export function useUpdateInternPipelineStage() {
+  const { actor } = useBackend();
+  const { sessionToken } = useAuth();
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      internId,
+      newStage,
+      notes,
+    }: {
+      internId: string;
+      newStage: InternPipelineStage;
+      notes: string;
+    }) => {
+      if (!actor || !sessionToken) throw new Error("Not connected");
+      const result = await actor.updateInternPipelineStage(
+        sessionToken,
+        internId,
+        newStage as any,
+        notes,
+      );
+      if (result.__kind__ === "err") throw new Error(result.err);
+      return convertIntern(result.ok);
+    },
+    onSuccess: (_, { internId }) => {
+      qc.invalidateQueries({ queryKey: ["interns"] });
+      qc.invalidateQueries({ queryKey: ["intern", internId] });
+      qc.invalidateQueries({ queryKey: ["stageHistory", internId] });
+      qc.invalidateQueries({ queryKey: ["dashboard"] });
+      toast.success("Pipeline stage updated");
+    },
+    onError: (e: Error) =>
+      toast.error(e.message || "Failed to update pipeline stage"),
+  });
+}
+
+export function useStageHistory(internId: string | null | undefined) {
+  const { actor, isFetching } = useBackend();
+  return useQuery<InternPipelineStageHistory[]>({
+    queryKey: ["stageHistory", internId],
+    queryFn: async () => {
+      if (!actor || !internId) return [];
+      const results = await actor.getStageHistory(internId);
+      return results.map((r) => ({
+        stage: r.stage,
+        changedBy: r.changedBy,
+        changedAt: new Date(Number(r.changedAt) / 1_000_000),
+        notes: r.notes,
+      }));
+    },
+    enabled: !!actor && !isFetching && !!internId,
   });
 }
 

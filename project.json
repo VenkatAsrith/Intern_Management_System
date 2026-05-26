@@ -1,24 +1,22 @@
 {
-  "overview": "TechMecha Torque IMS is an enterprise intern management platform with three spaces (Org, Marketing, Learning), full CRUD, performance tracking, document management, WhatsApp integration, and a dark-themed branded UI.",
+  "overview": "Enterprise intern and client relationship management platform for TechMecha Torque with full CRM, pipeline tracking, and analytics.",
   "features": [
-    "Intern CRUD with profile picture uploads",
-    "3 enterprise spaces: Org, Marketing, Learning",
-    "Performance tracking with Recharts line charts",
-    "Document tracking (offer/certificate/completion letters)",
-    "WhatsApp deep-link integration with timestamp logging",
-    "Advanced intern table with filters, sorting, pagination, CSV export",
-    "Dashboard with stats cards, activity feed, quick filters",
-    "Internet Identity authentication with 3 admin principals",
-    "Mobile-responsive dark theme with TechMecha Red accents",
-    "Sample data generation on first load"
+    "Client pipeline with Kanban board and deal tracking",
+    "Auto lead scoring and deal probability",
+    "Advanced CRM analytics and revenue forecasting",
+    "Intern management with document generation",
+    "Invoice lifecycle tracking",
+    "Follow-up reminders and daily digest",
+    "Multiple contacts per company"
   ],
-  "category": "productivity",
+  "category": "enterprise-app",
   "tags": [
+    "crm",
     "intern-management",
-    "hr",
     "enterprise",
     "dark-theme",
-    "internet-computer"
+    "analytics",
+    "pipeline"
   ],
-  "last_updated": "2026-05-04T10:07:01.907Z"
+  "last_updated": "2026-05-24T18:48:36.968Z"
 }

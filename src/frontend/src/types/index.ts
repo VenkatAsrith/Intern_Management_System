@@ -34,6 +34,28 @@ export type {
 };
 export type { BackendListInternsFilter };
 
+export type InternPipelineStage =
+  | "applied"
+  | "screened"
+  | "interviewScheduled"
+  | "interviewDone"
+  | "decisionPending"
+  | "offerSent"
+  | "offerAccepted"
+  | "offerRejected"
+  | "onboarding"
+  | "active"
+  | "performanceReview"
+  | "completed"
+  | "alumni";
+
+export interface InternPipelineStageHistory {
+  stage: InternPipelineStage;
+  changedBy: string;
+  changedAt: Date;
+  notes: string;
+}
+
 export interface Intern {
   id: string;
   name: string;
@@ -48,6 +70,23 @@ export interface Intern {
   createdAt: Date;
   updatedAt: Date;
   adminNotes: string;
+  // Pipeline & extended profile
+  pipelineStage: InternPipelineStage;
+  dob?: string;
+  gender?: string;
+  emergencyContact?: string;
+  college?: string;
+  degreeYear?: string;
+  domain?: string;
+  mentorAssigned?: string;
+  startDate?: string;
+  expectedEndDate?: string;
+  actualEndDate?: string;
+  internshipType?: string;
+  stipendAmount?: number;
+  ppoCandidate: boolean;
+  performanceTier?: string;
+  isActive: boolean;
   // Document states
   offerLetterSent: boolean;
   offerLetterSentAt?: Date;

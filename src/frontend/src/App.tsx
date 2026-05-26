@@ -134,6 +134,42 @@ const settingsRoute = createRoute({
     ),
 });
 
+// ─── CRMS Routes ─────────────────────────────────────────────────────────────
+
+const clientsRoute = createRoute({
+  getParentRoute: () => layoutRoute,
+  path: "/clients",
+  component: () => LazyPage(() => import("@/pages/clients/ClientsPage")),
+});
+
+const clientsKanbanRoute = createRoute({
+  getParentRoute: () => layoutRoute,
+  path: "/clients/kanban",
+  component: () => LazyPage(() => import("@/pages/clients/ClientsKanbanPage")),
+});
+
+const clientsCalendarRoute = createRoute({
+  getParentRoute: () => layoutRoute,
+  path: "/clients/calendar",
+  component: () =>
+    LazyPage(() => import("@/pages/clients/ClientsCalendarPage")),
+});
+
+const clientsAnalyticsRoute = createRoute({
+  getParentRoute: () => layoutRoute,
+  path: "/clients/analytics",
+  component: () =>
+    LazyPage(() => import("@/pages/clients/ClientsAnalyticsPage")),
+});
+
+const clientDetailRoute = createRoute({
+  getParentRoute: () => layoutRoute,
+  path: "/clients/$id",
+  component: () => LazyPage(() => import("@/pages/clients/ClientDetailPage")),
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+
 const notFoundRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "*",
@@ -152,6 +188,11 @@ const routeTree = rootRoute.addChildren([
       internDetailRoute,
       internEditRoute,
       settingsRoute,
+      clientsRoute,
+      clientsKanbanRoute,
+      clientsCalendarRoute,
+      clientsAnalyticsRoute,
+      clientDetailRoute,
     ]),
   ]),
 ]);

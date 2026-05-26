@@ -18,6 +18,142 @@ export interface Activity {
   'timestamp' : bigint,
   'details' : string,
 }
+export type ActivityType = { 'whatsappMessage' : null } |
+  { 'callScheduled' : null } |
+  { 'statusChange' : null } |
+  { 'proposalUploaded' : null } |
+  { 'noteAdded' : null } |
+  { 'documentShared' : null } |
+  { 'commentAdded' : null } |
+  { 'invoiceGenerated' : null } |
+  { 'quickMeeting' : null } |
+  { 'quickEmail' : null } |
+  { 'quickCall' : null };
+export interface AnalyticsData {
+  'weightedForecast' : bigint,
+  'conversionRates' : Array<[string, bigint]>,
+  'totalPipeline' : bigint,
+  'avgDealCycleDays' : bigint,
+  'winRate' : bigint,
+  'wonLostBreakdown' : Array<[string, bigint]>,
+}
+export interface Announcement {
+  'id' : string,
+  'title' : string,
+  'content' : string,
+  'createdAt' : bigint,
+  'createdBy' : string,
+  'isActive' : boolean,
+}
+export interface Client {
+  'id' : string,
+  'dealProbability' : bigint,
+  'contacts' : Array<ContactPerson>,
+  'source' : string,
+  'serviceInterested' : string,
+  'pipelineValue' : [] | [number],
+  'gstNumber' : [] | [string],
+  'lastActivity' : [] | [bigint],
+  'designation' : string,
+  'createdAt' : bigint,
+  'createdBy' : string,
+  'tags' : Array<string>,
+  'leadScore' : bigint,
+  'lastActivityDate' : [] | [bigint],
+  'statusHistory' : Array<StatusHistoryEntry>,
+  'email' : string,
+  'website' : string,
+  'proposalExpiry' : [] | [bigint],
+  'proposalVersion' : bigint,
+  'whatsappNumber' : string,
+  'customFields' : Array<[string, string]>,
+  'updatedAt' : bigint,
+  'closedAt' : [] | [bigint],
+  'wonLostReason' : [] | [string],
+  'nextMeetingDate' : [] | [bigint],
+  'companyName' : string,
+  'leadSource' : string,
+  'priorityLevel' : PriorityLevel,
+  'dealValue' : number,
+  'companySize' : string,
+  'proposalStatus' : [] | [string],
+  'healthScore' : bigint,
+  'phone' : string,
+  'engagementScore' : bigint,
+  'industryType' : string,
+  'contactPersonName' : string,
+  'assignedTeamMember' : string,
+  'location' : string,
+  'activityCount' : bigint,
+  'currentStatus' : ClientStatus,
+  'closedReason' : [] | [string],
+  'followUpDate' : [] | [bigint],
+}
+export interface ClientActivity {
+  'id' : string,
+  'clientId' : string,
+  'activityType' : ActivityType,
+  'metadata' : [] | [string],
+  'description' : string,
+  'adminName' : string,
+  'timestamp' : bigint,
+}
+export interface ClientAnalytics {
+  'rejectedLeads' : bigint,
+  'totalClients' : bigint,
+  'monthlyData' : Array<MonthlyAnalyticsEntry>,
+  'activeLeads' : bigint,
+  'approvedDeals' : bigint,
+  'revenuePipeline' : number,
+}
+export interface ClientComment {
+  'id' : string,
+  'clientId' : string,
+  'content' : string,
+  'authorName' : string,
+  'timestamp' : bigint,
+  'parentId' : [] | [string],
+  'isPinned' : boolean,
+}
+export type ClientStatus = { 'discoveryCallDone' : null } |
+  { 'closedWon' : null } |
+  { 'leadCaptured' : null } |
+  { 'proposalSent' : null } |
+  { 'contacted' : null } |
+  { 'negotiation' : null } |
+  { 'onHold' : null } |
+  { 'closedLost' : null };
+export interface ContactPerson {
+  'id' : string,
+  'name' : string,
+  'role' : string,
+  'email' : string,
+  'isPrimary' : boolean,
+  'addedAt' : bigint,
+  'phone' : string,
+}
+export interface CreateClientRequest {
+  'source' : string,
+  'serviceInterested' : string,
+  'gstNumber' : [] | [string],
+  'designation' : string,
+  'tags' : Array<string>,
+  'email' : string,
+  'website' : string,
+  'whatsappNumber' : string,
+  'nextMeetingDate' : [] | [bigint],
+  'companyName' : string,
+  'leadSource' : string,
+  'priorityLevel' : PriorityLevel,
+  'dealValue' : number,
+  'companySize' : string,
+  'phone' : string,
+  'industryType' : string,
+  'contactPersonName' : string,
+  'assignedTeamMember' : string,
+  'location' : string,
+  'followUpDate' : [] | [bigint],
+}
 export interface CreateInternPayload {
   'status' : Status,
   'experienceLevel' : ExperienceLevel,
@@ -55,21 +191,32 @@ export type ExperienceLevel = { 'Mid' : null } |
   { 'Senior' : null };
 export interface Intern {
   'id' : string,
+  'dob' : [] | [string],
   'status' : Status,
   'experienceLevel' : ExperienceLevel,
   'profilePicCid' : [] | [string],
+  'performanceTier' : [] | [string],
+  'actualEndDate' : [] | [string],
   'offerLetterSentAt' : [] | [bigint],
+  'domain' : [] | [string],
+  'stipendAmount' : [] | [number],
+  'mentorAssigned' : [] | [string],
   'name' : string,
   'createdAt' : bigint,
+  'emergencyContact' : [] | [string],
   'joiningDate' : bigint,
   'certificateOpened' : boolean,
   'completionLetterOpened' : boolean,
+  'isActive' : boolean,
   'email' : string,
   'lastWhatsAppedAt' : [] | [bigint],
   'certificateOpenedAt' : [] | [bigint],
   'space' : Space,
   'updatedAt' : bigint,
+  'pipelineStage' : InternPipelineStage,
   'offerLetterSent' : boolean,
+  'gender' : [] | [string],
+  'degreeYear' : [] | [string],
   'certificateSentAt' : [] | [bigint],
   'completionLetterSentAt' : [] | [bigint],
   'completionLetterSent' : boolean,
@@ -81,11 +228,92 @@ export interface Intern {
   'adminNotes' : string,
   'offerLetterOpened' : boolean,
   'certificateSent' : boolean,
+  'college' : [] | [string],
+  'expectedEndDate' : [] | [string],
+  'ppoCandidate' : boolean,
+  'startDate' : [] | [string],
+  'internshipType' : [] | [string],
 }
+export type InternPipelineStage = { 'offerSent' : null } |
+  { 'active' : null } |
+  { 'offerRejected' : null } |
+  { 'offerAccepted' : null } |
+  { 'alumni' : null } |
+  { 'applied' : null } |
+  { 'completed' : null } |
+  { 'performanceReview' : null } |
+  { 'interviewDone' : null } |
+  { 'interviewScheduled' : null } |
+  { 'onboarding' : null } |
+  { 'decisionPending' : null } |
+  { 'screened' : null };
+export interface InternPipelineStageHistory {
+  'changedAt' : bigint,
+  'changedBy' : string,
+  'stage' : InternPipelineStage,
+  'notes' : string,
+}
+export interface Invoice {
+  'id' : string,
+  'tax' : number,
+  'status' : InvoicePaymentStatus,
+  'lineItems' : Array<InvoiceLineItem>,
+  'total' : number,
+  'clientId' : string,
+  'paymentStatus' : PaymentStatus,
+  'createdAt' : bigint,
+  'createdBy' : string,
+  'dueDate' : [] | [bigint],
+  'amountPaid' : bigint,
+  'invoiceNumber' : string,
+  'notes' : [] | [string],
+  'subtotal' : number,
+}
+export interface InvoiceLineItem {
+  'rate' : number,
+  'description' : string,
+  'quantity' : number,
+  'amount' : number,
+}
+export type InvoicePaymentStatus = { 'paid' : null } |
+  { 'sent' : null } |
+  { 'overdue' : null } |
+  { 'draft' : null } |
+  { 'viewed' : null } |
+  { 'partial' : null };
 export interface ListInternsFilter {
   'status' : [] | [Status],
   'space' : [] | [Space],
 }
+export interface MonthlyAnalyticsEntry {
+  'month' : string,
+  'approved' : bigint,
+  'newLeads' : bigint,
+  'rejected' : bigint,
+}
+export interface Notification {
+  'id' : string,
+  'title' : string,
+  'userId' : string,
+  'notificationType' : NotificationType,
+  'createdAt' : bigint,
+  'isRead' : boolean,
+  'message' : string,
+  'relatedId' : [] | [string],
+}
+export type NotificationType = { 'taskAssigned' : null } |
+  { 'invoiceDue' : null } |
+  { 'attendanceAnomaly' : null } |
+  { 'taskOverdue' : null } |
+  { 'announcement' : null } |
+  { 'leaveApproved' : null } |
+  { 'leaveRejected' : null } |
+  { 'stageChanged' : null } |
+  { 'overdueFollowUp' : null };
+export type PaymentStatus = { 'cancelled' : null } |
+  { 'pending' : null } |
+  { 'paid' : null } |
+  { 'overdue' : null };
 export interface Performance {
   'id' : string,
   'month' : bigint,
@@ -99,12 +327,44 @@ export interface Performance {
   'communicationScore' : number,
   'adminNotes' : string,
 }
+export type PriorityLevel = { 'low' : null } |
+  { 'high' : null } |
+  { 'urgent' : null } |
+  { 'medium' : null };
 export type Space = { 'Org' : null } |
   { 'Learning' : null } |
   { 'Marketing' : null };
 export type Status = { 'OnHold' : null } |
   { 'Active' : null } |
   { 'Completed' : null };
+export interface StatusHistoryEntry {
+  'status' : ClientStatus,
+  'note' : string,
+  'adminName' : string,
+  'timestamp' : bigint,
+}
+export interface UpdateClientRequest {
+  'source' : [] | [string],
+  'serviceInterested' : [] | [string],
+  'gstNumber' : [] | [string],
+  'designation' : [] | [string],
+  'tags' : [] | [Array<string>],
+  'email' : [] | [string],
+  'website' : [] | [string],
+  'whatsappNumber' : [] | [string],
+  'nextMeetingDate' : [] | [bigint],
+  'companyName' : [] | [string],
+  'leadSource' : [] | [string],
+  'priorityLevel' : [] | [PriorityLevel],
+  'dealValue' : [] | [number],
+  'companySize' : [] | [string],
+  'phone' : [] | [string],
+  'industryType' : [] | [string],
+  'contactPersonName' : [] | [string],
+  'assignedTeamMember' : [] | [string],
+  'location' : [] | [string],
+  'followUpDate' : [] | [bigint],
+}
 export interface UpdateInternPayload {
   'status' : Status,
   'experienceLevel' : ExperienceLevel,
@@ -128,14 +388,73 @@ export interface UpdatePerformancePayload {
   'adminNotes' : string,
 }
 export interface _SERVICE {
+  'addClientActivity' : ActorMethod<
+    [string, ActivityType, string, [] | [string]],
+    { 'ok' : ClientActivity } |
+      { 'err' : string }
+  >,
+  'addClientComment' : ActorMethod<
+    [string, string, [] | [string]],
+    { 'ok' : ClientComment } |
+      { 'err' : string }
+  >,
+  'addContact' : ActorMethod<
+    [string, ContactPerson],
+    { 'ok' : Client } |
+      { 'err' : string }
+  >,
   'addPerformance' : ActorMethod<
     [string, CreatePerformancePayload],
     { 'ok' : Performance } |
       { 'err' : string }
   >,
+  'captureWonLostReason' : ActorMethod<
+    [string, string],
+    { 'ok' : Client } |
+      { 'err' : string }
+  >,
+  'createAnnouncement' : ActorMethod<
+    [{ 'title' : string, 'content' : string, 'createdBy' : string }],
+    { 'ok' : Announcement } |
+      { 'err' : string }
+  >,
+  'createClient' : ActorMethod<
+    [CreateClientRequest],
+    { 'ok' : Client } |
+      { 'err' : string }
+  >,
   'createIntern' : ActorMethod<
     [string, CreateInternPayload],
     { 'ok' : Intern } |
+      { 'err' : string }
+  >,
+  'createInvoice' : ActorMethod<
+    [string, Array<InvoiceLineItem>, number, [] | [string]],
+    { 'ok' : Invoice } |
+      { 'err' : string }
+  >,
+  'createNotification' : ActorMethod<
+    [
+      {
+        'title' : string,
+        'userId' : string,
+        'notificationType' : NotificationType,
+        'message' : string,
+        'relatedId' : [] | [string],
+      },
+    ],
+    { 'ok' : Notification } |
+      { 'err' : string }
+  >,
+  'deleteAnnouncement' : ActorMethod<
+    [string],
+    { 'ok' : null } |
+      { 'err' : string }
+  >,
+  'deleteClient' : ActorMethod<[string], { 'ok' : null } | { 'err' : string }>,
+  'deleteClientComment' : ActorMethod<
+    [string],
+    { 'ok' : null } |
       { 'err' : string }
   >,
   'deleteIntern' : ActorMethod<
@@ -149,11 +468,30 @@ export interface _SERVICE {
       { 'err' : string }
   >,
   'getActivities' : ActorMethod<[[] | [string]], Array<Activity>>,
+  'getAnalyticsDashboard' : ActorMethod<[], AnalyticsData>,
+  'getCRMFunnelData' : ActorMethod<[], Array<[string, bigint]>>,
+  'getClient' : ActorMethod<[string], { 'ok' : Client } | { 'err' : string }>,
+  'getClientActivities' : ActorMethod<[string], Array<ClientActivity>>,
+  'getClientAnalytics' : ActorMethod<[], ClientAnalytics>,
+  'getClientComments' : ActorMethod<[string], Array<ClientComment>>,
+  'getClientInvoices' : ActorMethod<[string], Array<Invoice>>,
   'getDashboardStats' : ActorMethod<[], DashboardStats>,
+  'getDealCycleTime' : ActorMethod<[], bigint>,
   'getIntern' : ActorMethod<[string], [] | [Intern]>,
+  'getLostDealAnalysis' : ActorMethod<[], Array<[string, bigint, bigint]>>,
+  'getStageHistory' : ActorMethod<[string], Array<InternPipelineStageHistory>>,
+  'getWinRateByMember' : ActorMethod<[], Array<[string, bigint, bigint]>>,
   'initSampleData' : ActorMethod<[], bigint>,
+  'listAnnouncements' : ActorMethod<[boolean], Array<Announcement>>,
+  'listClients' : ActorMethod<[], Array<Client>>,
   'listInterns' : ActorMethod<[ListInternsFilter], Array<Intern>>,
+  'listNotifications' : ActorMethod<[string], Array<Notification>>,
   'listPerformances' : ActorMethod<[string], Array<Performance>>,
+  'logQuickActivity' : ActorMethod<
+    [string, string, string],
+    { 'ok' : Client } |
+      { 'err' : string }
+  >,
   'logWhatsApp' : ActorMethod<
     [string, string],
     { 'ok' : boolean } |
@@ -165,7 +503,43 @@ export interface _SERVICE {
       { 'err' : string }
   >,
   'logout' : ActorMethod<[string], undefined>,
+  'markAllAsRead' : ActorMethod<
+    [string],
+    { 'ok' : bigint } |
+      { 'err' : string }
+  >,
+  'markAsRead' : ActorMethod<[string], { 'ok' : null } | { 'err' : string }>,
+  'pinClientComment' : ActorMethod<
+    [string, boolean],
+    { 'ok' : ClientComment } |
+      { 'err' : string }
+  >,
+  'removeContact' : ActorMethod<
+    [string, string],
+    { 'ok' : Client } |
+      { 'err' : string }
+  >,
   'seedSampleData' : ActorMethod<[], undefined>,
+  'updateClient' : ActorMethod<
+    [string, UpdateClientRequest],
+    { 'ok' : Client } |
+      { 'err' : string }
+  >,
+  'updateClientComment' : ActorMethod<
+    [string, string],
+    { 'ok' : ClientComment } |
+      { 'err' : string }
+  >,
+  'updateClientStatus' : ActorMethod<
+    [string, ClientStatus, string],
+    { 'ok' : Client } |
+      { 'err' : string }
+  >,
+  'updateContact' : ActorMethod<
+    [string, string, ContactPerson],
+    { 'ok' : Client } |
+      { 'err' : string }
+  >,
   'updateDocumentState' : ActorMethod<
     [string, string, string, string],
     { 'ok' : boolean } |
@@ -176,9 +550,52 @@ export interface _SERVICE {
     { 'ok' : Intern } |
       { 'err' : string }
   >,
+  'updateInternExtendedProfile' : ActorMethod<
+    [
+      string,
+      string,
+      [] | [string],
+      [] | [string],
+      [] | [string],
+      [] | [string],
+      [] | [string],
+      [] | [string],
+      [] | [string],
+      [] | [string],
+      [] | [string],
+      [] | [string],
+      [] | [string],
+      [] | [number],
+      boolean,
+      [] | [string],
+      boolean,
+    ],
+    { 'ok' : Intern } |
+      { 'err' : string }
+  >,
+  'updateInternPipelineStage' : ActorMethod<
+    [string, string, InternPipelineStage, string],
+    { 'ok' : Intern } |
+      { 'err' : string }
+  >,
+  'updateInvoicePaymentStatus' : ActorMethod<
+    [string, PaymentStatus],
+    { 'ok' : Invoice } |
+      { 'err' : string }
+  >,
+  'updateInvoiceStatus' : ActorMethod<
+    [string, string, InvoicePaymentStatus, [] | [bigint]],
+    { 'ok' : Invoice } |
+      { 'err' : string }
+  >,
   'updatePerformance' : ActorMethod<
     [string, string, UpdatePerformancePayload],
     { 'ok' : Performance } |
+      { 'err' : string }
+  >,
+  'updateProposalStatus' : ActorMethod<
+    [string, string, bigint],
+    { 'ok' : Client } |
       { 'err' : string }
   >,
   'validateSession' : ActorMethod<

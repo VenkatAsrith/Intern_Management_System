@@ -14,6 +14,29 @@ module {
     #OnHold;
   };
 
+  public type InternPipelineStage = {
+    #applied;
+    #screened;
+    #interviewScheduled;
+    #interviewDone;
+    #decisionPending;
+    #offerSent;
+    #offerAccepted;
+    #offerRejected;
+    #onboarding;
+    #active;
+    #performanceReview;
+    #completed;
+    #alumni;
+  };
+
+  public type InternPipelineStageHistory = {
+    stage : InternPipelineStage;
+    changedBy : Text;
+    changedAt : Int;
+    notes : Text;
+  };
+
   public type ExperienceLevel = {
     #Junior;
     #Mid;
@@ -49,6 +72,25 @@ module {
     completionLetterSentAt : ?Int;
     completionLetterOpened : Bool;
     completionLetterOpenedAt : ?Int;
+    // pipeline
+    pipelineStage : InternPipelineStage;
+    // extended personal info
+    dob : ?Text;
+    gender : ?Text;
+    emergencyContact : ?Text;
+    college : ?Text;
+    degreeYear : ?Text;
+    domain : ?Text;
+    mentorAssigned : ?Text;
+    // internship details
+    startDate : ?Text;
+    expectedEndDate : ?Text;
+    actualEndDate : ?Text;
+    internshipType : ?Text;
+    stipendAmount : ?Float;
+    ppoCandidate : Bool;
+    performanceTier : ?Text;
+    isActive : Bool;
   };
 
   public type CreateInternPayload = {

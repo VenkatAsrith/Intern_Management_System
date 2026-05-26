@@ -84,6 +84,22 @@ module {
       completionLetterSentAt = null;
       completionLetterOpened = false;
       completionLetterOpenedAt = null;
+      pipelineStage = #applied;
+      dob = null;
+      gender = null;
+      emergencyContact = null;
+      college = null;
+      degreeYear = null;
+      domain = null;
+      mentorAssigned = null;
+      startDate = null;
+      expectedEndDate = null;
+      actualEndDate = null;
+      internshipType = null;
+      stipendAmount = null;
+      ppoCandidate = false;
+      performanceTier = null;
+      isActive = true;
     };
     interns.add(id, intern);
     logActivity(activities, counter, id, "created", "Intern " # payload.name # " created", caller);
@@ -471,10 +487,10 @@ module {
   // --- Sample data seeding ---
 
   public func seedSampleData(
-    interns : Map.Map<Text, Types.Intern>,
-    performances : Map.Map<Text, Types.Performance>,
-    activities : List.List<Types.Activity>,
-    counter : { var n : Nat },
+    _interns : Map.Map<Text, Types.Intern>,
+    _performances : Map.Map<Text, Types.Performance>,
+    _activities : List.List<Types.Activity>,
+    _counter : { var n : Nat },
   ) : Nat {
     // Sample data removed — no records are seeded.
     0

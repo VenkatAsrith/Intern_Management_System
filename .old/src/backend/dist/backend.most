@@ -1,4 +1,18 @@
-// Version: 1.0.0
+// Version: 3.0.0
+type ActivityType__689163928 =
+  {
+    #callScheduled;
+    #commentAdded;
+    #documentShared;
+    #invoiceGenerated;
+    #noteAdded;
+    #proposalUploaded;
+    #quickCall;
+    #quickEmail;
+    #quickMeeting;
+    #statusChange;
+    #whatsappMessage
+  };
 type Activity__891213489 =
   {
     action : Text;
@@ -8,46 +22,472 @@ type Activity__891213489 =
     performedBy : Text;
     timestamp : Int
   };
+type Announcement__372525041 =
+  {
+    content : Text;
+    createdAt : Int;
+    createdBy : Text;
+    id : Text;
+    isActive : Bool;
+    title : Text
+  };
+type ClientActivity__557894395 =
+  {
+    activityType : ActivityType__689163928;
+    adminName : Text;
+    clientId : Text;
+    description : Text;
+    id : Text;
+    metadata : ?Text;
+    timestamp : Int
+  };
+type ClientComment__561139874 =
+  {
+    authorName : Text;
+    clientId : Text;
+    content : Text;
+    id : Text;
+    isPinned : Bool;
+    parentId : ?Text;
+    timestamp : Int
+  };
+type ClientStatus__586235630 =
+  {
+    #closedLost;
+    #closedWon;
+    #contacted;
+    #discoveryCallDone;
+    #leadCaptured;
+    #negotiation;
+    #onHold;
+    #proposalSent
+  };
+type Client__488727031 =
+  {
+    activityCount : Nat;
+    assignedTeamMember : Text;
+    closedAt : ?Int;
+    closedReason : ?Text;
+    companyName : Text;
+    companySize : Text;
+    contactPersonName : Text;
+    contacts : [ContactPerson__12740296];
+    createdAt : Int;
+    createdBy : Text;
+    currentStatus : ClientStatus__586235630;
+    customFields : [(Text, Text)];
+    dealProbability : Nat;
+    dealValue : Float;
+    designation : Text;
+    email : Text;
+    engagementScore : Nat;
+    followUpDate : ?Int;
+    gstNumber : ?Text;
+    healthScore : Nat;
+    id : Text;
+    industryType : Text;
+    lastActivity : ?Int;
+    lastActivityDate : ?Int;
+    leadScore : Nat;
+    leadSource : Text;
+    location : Text;
+    nextMeetingDate : ?Int;
+    phone : Text;
+    pipelineValue : ?Float;
+    priorityLevel : PriorityLevel__309216396;
+    proposalExpiry : ?Int;
+    proposalStatus : ?Text;
+    proposalVersion : Nat;
+    serviceInterested : Text;
+    source : Text;
+    statusHistory : [StatusHistoryEntry__143951834];
+    tags : [Text];
+    updatedAt : Int;
+    website : Text;
+    whatsappNumber : Text;
+    wonLostReason : ?Text
+  };
+type ContactPerson__12740296 =
+  {
+    addedAt : Int;
+    email : Text;
+    id : Text;
+    isPrimary : Bool;
+    name : Text;
+    phone : Text;
+    role : Text
+  };
 type Data__791452850<K, V> =
   {var count : Nat__490723111; kvs : [var ?(K, V)]};
 type ExperienceLevel__3557808 = {#Junior; #Mid; #Senior};
+type InternPipelineStageHistory__865410801 =
+  {
+    changedAt : Int;
+    changedBy : Text;
+    notes : Text;
+    stage : InternPipelineStage__914364127
+  };
+type InternPipelineStage__914364127 =
+  {
+    #active;
+    #alumni;
+    #applied;
+    #completed;
+    #decisionPending;
+    #interviewDone;
+    #interviewScheduled;
+    #offerAccepted;
+    #offerRejected;
+    #offerSent;
+    #onboarding;
+    #performanceReview;
+    #screened
+  };
 type Intern__707342932 =
   {
+    actualEndDate : ?Text;
     adminNotes : Text;
     certificateOpened : Bool;
     certificateOpenedAt : ?Int;
     certificateSent : Bool;
     certificateSentAt : ?Int;
+    college : ?Text;
     completionLetterOpened : Bool;
     completionLetterOpenedAt : ?Int;
     completionLetterSent : Bool;
     completionLetterSentAt : ?Int;
     createdAt : Int;
+    degreeYear : ?Text;
     department : Text;
+    dob : ?Text;
+    domain : ?Text;
     email : Text;
+    emergencyContact : ?Text;
+    expectedEndDate : ?Text;
     experienceLevel : ExperienceLevel__3557808;
+    gender : ?Text;
     id : Text;
+    internshipType : ?Text;
+    isActive : Bool;
     joiningDate : Int;
     lastContactedAt : ?Int;
     lastWhatsAppedAt : ?Int;
+    mentorAssigned : ?Text;
     name : Text;
     offerLetterOpened : Bool;
     offerLetterOpenedAt : ?Int;
     offerLetterSent : Bool;
     offerLetterSentAt : ?Int;
+    performanceTier : ?Text;
     phone : Text;
+    pipelineStage : InternPipelineStage__914364127;
+    ppoCandidate : Bool;
     profilePicCid : ?Text;
     space : Space__27052120;
+    startDate : ?Text;
     status : Status__802400896;
+    stipendAmount : ?Float;
     updatedAt : Int
   };
 type Internal__8484328<K, V> =
   {children : [var ?Node__46230540<K, V>]; data : Data__791452850<K, V>};
+type InvoiceLineItem__560307338 =
+  {amount : Float; description : Text; quantity : Float; rate : Float};
+type InvoicePaymentStatus__1049909240 =
+  {#draft; #overdue; #paid; #partial; #sent; #viewed};
+type Invoice__883872038 =
+  {
+    amountPaid : Nat;
+    clientId : Text;
+    createdAt : Int;
+    createdBy : Text;
+    dueDate : ?Int;
+    id : Text;
+    invoiceNumber : Text;
+    lineItems : [InvoiceLineItem__560307338];
+    notes : ?Text;
+    paymentStatus : PaymentStatus__654846221;
+    status : InvoicePaymentStatus__1049909240;
+    subtotal : Float;
+    tax : Float;
+    total : Float
+  };
 type Leaf__809889148<K, V> = {data : Data__791452850<K, V>};
+type List__415060402<T> = List__790383201<T>;
+type List__790383201<T> =
+  {
+    var blockIndex : Nat__490723111;
+    var blocks : [var [var ?T]];
+    var elementIndex : Nat__490723111
+  };
+type Map__158565046<K, V> = Map__297112838<K, V>;
+type Map__297112838<K, V> =
+  {var root : Node__46230540<K, V>; var size : Nat__490723111};
+type Map__605269027<K, V> = Map__158565046<K, V>;
 type Nat__490723111 = Nat__920180692;
 type Nat__920180692 = Nat;
 type Node__46230540<K, V> =
   {#internal : Internal__8484328<K, V>; #leaf : Leaf__809889148<K, V>};
+type NotificationType__908192046 =
+  {
+    #announcement;
+    #attendanceAnomaly;
+    #invoiceDue;
+    #leaveApproved;
+    #leaveRejected;
+    #overdueFollowUp;
+    #stageChanged;
+    #taskAssigned;
+    #taskOverdue
+  };
+type Notification__264708741 =
+  {
+    createdAt : Int;
+    id : Text;
+    isRead : Bool;
+    message : Text;
+    notificationType : NotificationType__908192046;
+    relatedId : ?Text;
+    title : Text;
+    userId : Text
+  };
+type OldActivityType__776306690 =
+  {
+    #callScheduled;
+    #commentAdded;
+    #documentShared;
+    #invoiceGenerated;
+    #noteAdded;
+    #proposalUploaded;
+    #statusChange;
+    #whatsappMessage
+  };
+type OldAssignmentSubmission__628849079 =
+  {
+    feedback : ?Text;
+    grade : ?Float;
+    gradedAt : ?Int;
+    id : Text;
+    internId : Text;
+    lessonId : Text;
+    submissionLink : Text;
+    submittedAt : Int
+  };
+type OldAttendanceRecord__238745332 =
+  {
+    checkInTime : ?Text;
+    checkOutTime : ?Text;
+    createdAt : Int;
+    date : Text;
+    dayType : OldDayType__496931997;
+    id : Text;
+    internId : Text;
+    isLate : Bool;
+    method : OldCheckInMethod__473196665;
+    notes : Text;
+    sessionDuration : ?Float
+  };
+type OldCheckInMethod__473196665 = {#manual; #qrCode};
+type OldClientActivity__179607166 =
+  {
+    activityType : OldActivityType__776306690;
+    adminName : Text;
+    clientId : Text;
+    description : Text;
+    id : Text;
+    metadata : ?Text;
+    timestamp : Int
+  };
+type OldClientComment__243771484 =
+  {
+    authorName : Text;
+    clientId : Text;
+    content : Text;
+    id : Text;
+    isPinned : Bool;
+    parentId : ?Text;
+    timestamp : Int
+  };
+type OldClientStatus__682124909 =
+  {
+    #closedLost;
+    #closedWon;
+    #contacted;
+    #discoveryCallDone;
+    #leadCaptured;
+    #negotiation;
+    #onHold;
+    #proposalSent
+  };
+type OldClient__766621721 =
+  {
+    assignedTeamMember : Text;
+    closedReason : ?Text;
+    companyName : Text;
+    companySize : Text;
+    contactPersonName : Text;
+    createdAt : Int;
+    createdBy : Text;
+    currentStatus : OldClientStatus__682124909;
+    dealValue : Float;
+    designation : Text;
+    email : Text;
+    followUpDate : ?Int;
+    gstNumber : ?Text;
+    id : Text;
+    industryType : Text;
+    lastActivityDate : ?Int;
+    leadSource : Text;
+    location : Text;
+    nextMeetingDate : ?Int;
+    phone : Text;
+    pipelineValue : ?Float;
+    priorityLevel : OldPriorityLevel__792847477;
+    serviceInterested : Text;
+    statusHistory : [OldStatusHistoryEntry__627936534];
+    updatedAt : Int;
+    website : Text;
+    whatsappNumber : Text
+  };
+type OldCourseAssignment__470376412 =
+  {
+    assignedAt : Int;
+    courseId : Text;
+    deadline : ?Text;
+    id : Text;
+    internId : Text
+  };
+type OldCourseModule__166205648 =
+  {courseId : Text; createdAt : Int; id : Text; order : Nat; title : Text};
+type OldCourse__138436238 =
+  {
+    createdAt : Int;
+    description : Text;
+    id : Text;
+    programId : Text;
+    thumbnail : ?Text;
+    title : Text
+  };
+type OldDayType__496931997 = {#halfDay; #holiday; #leave; #working};
+type OldInvoiceLineItem__586349027 =
+  {amount : Float; description : Text; quantity : Float; rate : Float};
+type OldInvoice__117248841 =
+  {
+    clientId : Text;
+    createdAt : Int;
+    createdBy : Text;
+    id : Text;
+    invoiceNumber : Text;
+    lineItems : [OldInvoiceLineItem__586349027];
+    notes : ?Text;
+    paymentStatus : OldPaymentStatus__257022736;
+    subtotal : Float;
+    tax : Float;
+    total : Float
+  };
+type OldLMSCertificate__283566822 =
+  {courseId : Text; id : Text; internId : Text; issuedAt : Int};
+type OldLeaveRequest__313462087 =
+  {
+    createdAt : Int;
+    endDate : Text;
+    id : Text;
+    internId : Text;
+    leaveType : OldLeaveType__891114033;
+    reason : Text;
+    reviewedAt : ?Int;
+    reviewedBy : ?Text;
+    startDate : Text;
+    status : OldLeaveStatus__852497893
+  };
+type OldLeaveStatus__852497893 = {#approved; #pending; #rejected};
+type OldLeaveType__891114033 = {#casual; #compensatory; #lop; #sick};
+type OldLessonCompletionStatus__522478670 =
+  {#completed; #inProgress; #notStarted};
+type OldLessonProgress__2872548 =
+  {
+    completedAt : ?Int;
+    id : Text;
+    internId : Text;
+    lessonId : Text;
+    status : OldLessonCompletionStatus__522478670
+  };
+type OldLessonType__422399123 = {#article; #assignment; #quiz; #video};
+type OldLesson__895252987 =
+  {
+    content : Text;
+    createdAt : Int;
+    id : Text;
+    lessonType : OldLessonType__422399123;
+    moduleId : Text;
+    order : Nat;
+    title : Text;
+    videoUrl : ?Text
+  };
+type OldPaymentStatus__257022736 = {#cancelled; #overdue; #paid; #pending};
+type OldPriorityLevel__792847477 = {#high; #low; #medium; #urgent};
+type OldProgram__490897846 =
+  {createdAt : Int; description : Text; id : Text; title : Text};
+type OldQRToken__1072579361 =
+  {createdAt : Int; expiresAt : Int; token : Text};
+type OldQuizAttempt__100577174 =
+  {
+    answers : [Text];
+    attemptedAt : Int;
+    id : Text;
+    internId : Text;
+    lessonId : Text;
+    score : Float
+  };
+type OldQuizQuestion__419340389 =
+  {
+    correctAnswer : Text;
+    id : Text;
+    lessonId : Text;
+    options : [Text];
+    order : Nat;
+    question : Text;
+    questionType : Text
+  };
+type OldSprint__929221436 =
+  {
+    createdAt : Int;
+    endDate : Text;
+    id : Text;
+    startDate : Text;
+    title : Text;
+    weekDuration : Nat
+  };
+type OldStatusHistoryEntry__627936534 =
+  {
+    adminName : Text;
+    note : Text;
+    status : OldClientStatus__682124909;
+    timestamp : Int
+  };
+type OldTaskPriority__296279257 = {#critical; #high; #low; #medium};
+type OldTaskStatus__486207089 =
+  {#approved; #draft; #revisionRequested; #submitted; #underReview};
+type OldTask__334677346 =
+  {
+    actualHours : Float;
+    assignedBy : Text;
+    assignedTo : Text;
+    attachments : [Text];
+    createdAt : Int;
+    description : Text;
+    dueDate : Text;
+    estimatedHours : Float;
+    id : Text;
+    priority : OldTaskPriority__296279257;
+    reviewNotes : Text;
+    sprintId : ?Text;
+    status : OldTaskStatus__486207089;
+    tags : [Text];
+    title : Text;
+    updatedAt : Int
+  };
+type PaymentStatus__654846221 = {#cancelled; #overdue; #paid; #pending};
 type Performance__767774655 =
   {
     adminNotes : Text;
@@ -62,20 +502,125 @@ type Performance__767774655 =
     taskScore : Float;
     year : Nat
   };
+type PriorityLevel__309216396 = {#high; #low; #medium; #urgent};
 type SessionInfo__536145658 = {displayName : Text; username : Text};
 type Space__27052120 = {#Learning; #Marketing; #Org};
+type StatusHistoryEntry__143951834 =
+  {
+    adminName : Text;
+    note : Text;
+    status : ClientStatus__586235630;
+    timestamp : Int
+  };
 type Status__802400896 = {#Active; #Completed; #OnHold};
-actor {
+actor ({
+  in _attendanceIdCounter : {var n : Nat};
+  in _lmsIdCounter : {var n : Nat};
+  in _taskIdCounter : {var n : Nat};
   stable activities :
     {
       var blockIndex : Nat__490723111;
       var blocks : [var [var ?Activity__891213489]];
       var elementIndex : Nat__490723111
     };
+  stable announcements :
+    {
+      var root : Node__46230540<Text, Announcement__372525041>;
+      var size : Nat__490723111
+    };
+  in assignmentSubmissions :
+    Map__605269027<Text, OldAssignmentSubmission__628849079>;
+  in attendanceRecords : Map__605269027<Text, OldAttendanceRecord__238745332>;
+  in clientActivities : List__415060402<OldClientActivity__179607166>;
+  in clientComments : Map__605269027<Text, OldClientComment__243771484>;
+  in clientIdCounter : {var n : Nat};
+  in clients : Map__605269027<Text, OldClient__766621721>;
+  in courseAssignments : Map__605269027<Text, OldCourseAssignment__470376412>;
   stable idCounter : {var n : Nat};
   stable interns :
     {
       var root : Node__46230540<Text, Intern__707342932>;
+      var size : Nat__490723111
+    };
+  in invoiceCounter : {var n : Nat};
+  in invoices : Map__605269027<Text, OldInvoice__117248841>;
+  in leaveRequests : Map__605269027<Text, OldLeaveRequest__313462087>;
+  in lessonProgress : Map__605269027<Text, OldLessonProgress__2872548>;
+  in lmsCertificates : Map__605269027<Text, OldLMSCertificate__283566822>;
+  in lmsCourses : Map__605269027<Text, OldCourse__138436238>;
+  in lmsLessons : Map__605269027<Text, OldLesson__895252987>;
+  in lmsModules : Map__605269027<Text, OldCourseModule__166205648>;
+  in lmsPrograms : Map__605269027<Text, OldProgram__490897846>;
+  stable notifications :
+    {
+      var root : Node__46230540<Text, Notification__264708741>;
+      var size : Nat__490723111
+    };
+  stable performances :
+    {
+      var root : Node__46230540<Text, Performance__767774655>;
+      var size : Nat__490723111
+    };
+  in qrTokens : Map__605269027<Text, OldQRToken__1072579361>;
+  in quizAttempts : Map__605269027<Text, OldQuizAttempt__100577174>;
+  in quizQuestions : Map__605269027<Text, OldQuizQuestion__419340389>;
+  stable var seeded : Bool;
+  stable sessions :
+    {
+      var root : Node__46230540<Text, SessionInfo__536145658>;
+      var size : Nat__490723111
+    };
+  in sprints : Map__605269027<Text, OldSprint__929221436>;
+  stable stageHistories :
+    {
+      var root : Node__46230540<Text, InternPipelineStageHistory__865410801>;
+      var size : Nat__490723111
+    };
+  in tasks : Map__605269027<Text, OldTask__334677346>
+}, {
+  stable activities :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?Activity__891213489]];
+      var elementIndex : Nat__490723111
+    };
+  stable announcements :
+    {
+      var root : Node__46230540<Text, Announcement__372525041>;
+      var size : Nat__490723111
+    };
+  stable clientActivities :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?ClientActivity__557894395]];
+      var elementIndex : Nat__490723111
+    };
+  stable clientComments :
+    {
+      var root : Node__46230540<Text, ClientComment__561139874>;
+      var size : Nat__490723111
+    };
+  stable clientIdCounter : {var n : Nat};
+  stable clients :
+    {
+      var root : Node__46230540<Text, Client__488727031>;
+      var size : Nat__490723111
+    };
+  stable idCounter : {var n : Nat};
+  stable interns :
+    {
+      var root : Node__46230540<Text, Intern__707342932>;
+      var size : Nat__490723111
+    };
+  stable invoiceCounter : {var n : Nat};
+  stable invoices :
+    {
+      var root : Node__46230540<Text, Invoice__883872038>;
+      var size : Nat__490723111
+    };
+  stable notifications :
+    {
+      var root : Node__46230540<Text, Notification__264708741>;
       var size : Nat__490723111
     };
   stable performances :
@@ -88,5 +633,10 @@ actor {
     {
       var root : Node__46230540<Text, SessionInfo__536145658>;
       var size : Nat__490723111
+    };
+  stable stageHistories :
+    {
+      var root : Node__46230540<Text, InternPipelineStageHistory__865410801>;
+      var size : Nat__490723111
     }
-};
+});

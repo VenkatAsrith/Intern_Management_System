@@ -425,8 +425,94 @@ export function InternDetailPage() {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="overview" className="mt-4">
+        <TabsContent value="overview" className="mt-4 space-y-4">
           <OverviewTab intern={intern} />
+          <div
+            className="bg-card border border-border rounded-xl p-5"
+            data-ocid="intern_detail.extended_profile_card"
+          >
+            <h3 className="font-semibold text-foreground text-sm mb-3">
+              Extended Profile
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
+              {intern.dob && (
+                <div>
+                  <p className="text-xs text-muted-foreground">Date of Birth</p>
+                  <p className="text-foreground">{intern.dob}</p>
+                </div>
+              )}
+              {intern.college && (
+                <div>
+                  <p className="text-xs text-muted-foreground">College</p>
+                  <p className="text-foreground">{intern.college}</p>
+                </div>
+              )}
+              {intern.department && (
+                <div>
+                  <p className="text-xs text-muted-foreground">Department</p>
+                  <p className="text-foreground">{intern.department}</p>
+                </div>
+              )}
+              {intern.domain && (
+                <div>
+                  <p className="text-xs text-muted-foreground">Domain</p>
+                  <p className="text-foreground">{intern.domain}</p>
+                </div>
+              )}
+              {intern.mentorAssigned && (
+                <div>
+                  <p className="text-xs text-muted-foreground">
+                    Mentor Assigned
+                  </p>
+                  <p className="text-foreground">{intern.mentorAssigned}</p>
+                </div>
+              )}
+              {intern.internshipType && (
+                <div>
+                  <p className="text-xs text-muted-foreground">
+                    Internship Type
+                  </p>
+                  <p className="text-foreground">{intern.internshipType}</p>
+                </div>
+              )}
+              {intern.stipendAmount !== undefined && (
+                <div>
+                  <p className="text-xs text-muted-foreground">Stipend</p>
+                  <p className="text-foreground">
+                    ₹{intern.stipendAmount.toLocaleString("en-IN")}
+                  </p>
+                </div>
+              )}
+              <div>
+                <p className="text-xs text-muted-foreground">PPO Candidate</p>
+                <p className="text-foreground">
+                  {intern.ppoCandidate ? "Yes" : "No"}
+                </p>
+              </div>
+              {intern.performanceTier && (
+                <div>
+                  <p className="text-xs text-muted-foreground">
+                    Performance Tier
+                  </p>
+                  <p className="text-foreground">{intern.performanceTier}</p>
+                </div>
+              )}
+              {intern.startDate && (
+                <div>
+                  <p className="text-xs text-muted-foreground">Start Date</p>
+                  <p className="text-foreground">{intern.startDate}</p>
+                </div>
+              )}
+              {intern.expectedEndDate && (
+                <div>
+                  <p className="text-xs text-muted-foreground">
+                    Expected End Date
+                  </p>
+                  <p className="text-foreground">{intern.expectedEndDate}</p>
+                </div>
+              )}
+            </div>
+          </div>
         </TabsContent>
 
         <TabsContent value="documents" className="mt-4">

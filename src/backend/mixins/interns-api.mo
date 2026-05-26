@@ -1,8 +1,11 @@
 import List "mo:core/List";
 import Map "mo:core/Map";
+import Time "mo:core/Time";
+import Int "mo:core/Int";
 import Auth "../lib/auth";
 import InternLib "../lib/interns";
 import Types "../types/interns";
+import NotifTypes "../types/notifications";
 
 mixin (
   interns : Map.Map<Text, Types.Intern>,
@@ -10,6 +13,8 @@ mixin (
   activities : List.List<Types.Activity>,
   counter : { var n : Nat },
   sessions : Map.Map<Text, Auth.SessionInfo>,
+  stageHistories : Map.Map<Text, Types.InternPipelineStageHistory>,
+  notifications : Map.Map<Text, NotifTypes.Notification>,
 ) {
 
   public func createIntern(sessionToken : Text, payload : Types.CreateInternPayload) : async { #ok : Types.Intern; #err : Text } {
@@ -95,6 +100,109 @@ mixin (
 
   public query func getDashboardStats() : async Types.DashboardStats {
     InternLib.getDashboardStats(interns, performances)
+  };
+
+  // ── Intern Pipeline Stage ────────────────────────────────────────────────
+
+  public func updateInternPipelineStage(
+    sessionToken : Text,
+    internId : Text,
+    newStage : Types.InternPipelineStage,
+    notes : Text,
+  ) : async { #ok : Types.Intern; #err : Text } {
+    let changedBy = Auth.requireSession(sessions, sessionToken);
+    switch (interns.get(internId)) {
+      case null { #err("Intern not found") };
+      case (?intern) {
+        let now = Time.now();
+        // Append history entry (key = internId # "-" # timestamp for uniqueness)
+        let histKey = internId # "-" # now.toText();
+        let entry : Types.InternPipelineStageHistory = {
+          stage     = newStage;
+          changedBy;
+          changedAt = now;
+          notes;
+        };
+        stageHistories.add(histKey, entry);
+        // Update intern record
+        let updated : Types.Intern = { intern with pipelineStage = newStage; updatedAt = now };
+        interns.add(internId, updated);
+        // Notify
+        let notifId = "notif-" # now.toText();
+        let notif : NotifTypes.Notification = {
+          id               = notifId;
+          userId           = internId;
+          notificationType = #stageChanged;
+          title            = "Pipeline stage updated";
+          message          = "Your pipeline stage has been updated by " # changedBy;
+          isRead           = false;
+          relatedId        = ?internId;
+          createdAt        = now;
+        };
+        notifications.add(notifId, notif);
+        #ok(updated)
+      };
+    }
+  };
+
+  public query func getStageHistory(internId : Text) : async [Types.InternPipelineStageHistory] {
+    let prefix = internId # "-";
+    let all = stageHistories.entries().toArray()
+      .filter(func((k, _)) { k.startsWith(#text prefix) })
+      .map(func((_, h)) { h });
+    all.sort(func(a, b) {
+      if (a.changedAt < b.changedAt) #less
+      else if (a.changedAt > b.changedAt) #greater
+      else #equal
+    })
+  };
+
+  public func updateInternExtendedProfile(
+    sessionToken : Text,
+    internId : Text,
+    dob : ?Text,
+    gender : ?Text,
+    emergencyContact : ?Text,
+    college : ?Text,
+    department : ?Text,
+    degreeYear : ?Text,
+    domain : ?Text,
+    mentorAssigned : ?Text,
+    startDate : ?Text,
+    expectedEndDate : ?Text,
+    internshipType : ?Text,
+    stipendAmount : ?Float,
+    ppoCandidate : Bool,
+    performanceTier : ?Text,
+    isActive : Bool,
+  ) : async { #ok : Types.Intern; #err : Text } {
+    let _username = Auth.requireSession(sessions, sessionToken);
+    switch (interns.get(internId)) {
+      case null { #err("Intern not found") };
+      case (?intern) {
+        let updated : Types.Intern = {
+          intern with
+          dob;
+          gender;
+          emergencyContact;
+          college;
+          department       = switch (department) { case (?d) d; case null intern.department };
+          degreeYear;
+          domain;
+          mentorAssigned;
+          startDate;
+          expectedEndDate;
+          internshipType;
+          stipendAmount;
+          ppoCandidate;
+          performanceTier;
+          isActive;
+          updatedAt        = Time.now();
+        };
+        interns.add(internId, updated);
+        #ok(updated)
+      };
+    }
   };
 
 };

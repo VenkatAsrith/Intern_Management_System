@@ -22,6 +22,36 @@ type UpdateInternPayload =
    space: Space;
    status: Status;
  };
+type UpdateClientRequest = 
+ record {
+   assignedTeamMember: opt text;
+   companyName: opt text;
+   companySize: opt text;
+   contactPersonName: opt text;
+   dealValue: opt float64;
+   designation: opt text;
+   email: opt text;
+   followUpDate: opt int;
+   gstNumber: opt text;
+   industryType: opt text;
+   leadSource: opt text;
+   location: opt text;
+   nextMeetingDate: opt int;
+   phone: opt text;
+   priorityLevel: opt PriorityLevel;
+   serviceInterested: opt text;
+   source: opt text;
+   tags: opt vec text;
+   website: opt text;
+   whatsappNumber: opt text;
+ };
+type StatusHistoryEntry = 
+ record {
+   adminName: text;
+   note: text;
+   status: ClientStatus;
+   timestamp: int;
+ };
 type Status = 
  variant {
    Active;
@@ -33,6 +63,13 @@ type Space =
    Learning;
    Marketing;
    Org;
+ };
+type PriorityLevel = 
+ variant {
+   high;
+   low;
+   medium;
+   urgent;
  };
 type Performance = 
  record {
@@ -48,39 +85,148 @@ type Performance =
    taskScore: float64;
    year: nat;
  };
+type PaymentStatus = 
+ variant {
+   cancelled;
+   overdue;
+   paid;
+   pending;
+ };
+type NotificationType = 
+ variant {
+   announcement;
+   attendanceAnomaly;
+   invoiceDue;
+   leaveApproved;
+   leaveRejected;
+   overdueFollowUp;
+   stageChanged;
+   taskAssigned;
+   taskOverdue;
+ };
+type Notification = 
+ record {
+   createdAt: int;
+   id: text;
+   isRead: bool;
+   message: text;
+   notificationType: NotificationType;
+   relatedId: opt text;
+   title: text;
+   userId: text;
+ };
+type MonthlyAnalyticsEntry = 
+ record {
+   approved: nat;
+   month: text;
+   newLeads: nat;
+   rejected: nat;
+ };
 type ListInternsFilter = 
  record {
    space: opt Space;
    status: opt Status;
  };
+type InvoicePaymentStatus = 
+ variant {
+   draft;
+   overdue;
+   paid;
+   partial;
+   sent;
+   viewed;
+ };
+type InvoiceLineItem = 
+ record {
+   amount: float64;
+   description: text;
+   quantity: float64;
+   rate: float64;
+ };
+type Invoice = 
+ record {
+   amountPaid: nat;
+   clientId: text;
+   createdAt: int;
+   createdBy: text;
+   dueDate: opt int;
+   id: text;
+   invoiceNumber: text;
+   lineItems: vec InvoiceLineItem;
+   notes: opt text;
+   paymentStatus: PaymentStatus;
+   status: InvoicePaymentStatus;
+   subtotal: float64;
+   tax: float64;
+   total: float64;
+ };
+type InternPipelineStageHistory = 
+ record {
+   changedAt: int;
+   changedBy: text;
+   notes: text;
+   stage: InternPipelineStage;
+ };
+type InternPipelineStage = 
+ variant {
+   active;
+   alumni;
+   applied;
+   completed;
+   decisionPending;
+   interviewDone;
+   interviewScheduled;
+   offerAccepted;
+   offerRejected;
+   offerSent;
+   onboarding;
+   performanceReview;
+   screened;
+ };
 type Intern = 
  record {
+   actualEndDate: opt text;
    adminNotes: text;
    certificateOpened: bool;
    certificateOpenedAt: opt int;
    certificateSent: bool;
    certificateSentAt: opt int;
+   college: opt text;
    completionLetterOpened: bool;
    completionLetterOpenedAt: opt int;
    completionLetterSent: bool;
    completionLetterSentAt: opt int;
    createdAt: int;
+   degreeYear: opt text;
    department: text;
+   dob: opt text;
+   domain: opt text;
    email: text;
+   emergencyContact: opt text;
+   expectedEndDate: opt text;
    experienceLevel: ExperienceLevel;
+   gender: opt text;
    id: text;
+   internshipType: opt text;
+   isActive: bool;
    joiningDate: int;
    lastContactedAt: opt int;
    lastWhatsAppedAt: opt int;
+   mentorAssigned: opt text;
    name: text;
    offerLetterOpened: bool;
    offerLetterOpenedAt: opt int;
    offerLetterSent: bool;
    offerLetterSentAt: opt int;
+   performanceTier: opt text;
    phone: text;
+   pipelineStage: InternPipelineStage;
+   ppoCandidate: bool;
    profilePicCid: opt text;
    space: Space;
+   startDate: opt text;
    status: Status;
+   stipendAmount: opt float64;
    updatedAt: int;
  };
 type ExperienceLevel = 
@@ -124,6 +270,165 @@ type CreateInternPayload =
    space: Space;
    status: Status;
  };
+type CreateClientRequest = 
+ record {
+   assignedTeamMember: text;
+   companyName: text;
+   companySize: text;
+   contactPersonName: text;
+   dealValue: float64;
+   designation: text;
+   email: text;
+   followUpDate: opt int;
+   gstNumber: opt text;
+   industryType: text;
+   leadSource: text;
+   location: text;
+   nextMeetingDate: opt int;
+   phone: text;
+   priorityLevel: PriorityLevel;
+   serviceInterested: text;
+   source: text;
+   tags: vec text;
+   website: text;
+   whatsappNumber: text;
+ };
+type ContactPerson = 
+ record {
+   addedAt: int;
+   email: text;
+   id: text;
+   isPrimary: bool;
+   name: text;
+   phone: text;
+   role: text;
+ };
+type ClientStatus = 
+ variant {
+   closedLost;
+   closedWon;
+   contacted;
+   discoveryCallDone;
+   leadCaptured;
+   negotiation;
+   onHold;
+   proposalSent;
+ };
+type ClientComment = 
+ record {
+   authorName: text;
+   clientId: text;
+   content: text;
+   id: text;
+   isPinned: bool;
+   parentId: opt text;
+   timestamp: int;
+ };
+type ClientAnalytics = 
+ record {
+   activeLeads: nat;
+   approvedDeals: nat;
+   monthlyData: vec MonthlyAnalyticsEntry;
+   rejectedLeads: nat;
+   revenuePipeline: float64;
+   totalClients: nat;
+ };
+type ClientActivity = 
+ record {
+   activityType: ActivityType;
+   adminName: text;
+   clientId: text;
+   description: text;
+   id: text;
+   metadata: opt text;
+   timestamp: int;
+ };
+type Client = 
+ record {
+   activityCount: nat;
+   assignedTeamMember: text;
+   closedAt: opt int;
+   closedReason: opt text;
+   companyName: text;
+   companySize: text;
+   contactPersonName: text;
+   contacts: vec ContactPerson;
+   createdAt: int;
+   createdBy: text;
+   currentStatus: ClientStatus;
+   customFields: vec record {
+                       text;
+                       text;
+                     };
+   dealProbability: nat;
+   dealValue: float64;
+   designation: text;
+   email: text;
+   engagementScore: nat;
+   followUpDate: opt int;
+   gstNumber: opt text;
+   healthScore: nat;
+   id: text;
+   industryType: text;
+   lastActivity: opt int;
+   lastActivityDate: opt int;
+   leadScore: nat;
+   leadSource: text;
+   location: text;
+   nextMeetingDate: opt int;
+   phone: text;
+   pipelineValue: opt float64;
+   priorityLevel: PriorityLevel;
+   proposalExpiry: opt int;
+   proposalStatus: opt text;
+   proposalVersion: nat;
+   serviceInterested: text;
+   source: text;
+   statusHistory: vec StatusHistoryEntry;
+   tags: vec text;
+   updatedAt: int;
+   website: text;
+   whatsappNumber: text;
+   wonLostReason: opt text;
+ };
+type Announcement = 
+ record {
+   content: text;
+   createdAt: int;
+   createdBy: text;
+   id: text;
+   isActive: bool;
+   title: text;
+ };
+type AnalyticsData = 
+ record {
+   avgDealCycleDays: nat;
+   conversionRates: vec record {
+                          text;
+                          nat;
+                        };
+   totalPipeline: nat;
+   weightedForecast: nat;
+   winRate: nat;
+   wonLostBreakdown: vec record {
+                           text;
+                           nat;
+                         };
+ };
+type ActivityType = 
+ variant {
+   callScheduled;
+   commentAdded;
+   documentShared;
+   invoiceGenerated;
+   noteAdded;
+   proposalUploaded;
+   quickCall;
+   quickEmail;
+   quickMeeting;
+   statusChange;
+   whatsappMessage;
+ };
 type Activity = 
  record {
    action: text;
@@ -134,16 +439,79 @@ type Activity =
    timestamp: int;
  };
 service : {
+  addClientActivity: (clientId: text, activityType: ActivityType,
+   description: text, metadata: opt text) ->
+   (variant {
+      err: text;
+      ok: ClientActivity;
+    });
+  addClientComment: (clientId: text, content: text, parentId: opt text) ->
+   (variant {
+      err: text;
+      ok: ClientComment;
+    });
+  addContact: (clientId: text, contact: ContactPerson) ->
+   (variant {
+      err: text;
+      ok: Client;
+    });
   addPerformance: (sessionToken: text, payload: CreatePerformancePayload) ->
    (variant {
       err: text;
       ok: Performance;
+    });
+  captureWonLostReason: (clientId: text, reason: text) ->
+   (variant {
+      err: text;
+      ok: Client;
+    });
+  createAnnouncement: (payload:
+   record {
+     content: text;
+     createdBy: text;
+     title: text;
+   }) -> (variant {
+            err: text;
+            ok: Announcement;
+          });
+  createClient: (req: CreateClientRequest) ->
+   (variant {
+      err: text;
+      ok: Client;
     });
   createIntern: (sessionToken: text, payload: CreateInternPayload) ->
    (variant {
       err: text;
       ok: Intern;
     });
+  createInvoice: (clientId: text, lineItems: vec InvoiceLineItem, tax:
+   float64, notes: opt text) -> (variant {
+                                   err: text;
+                                   ok: Invoice;
+                                 });
+  createNotification: (payload:
+   record {
+     message: text;
+     notificationType: NotificationType;
+     relatedId: opt text;
+     title: text;
+     userId: text;
+   }) -> (variant {
+            err: text;
+            ok: Notification;
+          });
+  deleteAnnouncement: (id: text) -> (variant {
+                                       err: text;
+                                       ok;
+                                     });
+  deleteClient: (id: text) -> (variant {
+                                 err: text;
+                                 ok;
+                               });
+  deleteClientComment: (commentId: text) -> (variant {
+                                               err: text;
+                                               ok;
+                                             });
   deleteIntern: (sessionToken: text, id: text) ->
    (variant {
       err: text;
@@ -155,11 +523,44 @@ service : {
       ok: bool;
     });
   getActivities: (internId: opt text) -> (vec Activity) query;
+  getAnalyticsDashboard: () -> (AnalyticsData) query;
+  getCRMFunnelData: () -> (vec record {
+                                 text;
+                                 nat;
+                               }) query;
+  getClient: (id: text) -> (variant {
+                              err: text;
+                              ok: Client;
+                            }) query;
+  getClientActivities: (clientId: text) -> (vec ClientActivity) query;
+  getClientAnalytics: () -> (ClientAnalytics) query;
+  getClientComments: (clientId: text) -> (vec ClientComment) query;
+  getClientInvoices: (clientId: text) -> (vec Invoice) query;
   getDashboardStats: () -> (DashboardStats) query;
+  getDealCycleTime: () -> (nat) query;
   getIntern: (id: text) -> (opt Intern) query;
+  getLostDealAnalysis: () -> (vec record {
+                                    text;
+                                    nat;
+                                    nat;
+                                  }) query;
+  getStageHistory: (internId: text) -> (vec InternPipelineStageHistory) query;
+  getWinRateByMember: () -> (vec record {
+                                   text;
+                                   nat;
+                                   nat;
+                                 }) query;
   initSampleData: () -> (nat);
+  listAnnouncements: (activeOnly: bool) -> (vec Announcement) query;
+  listClients: () -> (vec Client) query;
   listInterns: (filter: ListInternsFilter) -> (vec Intern) query;
+  listNotifications: (userId: text) -> (vec Notification) query;
   listPerformances: (internId: text) -> (vec Performance) query;
+  logQuickActivity: (clientId: text, activityType: text, notes: text) ->
+   (variant {
+      err: text;
+      ok: Client;
+    });
   logWhatsApp: (sessionToken: text, internId: text) ->
    (variant {
       err: text;
@@ -174,7 +575,45 @@ service : {
           };
     });
   logout: (sessionToken: text) -> ();
+  markAllAsRead: (userId: text) -> (variant {
+                                      err: text;
+                                      ok: nat;
+                                    });
+  markAsRead: (id: text) -> (variant {
+                               err: text;
+                               ok;
+                             });
+  pinClientComment: (commentId: text, isPinned: bool) ->
+   (variant {
+      err: text;
+      ok: ClientComment;
+    });
+  removeContact: (clientId: text, contactId: text) ->
+   (variant {
+      err: text;
+      ok: Client;
+    });
   seedSampleData: () -> ();
+  updateClient: (id: text, req: UpdateClientRequest) ->
+   (variant {
+      err: text;
+      ok: Client;
+    });
+  updateClientComment: (commentId: text, content: text) ->
+   (variant {
+      err: text;
+      ok: ClientComment;
+    });
+  updateClientStatus: (id: text, status: ClientStatus, note: text) ->
+   (variant {
+      err: text;
+      ok: Client;
+    });
+  updateContact: (clientId: text, contactId: text, contact: ContactPerson) ->
+   (variant {
+      err: text;
+      ok: Client;
+    });
   updateDocumentState: (sessionToken: text, internId: text, docType: 
    text, action: text) -> (variant {
                              err: text;
@@ -185,11 +624,42 @@ service : {
                               err: text;
                               ok: Intern;
                             });
+  updateInternExtendedProfile: (sessionToken: text, internId: text, dob:
+   opt text, gender: opt text, emergencyContact: opt text, college: opt text,
+   department: opt text, degreeYear: opt text, domain: opt text,
+   mentorAssigned: opt text, startDate: opt text, expectedEndDate: opt text,
+   internshipType: opt text, stipendAmount: opt float64, ppoCandidate: 
+   bool, performanceTier: opt text, isActive: bool) ->
+   (variant {
+      err: text;
+      ok: Intern;
+    });
+  updateInternPipelineStage: (sessionToken: text, internId: text, newStage:
+   InternPipelineStage, notes: text) -> (variant {
+                                           err: text;
+                                           ok: Intern;
+                                         });
+  updateInvoicePaymentStatus: (invoiceId: text, status: PaymentStatus) ->
+   (variant {
+      err: text;
+      ok: Invoice;
+    });
+  updateInvoiceStatus: (clientId: text, invoiceId: text, status:
+   InvoicePaymentStatus, amountPaid: opt nat) ->
+   (variant {
+      err: text;
+      ok: Invoice;
+    });
   updatePerformance: (sessionToken: text, id: text, payload:
    UpdatePerformancePayload) -> (variant {
                                    err: text;
                                    ok: Performance;
                                  });
+  updateProposalStatus: (clientId: text, status: text, version: nat) ->
+   (variant {
+      err: text;
+      ok: Client;
+    });
   validateSession: (sessionToken: text) ->
    (variant {
       err: text;

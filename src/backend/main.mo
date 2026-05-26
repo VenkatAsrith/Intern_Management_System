@@ -4,7 +4,14 @@ import InternsMixin "mixins/interns-api";
 import Auth "lib/auth";
 import Types "types/interns";
 import InternLib "lib/interns";
+import ClientsMixin "mixins/clients-api";
+import ClientTypes "types/clients";
+import NotificationsMixin "mixins/notifications-api";
+import NotifTypes "types/notifications";
+import Migration "migration";
 
+
+(with migration = Migration.run)
 actor {
 
   // --- Stable state ---
@@ -17,8 +24,36 @@ actor {
   // Lazy init flag: seed sample data once on first run
   var seeded : Bool = false;
 
+  // Stable state for clients domain
+  let clients = Map.empty<Text, ClientTypes.Client>();
+  let clientActivities = List.empty<ClientTypes.ClientActivity>();
+  let clientComments = Map.empty<Text, ClientTypes.ClientComment>();
+  let invoices = Map.empty<Text, ClientTypes.Invoice>();
+  let clientIdCounter = { var n : Nat = 0 };
+  let invoiceCounter = { var n : Nat = 0 };
+
+  // Tasks domain state
+  // (removed — tasks module retired)
+
+  // Attendance domain state
+  // (removed — attendance module retired)
+
+  // LMS domain state
+  // (removed — LMS module retired)
+
+  // Notifications domain state
+  let notifications = Map.empty<Text, NotifTypes.Notification>();
+  let announcements = Map.empty<Text, NotifTypes.Announcement>();
+
+  // Intern pipeline stage history
+  let stageHistories = Map.empty<Text, Types.InternPipelineStageHistory>();
+
   // Include all intern domain API
-  include InternsMixin(interns, performances, activities, idCounter, sessions);
+  include InternsMixin(interns, performances, activities, idCounter, sessions, stageHistories, notifications);
+  // Include all client domain API
+  include ClientsMixin(clients, clientActivities, clientComments, invoices, clientIdCounter, invoiceCounter);
+  // Include all notifications domain API
+  include NotificationsMixin(notifications, announcements);
 
   // --- Auth endpoints ---
 
