@@ -1,22 +1,31 @@
 {
-  "overview": "Enterprise intern and client relationship management platform for TechMecha Torque with full CRM, pipeline tracking, and analytics.",
+  "overview": "TechMecha Torque IMS+CRM Version 2 — an enterprise-grade internal operations platform with full intern management, CRM pipeline, role-based access control, workflow automation, and advanced analytics built on the Internet Computer.",
   "features": [
-    "Client pipeline with Kanban board and deal tracking",
-    "Auto lead scoring and deal probability",
-    "Advanced CRM analytics and revenue forecasting",
-    "Intern management with document generation",
-    "Invoice lifecycle tracking",
-    "Follow-up reminders and daily digest",
-    "Multiple contacts per company"
+    "Role-based access control with 9 roles (Super Admin to Viewer) and permission matrix enforcement",
+    "6 automated workflows: overdue follow-up escalation, proposal expiry reminders, inactive lead detection, invoice overdue, SLA breach detection, reassignment on deactivation",
+    "Immutable audit logging for all system mutations with actor, action, before/after state",
+    "Approval queue for sensitive actions (delete, document send) requiring manager sign-off",
+    "Analytics upgrade: pipeline velocity, follow-up compliance rate, SLA breach rate, rep scorecards",
+    "User management admin console with CRUD, role assignment, space scoping, deactivation",
+    "Admin dashboard: audit log viewer, automation settings, approval queue, announcement management",
+    "Split-pane client preview (Space key), contextual right-click menus, bulk action bar",
+    "Inline editing for follow-up date, assigned member, and deal value on client table",
+    "Keyboard shortcuts: ? (shortcut panel), F (focus mode), L (quick activity), Ctrl+K (command palette)",
+    "Health score badge, stale deal badge, and SLA breach indicator on client cards",
+    "Multi-tab awareness banner when record is updated in another tab",
+    "Full IMS and CRM feature preservation from Version 1"
   ],
-  "category": "enterprise-app",
+  "category": "enterprise-platform",
   "tags": [
-    "crm",
     "intern-management",
-    "enterprise",
-    "dark-theme",
+    "crm",
+    "rbac",
+    "automation",
     "analytics",
-    "pipeline"
+    "internet-computer",
+    "enterprise",
+    "saas",
+    "workflow"
   ],
-  "last_updated": "2026-05-24T18:48:36.968Z"
+  "last_updated": "2026-05-28T19:46:51.090Z"
 }

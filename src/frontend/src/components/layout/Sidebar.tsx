@@ -1,16 +1,19 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
 import { Link, useLocation } from "@tanstack/react-router";
 import {
   BarChart3,
   Briefcase,
   Calendar,
+  ClipboardList,
   KanbanSquare,
   LayoutDashboard,
   Megaphone,
   Settings,
+  ShieldCheck,
   Users,
   X,
 } from "lucide-react";
@@ -46,8 +49,17 @@ const spaceItems = [
   },
 ];
 
+const adminNavItems = [
+  { to: "/admin/users", label: "Users", icon: Users },
+  { to: "/admin/approvals", label: "Approvals", icon: ClipboardList },
+  { to: "/admin/audit", label: "Audit Log", icon: ShieldCheck },
+  { to: "/admin/automations", label: "Automations", icon: BarChart3 },
+  { to: "/admin/announcements", label: "Announcements", icon: Megaphone },
+];
+
 export function Sidebar({ open, onClose }: SidebarProps) {
   const location = useLocation();
+  const { isAdmin } = useAuth();
   const isClientsActive = location.pathname.startsWith("/clients");
   const [, setClientsExpanded] = useState(isClientsActive);
   void setClientsExpanded;
@@ -201,9 +213,39 @@ export function Sidebar({ open, onClose }: SidebarProps) {
             );
           })}
 
-          <Separator className="my-4" />
+          {/* Section: ADMIN */}
+          {isAdmin() && (
+            <>
+              <Separator className="my-4" />
+              <div className="flex items-center justify-between px-2 mb-2">
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Admin
+                </p>
+                <span className="text-[10px] text-primary/70 font-medium border border-primary/20 rounded px-1.5 py-0.5 bg-primary/5">
+                  Control
+                </span>
+              </div>
+              {adminNavItems.map(({ to, label, icon: Icon }) => (
+                <Link
+                  key={to}
+                  to={to}
+                  data-ocid={`sidebar.admin_${label.toLowerCase().replace(/ /g, "_")}_link`}
+                  className={cn(
+                    "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+                    location.pathname === to
+                      ? "bg-primary/10 text-primary border border-primary/20"
+                      : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                  )}
+                >
+                  <Icon className="h-4 w-4 flex-shrink-0" />
+                  {label}
+                </Link>
+              ))}
+            </>
+          )}
 
           {/* Section: SETTINGS */}
+          <Separator className="my-4" />
           <p className="px-2 mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             System
           </p>

@@ -1,3 +1,27 @@
+type WorkflowExecution = 
+ record {
+   errorMessage: opt text;
+   id: text;
+   recordsProcessed: nat;
+   ruleName: text;
+   status: variant {
+             failed;
+             running;
+             success;
+           };
+   triggeredAt: int;
+ };
+type UserAccount = 
+ record {
+   createdAt: int;
+   displayName: text;
+   id: text;
+   isActive: bool;
+   passwordHash: text;
+   role: Role;
+   spaces: vec text;
+   username: text;
+ };
 type UpdatePerformancePayload = 
  record {
    adminNotes: text;
@@ -64,6 +88,34 @@ type Space =
    Marketing;
    Org;
  };
+type SlaStatus = 
+ variant {
+   breached;
+   notBreached;
+ };
+type Role = 
+ variant {
+   admin;
+   finance;
+   hr;
+   manager;
+   marketing;
+   operations;
+   sales;
+   superAdmin;
+   viewer;
+ };
+type RepScorecard = 
+ record {
+   activityCount: nat;
+   avgDealCycleTime: float64;
+   closedDealsCount: nat;
+   displayName: text;
+   totalDealValueClosed: float64;
+   userId: text;
+   username: text;
+   winRate: float64;
+ };
 type PriorityLevel = 
  variant {
    high;
@@ -95,14 +147,44 @@ type PaymentStatus =
 type NotificationType = 
  variant {
    announcement;
+   announcementPosted;
+   approvalRequestCreated;
    attendanceAnomaly;
+   dealClosedWon;
+   dealSLABreached;
+   followUpOverdue;
+   healthScoreLow;
+   internDocumentSent;
    invoiceDue;
+   invoiceOverdue;
    leaveApproved;
    leaveRejected;
+   newClientAssigned;
    overdueFollowUp;
+   proposalExpiring;
+   proposalExpiringUrgent;
    stageChanged;
+   staleDeal;
    taskAssigned;
    taskOverdue;
+ };
+type NotificationPriority = 
+ variant {
+   critical;
+   high;
+   low;
+   medium;
+ };
+type NotificationPreference = 
+ record {
+   digestEnabled: bool;
+   digestFrequency: variant {
+                      daily;
+                      hourly;
+                      immediate;
+                    };
+   eventType: text;
+   userId: text;
  };
 type Notification = 
  record {
@@ -111,6 +193,7 @@ type Notification =
    isRead: bool;
    message: text;
    notificationType: NotificationType;
+   priority: opt NotificationPriority;
    relatedId: opt text;
    title: text;
    userId: text;
@@ -245,6 +328,30 @@ type DashboardStats =
    orgCount: nat;
    totalInterns: nat;
  };
+type DashboardSnapshot = 
+ record {
+   activeDealsCount: nat;
+   closedDealsThisMonth: nat;
+   followUpComplianceRate: vec record {
+                                 text;
+                                 float64;
+                               };
+   pipelineVelocity: vec record {
+                           text;
+                           float64;
+                         };
+   revenueForecast: float64;
+   slaBreaachRatePerStage: vec record {
+                                 text;
+                                 float64;
+                               };
+   totalRevenueYTD: float64;
+   updatedAt: int;
+   winRateByRep: vec record {
+                       text;
+                       float64;
+                     };
+ };
 type CreatePerformancePayload = 
  record {
    adminNotes: text;
@@ -370,6 +477,7 @@ type Client =
    healthScore: nat;
    id: text;
    industryType: text;
+   isStale: opt bool;
    lastActivity: opt int;
    lastActivityDate: opt int;
    leadScore: nat;
@@ -383,7 +491,10 @@ type Client =
    proposalStatus: opt text;
    proposalVersion: nat;
    serviceInterested: text;
+   slaBreachedAt: opt int;
+   slaStatus: opt SlaStatus;
    source: text;
+   stageEnteredAt: opt int;
    statusHistory: vec StatusHistoryEntry;
    tags: vec text;
    updatedAt: int;
@@ -391,13 +502,49 @@ type Client =
    whatsappNumber: text;
    wonLostReason: opt text;
  };
+type AuditEvent = 
+ record {
+   action: text;
+   actorId: text;
+   actorRole: text;
+   afterState: opt text;
+   beforeState: opt text;
+   id: text;
+   ipAddress: opt text;
+   resourceId: text;
+   resourceType: text;
+   timestamp: int;
+ };
+type ApprovalStatus = 
+ variant {
+   approved;
+   pending;
+   rejected;
+ };
+type ApprovalRequest = 
+ record {
+   actionType: text;
+   approverId: opt text;
+   createdAt: int;
+   id: text;
+   notes: opt text;
+   requestPayload: text;
+   requesterId: text;
+   requesterRole: text;
+   resolvedAt: opt int;
+   resourceId: text;
+   resourceType: text;
+   status: ApprovalStatus;
+ };
 type Announcement = 
  record {
    content: text;
    createdAt: int;
    createdBy: text;
+   expiresAt: opt int;
    id: text;
    isActive: bool;
+   targetSpaces: opt vec text;
    title: text;
  };
 type AnalyticsData = 
@@ -460,6 +607,11 @@ service : {
       err: text;
       ok: Performance;
     });
+  approveRequest: (sessionToken: text, requestId: text, notes: opt text) ->
+   (variant {
+      err: text;
+      ok: ApprovalRequest;
+    });
   captureWonLostReason: (clientId: text, reason: text) ->
    (variant {
       err: text;
@@ -474,12 +626,29 @@ service : {
             err: text;
             ok: Announcement;
           });
+  createAnnouncementV2: (sessionToken: text, title: text, body: text,
+   targetSpaces: vec text, expiresAt: opt int) ->
+   (variant {
+      err: text;
+      ok: Announcement;
+    });
+  createApprovalRequest: (sessionToken: text, actionType: text, resourceType:
+   text, resourceId: text, payload: text) ->
+   (variant {
+      err: text;
+      ok: ApprovalRequest;
+    });
   createClient: (req: CreateClientRequest) ->
    (variant {
       err: text;
       ok: Client;
     });
   createIntern: (sessionToken: text, payload: CreateInternPayload) ->
+   (variant {
+      err: text;
+      ok: Intern;
+    });
+  createInternAudited: (sessionToken: text, payload: CreateInternPayload) ->
    (variant {
       err: text;
       ok: Intern;
@@ -493,6 +662,7 @@ service : {
    record {
      message: text;
      notificationType: NotificationType;
+     priority: NotificationPriority;
      relatedId: opt text;
      title: text;
      userId: text;
@@ -500,10 +670,21 @@ service : {
             err: text;
             ok: Notification;
           });
+  createUser: (sessionToken: text, username: text, password: text, roleText:
+   text, spaces: vec text, displayName: text) ->
+   (variant {
+      err: text;
+      ok: UserAccount;
+    });
   deleteAnnouncement: (id: text) -> (variant {
                                        err: text;
                                        ok;
                                      });
+  deleteAnnouncementById: (sessionToken: text, announcementId: text) ->
+   (variant {
+      err: text;
+      ok;
+    });
   deleteClient: (id: text) -> (variant {
                                  err: text;
                                  ok;
@@ -512,18 +693,48 @@ service : {
                                                err: text;
                                                ok;
                                              });
+  deleteClientWithAudit: (sessionToken: text, id: text) ->
+   (variant {
+      err: text;
+      ok: record {
+            approvalId: opt text;
+            deleted: bool;
+          };
+    });
   deleteIntern: (sessionToken: text, id: text) ->
    (variant {
       err: text;
       ok: bool;
+    });
+  deleteInternWithAudit: (sessionToken: text, id: text) ->
+   (variant {
+      err: text;
+      ok: record {
+            approvalId: opt text;
+            deleted: bool;
+          };
     });
   deletePerformance: (sessionToken: text, id: text) ->
    (variant {
       err: text;
       ok: bool;
     });
+  deleteUser: (sessionToken: text, userId: text) -> (variant {
+                                                       err: text;
+                                                       ok;
+                                                     });
   getActivities: (internId: opt text) -> (vec Activity) query;
   getAnalyticsDashboard: () -> (AnalyticsData) query;
+  getAnnouncementsBySpace: (sessionToken: text, space: opt text) ->
+   (variant {
+      err: text;
+      ok: vec Announcement;
+    }) query;
+  getAuditLog: (sessionToken: text, limit: nat, offset: nat) ->
+   (variant {
+      err: text;
+      ok: vec AuditEvent;
+    }) query;
   getCRMFunnelData: () -> (vec record {
                                  text;
                                  nat;
@@ -536,15 +747,68 @@ service : {
   getClientAnalytics: () -> (ClientAnalytics) query;
   getClientComments: (clientId: text) -> (vec ClientComment) query;
   getClientInvoices: (clientId: text) -> (vec Invoice) query;
+  getDashboardSnapshot: (sessionToken: text) ->
+   (variant {
+      err: text;
+      ok: DashboardSnapshot;
+    });
   getDashboardStats: () -> (DashboardStats) query;
   getDealCycleTime: () -> (nat) query;
+  getFollowUpComplianceRate: (sessionToken: text) ->
+   (variant {
+      err: text;
+      ok: vec record {
+                text;
+                float64;
+              };
+    });
   getIntern: (id: text) -> (opt Intern) query;
   getLostDealAnalysis: () -> (vec record {
                                     text;
                                     nat;
                                     nat;
                                   }) query;
+  getNotificationPreferences: (sessionToken: text) ->
+   (variant {
+      err: text;
+      ok: vec NotificationPreference;
+    }) query;
+  getNotificationsByPriority: (sessionToken: text, priority: text) ->
+   (variant {
+      err: text;
+      ok: vec Notification;
+    }) query;
+  getPipelineVelocity: (sessionToken: text) ->
+   (variant {
+      err: text;
+      ok: vec record {
+                text;
+                float64;
+              };
+    });
+  getRepScorecards: (sessionToken: text) ->
+   (variant {
+      err: text;
+      ok: vec RepScorecard;
+    });
+  getSLABreachRatePerStage: (sessionToken: text) ->
+   (variant {
+      err: text;
+      ok: vec record {
+                text;
+                float64;
+              };
+    });
+  getSLARules: () -> (vec record {
+                            text;
+                            nat;
+                          }) query;
   getStageHistory: (internId: text) -> (vec InternPipelineStageHistory) query;
+  getUserById: (sessionToken: text, userId: text) ->
+   (variant {
+      err: text;
+      ok: UserAccount;
+    }) query;
   getWinRateByMember: () -> (vec record {
                                    text;
                                    nat;
@@ -552,10 +816,22 @@ service : {
                                  }) query;
   initSampleData: () -> (nat);
   listAnnouncements: (activeOnly: bool) -> (vec Announcement) query;
+  listApprovalRequests: (sessionToken: text, statusFilter: opt text) ->
+   (variant {
+      err: text;
+      ok: vec ApprovalRequest;
+    }) query;
   listClients: () -> (vec Client) query;
   listInterns: (filter: ListInternsFilter) -> (vec Intern) query;
   listNotifications: (userId: text) -> (vec Notification) query;
   listPerformances: (internId: text) -> (vec Performance) query;
+  listUsers: (sessionToken: text) ->
+   (variant {
+      err: text;
+      ok: vec UserAccount;
+    }) query;
+  listWorkflowExecutions: (ruleName: opt text, limit: nat) ->
+   (vec WorkflowExecution) query;
   logQuickActivity: (clientId: text, activityType: text, notes: text) ->
    (variant {
       err: text;
@@ -569,10 +845,13 @@ service : {
   login: (username: text, password: text) ->
    (variant {
       err: text;
-      ok: record {
-            displayName: text;
-            sessionToken: text;
-          };
+      ok:
+       record {
+         displayName: text;
+         permissions: vec text;
+         role: text;
+         sessionToken: text;
+       };
     });
   logout: (sessionToken: text) -> ();
   markAllAsRead: (userId: text) -> (variant {
@@ -588,12 +867,28 @@ service : {
       err: text;
       ok: ClientComment;
     });
+  rejectRequest: (sessionToken: text, requestId: text, notes: opt text) ->
+   (variant {
+      err: text;
+      ok: ApprovalRequest;
+    });
   removeContact: (clientId: text, contactId: text) ->
    (variant {
       err: text;
       ok: Client;
     });
+  runAllAutomationJobs: () -> () oneway;
+  runAutomationJobs: (sessionToken: text) -> ();
   seedSampleData: () -> ();
+  setNotificationPreference: (sessionToken: text, eventType: text,
+   digestEnabled: bool, digestFrequency: text) -> (variant {
+                                                     err: text;
+                                                     ok;
+                                                   });
+  setSLARule: (stageName: text, maxHours: nat) -> (variant {
+                                                     err: text;
+                                                     ok;
+                                                   });
   updateClient: (id: text, req: UpdateClientRequest) ->
    (variant {
       err: text;
@@ -620,6 +915,11 @@ service : {
                              ok: bool;
                            });
   updateIntern: (sessionToken: text, id: text, payload:
+   UpdateInternPayload) -> (variant {
+                              err: text;
+                              ok: Intern;
+                            });
+  updateInternAudited: (sessionToken: text, id: text, payload:
    UpdateInternPayload) -> (variant {
                               err: text;
                               ok: Intern;
@@ -660,12 +960,20 @@ service : {
       err: text;
       ok: Client;
     });
+  updateUser: (sessionToken: text, userId: text, roleText: text, spaces:
+   vec text, isActive: bool) -> (variant {
+                                   err: text;
+                                   ok: UserAccount;
+                                 });
   validateSession: (sessionToken: text) ->
    (variant {
       err: text;
-      ok: record {
-            displayName: text;
-            username: text;
-          };
+      ok:
+       record {
+         displayName: text;
+         permissions: vec text;
+         role: text;
+         username: text;
+       };
     }) query;
 }

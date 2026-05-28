@@ -1,4 +1,7 @@
+import { BulkActionBar } from "@/components/BulkActionBar";
+import { QuickActivityModal } from "@/components/QuickActivityModal";
 import { ClientForm } from "@/components/clients/ClientForm";
+import { ClientSplitPane } from "@/components/clients/ClientSplitPane";
 import { PriorityBadge } from "@/components/clients/PriorityBadge";
 import { StatusBadge } from "@/components/clients/StatusBadge";
 import { WhatsAppModal } from "@/components/clients/WhatsAppModal";
@@ -258,6 +261,11 @@ export default function ClientsPage() {
   const [saveFilterName, setSaveFilterName] = useState("");
   const [saveFilterOpen, setSaveFilterOpen] = useState(false);
   const [_showShortcuts, setShowShortcuts] = useState(false);
+  const [splitPaneOpen, setSplitPaneOpen] = useState(false);
+  const [hoveredClient, setHoveredClient] = useState<Client | null>(null);
+  const [quickActivityClientId, setQuickActivityClientId] = useState<
+    string | null
+  >(null);
 
   const [filters, setFilters] = useState<ClientFilters>(DEFAULT_FILTERS);
   const [sortKey, setSortKey] = useState<SortKey | null>(null);
@@ -361,8 +369,22 @@ export default function ClientsPage() {
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       const ctrl = e.ctrlKey || e.metaKey;
+      const tag = (e.target as HTMLElement).tagName;
+      const isEditable =
+        tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT";
       if (e.key === "?" && !ctrl) {
         setShowShortcuts((v) => !v);
+        return;
+      }
+      if (e.key === " " && !ctrl && !isEditable) {
+        e.preventDefault();
+        if (hoveredClient) setSplitPaneOpen((v) => !v);
+        return;
+      }
+      if ((e.key === "l" || e.key === "L") && !ctrl && !isEditable) {
+        if (hoveredClient) {
+          setQuickActivityClientId(hoveredClient.id);
+        }
         return;
       }
       if (!ctrl) return;
@@ -381,7 +403,7 @@ export default function ClientsPage() {
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filtered]);
+  }, [filtered, hoveredClient]);
 
   // ─── Sorting ─────────────────────────────────────────────────────────────
   const sorted = useMemo(() => {
@@ -474,9 +496,13 @@ export default function ClientsPage() {
     setBulkDeleteOpen(false);
   }
 
-  function handleBulkStatusChange(status: ClientStatus) {
+  function handleBulkStatusChange(status: string) {
     for (const id of selected) {
-      updateStatus.mutate({ id, status, note: "Bulk status update" });
+      updateStatus.mutate({
+        id,
+        status: status as ClientStatus,
+        note: "Bulk status update",
+      });
     }
     setSelected(new Set());
   }
@@ -1206,10 +1232,24 @@ export default function ClientsPage() {
               {pageRows.map((client, i) => (
                 <tr
                   key={client.id}
-                  className={`border-b border-border/50 transition-colors hover:bg-card/60 ${
+                  className={`border-b border-border/50 transition-colors hover:bg-card/60 cursor-pointer ${
                     selected.has(client.id) ? "bg-primary/5" : ""
                   }`}
                   data-ocid={`clients.item.${i + 1}`}
+                  onClick={(e) => {
+                    const target = e.target as HTMLElement;
+                    // Don't override checkbox / button clicks
+                    if (target.closest("button, input, a")) return;
+                    setHoveredClient(client);
+                    setSplitPaneOpen(true);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setHoveredClient(client);
+                      setSplitPaneOpen(true);
+                    }
+                  }}
+                  onMouseEnter={() => setHoveredClient(client)}
                 >
                   <td className="px-4 py-3">
                     <Checkbox
@@ -1259,7 +1299,19 @@ export default function ClientsPage() {
                   )}
                   {col("status") && (
                     <td className="px-3 py-3">
-                      <StatusBadge status={client.currentStatus} />
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <StatusBadge status={client.currentStatus} />
+                        {client.isStale && (
+                          <span className="px-1.5 py-0.5 rounded text-xs font-medium bg-orange-500/15 text-orange-400 border border-orange-500/30">
+                            Stale
+                          </span>
+                        )}
+                        {client.slaStatus === "breached" && (
+                          <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-xs font-medium bg-red-500/15 text-red-400 border border-red-500/30">
+                            <AlertTriangle className="h-2.5 w-2.5" /> SLA
+                          </span>
+                        )}
+                      </div>
                     </td>
                   )}
                   {col("priority") && (
@@ -1339,6 +1391,24 @@ export default function ClientsPage() {
                       </span>
                     </td>
                   )}
+                  <td className="px-3 py-3 whitespace-nowrap">
+                    {(() => {
+                      const s = client.healthScore ?? client.leadScore ?? 0;
+                      const cls =
+                        s >= 70
+                          ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
+                          : s >= 40
+                            ? "bg-amber-500/15 text-amber-400 border border-amber-500/30"
+                            : "bg-red-500/15 text-red-400 border border-red-500/30";
+                      return (
+                        <span
+                          className={`inline-flex items-center justify-center w-8 h-6 rounded text-xs font-bold tabular-nums ${cls}`}
+                        >
+                          {s}
+                        </span>
+                      );
+                    })()}
+                  </td>
                   <td className="px-3 py-3 whitespace-nowrap">
                     {(() => {
                       const s =
@@ -1622,6 +1692,32 @@ export default function ClientsPage() {
           onClose={() => setWhatsappClient(null)}
         />
       )}
+
+      {/* ─── Client Split Pane ─── */}
+      <ClientSplitPane
+        client={splitPaneOpen ? hoveredClient : null}
+        onClose={() => setSplitPaneOpen(false)}
+      />
+
+      {/* ─── Quick Activity Modal (L key) ─── */}
+      <QuickActivityModal
+        clientId={quickActivityClientId}
+        isOpen={!!quickActivityClientId}
+        onClose={() => setQuickActivityClientId(null)}
+      />
+
+      {/* ─── Bulk Action Bar ─── */}
+      <BulkActionBar
+        selectedCount={selected.size}
+        entityType="clients"
+        selectedIds={Array.from(selected)}
+        onClear={() => setSelected(new Set())}
+        onBulkExport={() =>
+          exportCSV(allClients.filter((c) => selected.has(c.id)))
+        }
+        onBulkDelete={confirmBulkDelete}
+        onBulkMoveStage={handleBulkStatusChange}
+      />
     </div>
   );
 }

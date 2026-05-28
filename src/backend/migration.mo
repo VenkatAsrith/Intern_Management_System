@@ -1,12 +1,47 @@
 import Map "mo:core/Map";
-import List "mo:core/List";
-import ClientTypes "types/clients";
 
 module {
 
-  // ---------------------------------------------------------------------------
-  // Old type definitions (inline — do NOT import from .old/)
-  // ---------------------------------------------------------------------------
+  // ============================================================
+  // OLD type definitions (copied from .old/src/backend/)
+  // ============================================================
+
+  type OldSessionInfo = {
+    username    : Text;
+    displayName : Text;
+  };
+
+  type OldNotificationType = {
+    #taskAssigned;
+    #stageChanged;
+    #invoiceDue;
+    #attendanceAnomaly;
+    #overdueFollowUp;
+    #taskOverdue;
+    #leaveApproved;
+    #leaveRejected;
+    #announcement;
+  };
+
+  type OldNotification = {
+    id               : Text;
+    userId           : Text;
+    notificationType : OldNotificationType;
+    title            : Text;
+    message          : Text;
+    isRead           : Bool;
+    relatedId        : ?Text;
+    createdAt        : Int;
+  };
+
+  type OldAnnouncement = {
+    id        : Text;
+    title     : Text;
+    content   : Text;
+    createdBy : Text;
+    createdAt : Int;
+    isActive  : Bool;
+  };
 
   type OldClientStatus = {
     #leadCaptured;
@@ -26,9 +61,6 @@ module {
     #urgent;
   };
 
-  // Old ActivityType had only 8 constructors (new adds quickCall/quickMeeting/quickEmail)
-  // The new ActivityType is a supertype, so old records are directly assignable.
-  // We alias the new type here so migration compiles without re-declaring it.
   type OldActivityType = {
     #statusChange;
     #noteAdded;
@@ -38,499 +70,389 @@ module {
     #invoiceGenerated;
     #documentShared;
     #commentAdded;
-  };
-
-  type OldPaymentStatus = {
-    #pending;
-    #paid;
-    #overdue;
-    #cancelled;
+    #quickCall;
+    #quickMeeting;
+    #quickEmail;
   };
 
   type OldStatusHistoryEntry = {
-    status : OldClientStatus;
+    status    : OldClientStatus;
     timestamp : Int;
     adminName : Text;
-    note : Text;
+    note      : Text;
+  };
+
+  type OldContactPerson = {
+    id        : Text;
+    name      : Text;
+    email     : Text;
+    phone     : Text;
+    role      : Text;
+    isPrimary : Bool;
+    addedAt   : Int;
   };
 
   type OldClient = {
-    id : Text;
-    companyName : Text;
-    contactPersonName : Text;
-    designation : Text;
-    email : Text;
-    phone : Text;
-    whatsappNumber : Text;
-    website : Text;
-    industryType : Text;
-    companySize : Text;
-    location : Text;
-    gstNumber : ?Text;
-    serviceInterested : Text;
-    dealValue : Float;
-    leadSource : Text;
-    priorityLevel : OldPriorityLevel;
-    assignedTeamMember : Text;
-    followUpDate : ?Int;
-    nextMeetingDate : ?Int;
-    currentStatus : OldClientStatus;
-    statusHistory : [OldStatusHistoryEntry];
-    closedReason : ?Text;
-    lastActivityDate : ?Int;
-    pipelineValue : ?Float;
-    createdAt : Int;
-    updatedAt : Int;
-    createdBy : Text;
+    id                  : Text;
+    companyName         : Text;
+    contactPersonName   : Text;
+    designation         : Text;
+    email               : Text;
+    phone               : Text;
+    whatsappNumber      : Text;
+    website             : Text;
+    industryType        : Text;
+    companySize         : Text;
+    location            : Text;
+    gstNumber           : ?Text;
+    serviceInterested   : Text;
+    dealValue           : Float;
+    leadSource          : Text;
+    priorityLevel       : OldPriorityLevel;
+    assignedTeamMember  : Text;
+    followUpDate        : ?Int;
+    nextMeetingDate     : ?Int;
+    currentStatus       : OldClientStatus;
+    statusHistory       : [OldStatusHistoryEntry];
+    closedReason        : ?Text;
+    lastActivityDate    : ?Int;
+    pipelineValue       : ?Float;
+    contacts            : [OldContactPerson];
+    leadScore           : Nat;
+    dealProbability     : Nat;
+    healthScore         : Nat;
+    engagementScore     : Nat;
+    tags                : [Text];
+    source              : Text;
+    customFields        : [(Text, Text)];
+    lastActivity        : ?Int;
+    activityCount       : Nat;
+    proposalStatus      : ?Text;
+    proposalExpiry      : ?Int;
+    proposalVersion     : Nat;
+    wonLostReason       : ?Text;
+    closedAt            : ?Int;
+    createdAt           : Int;
+    updatedAt           : Int;
+    createdBy           : Text;
   };
 
-  type OldClientActivity = {
-    id : Text;
-    clientId : Text;
-    activityType : OldActivityType;
-    description : Text;
-    timestamp : Int;
-    adminName : Text;
-    metadata : ?Text;
+  // ============================================================
+  // NEW type definitions (matching current types)
+  // ============================================================
+
+  type NewSessionInfo = {
+    username    : Text;
+    displayName : Text;
+    role        : ?Text;
+    permissions : ?[Text];
   };
 
-  type OldClientComment = {
-    id : Text;
-    clientId : Text;
-    content : Text;
-    authorName : Text;
-    timestamp : Int;
-    isPinned : Bool;
-    parentId : ?Text;
+  type NewNotificationType = {
+    #taskAssigned;
+    #stageChanged;
+    #invoiceDue;
+    #attendanceAnomaly;
+    #overdueFollowUp;
+    #taskOverdue;
+    #leaveApproved;
+    #leaveRejected;
+    #announcement;
+    #proposalExpiring;
+    #staleDeal;
+    #invoiceOverdue;
+    #dealSLABreached;
+    #followUpOverdue;
+    #proposalExpiringUrgent;
+    #newClientAssigned;
+    #internDocumentSent;
+    #announcementPosted;
+    #dealClosedWon;
+    #healthScoreLow;
+    #approvalRequestCreated;
   };
 
-  type OldInvoiceLineItem = {
-    description : Text;
-    quantity : Float;
-    rate : Float;
-    amount : Float;
-  };
-
-  type OldInvoice = {
-    id : Text;
-    clientId : Text;
-    invoiceNumber : Text;
-    lineItems : [OldInvoiceLineItem];
-    subtotal : Float;
-    tax : Float;
-    total : Float;
-    paymentStatus : OldPaymentStatus;
-    createdAt : Int;
-    createdBy : Text;
-    notes : ?Text;
-  };
-
-  // ---------------------------------------------------------------------------
-  // Old stable-state types for dropped domains
-  // ---------------------------------------------------------------------------
-
-  type OldTaskStatus = {
-    #draft;
-    #submitted;
-    #underReview;
-    #approved;
-    #revisionRequested;
-  };
-
-  type OldTaskPriority = {
+  type NewNotificationPriority = {
     #critical;
     #high;
     #medium;
     #low;
   };
 
-  type OldSprint = {
-    id : Text;
-    title : Text;
-    startDate : Text;
-    endDate : Text;
-    weekDuration : Nat;
-    createdAt : Int;
+  type NewNotification = {
+    id               : Text;
+    userId           : Text;
+    notificationType : NewNotificationType;
+    title            : Text;
+    message          : Text;
+    isRead           : Bool;
+    relatedId        : ?Text;
+    createdAt        : Int;
+    priority         : ?NewNotificationPriority;
   };
 
-  type OldTask = {
-    id : Text;
-    title : Text;
-    description : Text;
-    assignedTo : Text;
-    assignedBy : Text;
-    priority : OldTaskPriority;
-    status : OldTaskStatus;
-    dueDate : Text;
-    estimatedHours : Float;
-    actualHours : Float;
-    tags : [Text];
-    sprintId : ?Text;
-    attachments : [Text];
-    createdAt : Int;
-    updatedAt : Int;
-    reviewNotes : Text;
+  type NewAnnouncement = {
+    id           : Text;
+    title        : Text;
+    content      : Text;
+    createdBy    : Text;
+    createdAt    : Int;
+    isActive     : Bool;
+    targetSpaces : ?[Text];
+    expiresAt    : ?Int;
   };
 
-  type OldDayType = { #working; #holiday; #leave; #halfDay };
-  type OldCheckInMethod = { #qrCode; #manual };
-
-  type OldAttendanceRecord = {
-    id : Text;
-    internId : Text;
-    date : Text;
-    checkInTime : ?Text;
-    checkOutTime : ?Text;
-    method : OldCheckInMethod;
-    sessionDuration : ?Float;
-    isLate : Bool;
-    dayType : OldDayType;
-    notes : Text;
-    createdAt : Int;
+  type NewClientStatus = {
+    #leadCaptured;
+    #contacted;
+    #discoveryCallDone;
+    #proposalSent;
+    #negotiation;
+    #closedWon;
+    #closedLost;
+    #onHold;
   };
 
-  type OldLeaveType = { #casual; #sick; #compensatory; #lop };
-  type OldLeaveStatus = { #pending; #approved; #rejected };
-
-  type OldLeaveRequest = {
-    id : Text;
-    internId : Text;
-    leaveType : OldLeaveType;
-    startDate : Text;
-    endDate : Text;
-    reason : Text;
-    status : OldLeaveStatus;
-    reviewedBy : ?Text;
-    reviewedAt : ?Int;
-    createdAt : Int;
+  type NewPriorityLevel = {
+    #low;
+    #medium;
+    #high;
+    #urgent;
   };
 
-  type OldQRToken = {
-    token : Text;
-    expiresAt : Int;
-    createdAt : Int;
+  type NewActivityType = {
+    #statusChange;
+    #noteAdded;
+    #whatsappMessage;
+    #callScheduled;
+    #proposalUploaded;
+    #invoiceGenerated;
+    #documentShared;
+    #commentAdded;
+    #quickCall;
+    #quickMeeting;
+    #quickEmail;
   };
 
-  type OldLessonType = { #video; #article; #quiz; #assignment };
-  type OldLessonCompletionStatus = { #notStarted; #inProgress; #completed };
-
-  type OldProgram = { id : Text; title : Text; description : Text; createdAt : Int };
-  type OldCourse = { id : Text; programId : Text; title : Text; description : Text; thumbnail : ?Text; createdAt : Int };
-  type OldCourseModule = { id : Text; courseId : Text; title : Text; order : Nat; createdAt : Int };
-
-  type OldLesson = {
-    id : Text;
-    moduleId : Text;
-    title : Text;
-    lessonType : OldLessonType;
-    content : Text;
-    videoUrl : ?Text;
-    order : Nat;
-    createdAt : Int;
+  type NewStatusHistoryEntry = {
+    status    : NewClientStatus;
+    timestamp : Int;
+    adminName : Text;
+    note      : Text;
   };
 
-  type OldQuizQuestion = {
-    id : Text;
-    lessonId : Text;
-    question : Text;
-    questionType : Text;
-    options : [Text];
-    correctAnswer : Text;
-    order : Nat;
+  type NewContactPerson = {
+    id        : Text;
+    name      : Text;
+    email     : Text;
+    phone     : Text;
+    role      : Text;
+    isPrimary : Bool;
+    addedAt   : Int;
   };
 
-  type OldCourseAssignment = {
-    id : Text;
-    courseId : Text;
-    internId : Text;
-    deadline : ?Text;
-    assignedAt : Int;
+  type NewSlaStatus = {
+    #notBreached;
+    #breached;
   };
 
-  type OldLessonProgress = {
-    id : Text;
-    lessonId : Text;
-    internId : Text;
-    status : OldLessonCompletionStatus;
-    completedAt : ?Int;
+  type NewClient = {
+    id                  : Text;
+    companyName         : Text;
+    contactPersonName   : Text;
+    designation         : Text;
+    email               : Text;
+    phone               : Text;
+    whatsappNumber      : Text;
+    website             : Text;
+    industryType        : Text;
+    companySize         : Text;
+    location            : Text;
+    gstNumber           : ?Text;
+    serviceInterested   : Text;
+    dealValue           : Float;
+    leadSource          : Text;
+    priorityLevel       : NewPriorityLevel;
+    assignedTeamMember  : Text;
+    followUpDate        : ?Int;
+    nextMeetingDate     : ?Int;
+    currentStatus       : NewClientStatus;
+    statusHistory       : [NewStatusHistoryEntry];
+    closedReason        : ?Text;
+    lastActivityDate    : ?Int;
+    pipelineValue       : ?Float;
+    contacts            : [NewContactPerson];
+    leadScore           : Nat;
+    dealProbability     : Nat;
+    healthScore         : Nat;
+    engagementScore     : Nat;
+    tags                : [Text];
+    source              : Text;
+    customFields        : [(Text, Text)];
+    lastActivity        : ?Int;
+    activityCount       : Nat;
+    proposalStatus      : ?Text;
+    proposalExpiry      : ?Int;
+    proposalVersion     : Nat;
+    wonLostReason       : ?Text;
+    closedAt            : ?Int;
+    stageEnteredAt      : ?Int;
+    isStale             : ?Bool;
+    slaStatus           : ?NewSlaStatus;
+    slaBreachedAt       : ?Int;
+    createdAt           : Int;
+    updatedAt           : Int;
+    createdBy           : Text;
   };
 
-  type OldQuizAttempt = {
-    id : Text;
-    lessonId : Text;
-    internId : Text;
-    answers : [Text];
-    score : Float;
-    attemptedAt : Int;
+  // ============================================================
+  // OldActor / NewActor stable state shapes
+  // ============================================================
+
+  public type OldActor = {
+    sessions      : Map.Map<Text, OldSessionInfo>;
+    notifications : Map.Map<Text, OldNotification>;
+    announcements : Map.Map<Text, OldAnnouncement>;
+    clients       : Map.Map<Text, OldClient>;
   };
 
-  type OldAssignmentSubmission = {
-    id : Text;
-    lessonId : Text;
-    internId : Text;
-    submissionLink : Text;
-    grade : ?Float;
-    feedback : ?Text;
-    submittedAt : Int;
-    gradedAt : ?Int;
+  public type NewActor = {
+    sessions      : Map.Map<Text, NewSessionInfo>;
+    notifications : Map.Map<Text, NewNotification>;
+    announcements : Map.Map<Text, NewAnnouncement>;
+    clients       : Map.Map<Text, NewClient>;
   };
 
-  type OldLMSCertificate = {
-    id : Text;
-    courseId : Text;
-    internId : Text;
-    issuedAt : Int;
-  };
-
-  // ---------------------------------------------------------------------------
-  // OldActor — exact stable fields from the previous canister version
-  // ---------------------------------------------------------------------------
-
-  type OldActor = {
-    // Clients domain
-    clients : Map.Map<Text, OldClient>;
-    clientActivities : List.List<OldClientActivity>;
-    clientComments : Map.Map<Text, OldClientComment>;
-    invoices : Map.Map<Text, OldInvoice>;
-    clientIdCounter : { var n : Nat };
-    invoiceCounter : { var n : Nat };
-    // Tasks domain (retired)
-    tasks : Map.Map<Text, OldTask>;
-    sprints : Map.Map<Text, OldSprint>;
-    _taskIdCounter : { var n : Nat };
-    // Attendance domain (retired)
-    attendanceRecords : Map.Map<Text, OldAttendanceRecord>;
-    leaveRequests : Map.Map<Text, OldLeaveRequest>;
-    qrTokens : Map.Map<Text, OldQRToken>;
-    _attendanceIdCounter : { var n : Nat };
-    // LMS domain (retired)
-    lmsPrograms : Map.Map<Text, OldProgram>;
-    lmsCourses : Map.Map<Text, OldCourse>;
-    lmsModules : Map.Map<Text, OldCourseModule>;
-    lmsLessons : Map.Map<Text, OldLesson>;
-    quizQuestions : Map.Map<Text, OldQuizQuestion>;
-    courseAssignments : Map.Map<Text, OldCourseAssignment>;
-    lessonProgress : Map.Map<Text, OldLessonProgress>;
-    quizAttempts : Map.Map<Text, OldQuizAttempt>;
-    assignmentSubmissions : Map.Map<Text, OldAssignmentSubmission>;
-    lmsCertificates : Map.Map<Text, OldLMSCertificate>;
-    _lmsIdCounter : { var n : Nat };
-  };
-
-  // ---------------------------------------------------------------------------
-  // NewActor — only the fields that are NEW or CHANGED vs old
-  // Fields that are unchanged and stable-compatible are inherited automatically.
-  // We only need to produce the client/invoice maps (shape changed) and explicitly
-  // consume the retired domain fields so the compiler knows they are intentionally dropped.
-  // ---------------------------------------------------------------------------
-
-  type NewActor = {
-    clients : Map.Map<Text, ClientTypes.Client>;
-    clientActivities : List.List<ClientTypes.ClientActivity>;
-    invoices : Map.Map<Text, ClientTypes.Invoice>;
-  };
-
-  // ---------------------------------------------------------------------------
+  // ============================================================
   // Migration helpers
-  // ---------------------------------------------------------------------------
+  // ============================================================
 
-  func migrateClientStatus(s : OldClientStatus) : ClientTypes.ClientStatus {
-    switch s {
-      case (#leadCaptured)      #leadCaptured;
-      case (#contacted)         #contacted;
-      case (#discoveryCallDone) #discoveryCallDone;
-      case (#proposalSent)      #proposalSent;
-      case (#negotiation)       #negotiation;
-      case (#closedWon)         #closedWon;
-      case (#closedLost)        #closedLost;
-      case (#onHold)            #onHold;
+  func migrateNotificationType(old : OldNotificationType) : NewNotificationType {
+    switch old {
+      case (#taskAssigned)      #taskAssigned;
+      case (#stageChanged)      #stageChanged;
+      case (#invoiceDue)        #invoiceDue;
+      case (#attendanceAnomaly) #attendanceAnomaly;
+      case (#overdueFollowUp)   #overdueFollowUp;
+      case (#taskOverdue)       #taskOverdue;
+      case (#leaveApproved)     #leaveApproved;
+      case (#leaveRejected)     #leaveRejected;
+      case (#announcement)      #announcement;
     }
   };
 
-  func migratePriority(p : OldPriorityLevel) : ClientTypes.PriorityLevel {
-    switch p {
-      case (#low)    #low;
-      case (#medium) #medium;
-      case (#high)   #high;
-      case (#urgent) #urgent;
-    }
-  };
-
-  func migrateStatusHistory(entries : [OldStatusHistoryEntry]) : [ClientTypes.StatusHistoryEntry] {
-    entries.map<OldStatusHistoryEntry, ClientTypes.StatusHistoryEntry>(
-      func(e) {
-        {
-          status    = migrateClientStatus(e.status);
-          timestamp = e.timestamp;
-          adminName = e.adminName;
-          note      = e.note;
-        }
-      }
-    )
-  };
-
-  func migrateActivityType(a : OldActivityType) : ClientTypes.ActivityType {
-    // Old 8-variant type maps directly; no stale variants exist.
-    // New type adds quickCall/quickMeeting/quickEmail but old records only have the 8 original ones.
-    switch a {
-      case (#statusChange)      #statusChange;
-      case (#noteAdded)         #noteAdded;
-      case (#whatsappMessage)   #whatsappMessage;
-      case (#callScheduled)     #callScheduled;
-      case (#proposalUploaded)  #proposalUploaded;
-      case (#invoiceGenerated)  #invoiceGenerated;
-      case (#documentShared)    #documentShared;
-      case (#commentAdded)      #commentAdded;
-    }
-  };
-
-  func migratePaymentStatus(p : OldPaymentStatus) : ClientTypes.PaymentStatus {
-    switch p {
-      case (#pending)   #pending;
-      case (#paid)      #paid;
-      case (#overdue)   #overdue;
-      case (#cancelled) #cancelled;
-    }
-  };
-
-  func migrateClient(old : OldClient) : ClientTypes.Client {
+  func migrateNotification(old : OldNotification) : NewNotification {
     {
-      id                 = old.id;
-      companyName        = old.companyName;
-      contactPersonName  = old.contactPersonName;
-      designation        = old.designation;
-      email              = old.email;
-      phone              = old.phone;
-      whatsappNumber     = old.whatsappNumber;
-      website            = old.website;
-      industryType       = old.industryType;
-      companySize        = old.companySize;
-      location           = old.location;
-      gstNumber          = old.gstNumber;
-      serviceInterested  = old.serviceInterested;
-      dealValue          = old.dealValue;
-      leadSource         = old.leadSource;
-      priorityLevel      = migratePriority(old.priorityLevel);
-      assignedTeamMember = old.assignedTeamMember;
-      followUpDate       = old.followUpDate;
-      nextMeetingDate    = old.nextMeetingDate;
-      currentStatus      = migrateClientStatus(old.currentStatus);
-      statusHistory      = migrateStatusHistory(old.statusHistory);
-      closedReason       = old.closedReason;
-      lastActivityDate   = old.lastActivityDate;
-      pipelineValue      = old.pipelineValue;
-      // New CRM upgrade fields — defaults
-      contacts           = [];
-      leadScore          = 0;
-      dealProbability    = 10;
-      healthScore        = 0;
-      engagementScore    = 0;
-      tags               = [];
-      source             = "";
-      customFields       = [];
-      lastActivity       = null;
-      activityCount      = 0;
-      proposalStatus     = null;
-      proposalExpiry     = null;
-      proposalVersion    = 0;
-      wonLostReason      = null;
-      closedAt           = null;
-      createdAt          = old.createdAt;
-      updatedAt          = old.updatedAt;
-      createdBy          = old.createdBy;
+      id               = old.id;
+      userId           = old.userId;
+      notificationType = migrateNotificationType(old.notificationType);
+      title            = old.title;
+      message          = old.message;
+      isRead           = old.isRead;
+      relatedId        = old.relatedId;
+      createdAt        = old.createdAt;
+      priority         = null;
     }
   };
 
-  func migrateActivity(old : OldClientActivity) : ClientTypes.ClientActivity {
+  func migrateAnnouncement(old : OldAnnouncement) : NewAnnouncement {
     {
       id           = old.id;
-      clientId     = old.clientId;
-      activityType = migrateActivityType(old.activityType);
-      description  = old.description;
-      timestamp    = old.timestamp;
-      adminName    = old.adminName;
-      metadata     = old.metadata;
+      title        = old.title;
+      content      = old.content;
+      createdBy    = old.createdBy;
+      createdAt    = old.createdAt;
+      isActive     = old.isActive;
+      targetSpaces = null;
+      expiresAt    = null;
     }
   };
 
-  func migrateInvoice(old : OldInvoice) : ClientTypes.Invoice {
-    // Map OldInvoiceLineItem → new (same shape)
-    let lineItems = old.lineItems.map(
-      func(li) {
+  func migrateClient(old : OldClient) : NewClient {
+    {
+      id                  = old.id;
+      companyName         = old.companyName;
+      contactPersonName   = old.contactPersonName;
+      designation         = old.designation;
+      email               = old.email;
+      phone               = old.phone;
+      whatsappNumber      = old.whatsappNumber;
+      website             = old.website;
+      industryType        = old.industryType;
+      companySize         = old.companySize;
+      location            = old.location;
+      gstNumber           = old.gstNumber;
+      serviceInterested   = old.serviceInterested;
+      dealValue           = old.dealValue;
+      leadSource          = old.leadSource;
+      priorityLevel       = old.priorityLevel;
+      assignedTeamMember  = old.assignedTeamMember;
+      followUpDate        = old.followUpDate;
+      nextMeetingDate     = old.nextMeetingDate;
+      currentStatus       = old.currentStatus;
+      statusHistory       = old.statusHistory;
+      closedReason        = old.closedReason;
+      lastActivityDate    = old.lastActivityDate;
+      pipelineValue       = old.pipelineValue;
+      contacts            = old.contacts;
+      leadScore           = old.leadScore;
+      dealProbability     = old.dealProbability;
+      healthScore         = old.healthScore;
+      engagementScore     = old.engagementScore;
+      tags                = old.tags;
+      source              = old.source;
+      customFields        = old.customFields;
+      lastActivity        = old.lastActivity;
+      activityCount       = old.activityCount;
+      proposalStatus      = old.proposalStatus;
+      proposalExpiry      = old.proposalExpiry;
+      proposalVersion     = old.proposalVersion;
+      wonLostReason       = old.wonLostReason;
+      closedAt            = old.closedAt;
+      stageEnteredAt      = null;
+      isStale             = null;
+      slaStatus           = null;
+      slaBreachedAt       = null;
+      createdAt           = old.createdAt;
+      updatedAt           = old.updatedAt;
+      createdBy           = old.createdBy;
+    }
+  };
+
+  // ============================================================
+  // Migration entry point
+  // ============================================================
+
+  public func run(old : OldActor) : NewActor {
+    let newSessions = old.sessions.map<Text, OldSessionInfo, NewSessionInfo>(
+      func(_k, s) {
         {
-          description = li.description;
-          quantity    = li.quantity;
-          rate        = li.rate;
-          amount      = li.amount;
+          username    = s.username;
+          displayName = s.displayName;
+          role        = null;
+          permissions = null;
         }
       }
     );
+
+    let newNotifications = old.notifications.map<Text, OldNotification, NewNotification>(
+      func(_k, n) { migrateNotification(n) }
+    );
+
+    let newAnnouncements = old.announcements.map<Text, OldAnnouncement, NewAnnouncement>(
+      func(_k, a) { migrateAnnouncement(a) }
+    );
+
+    let newClients = old.clients.map<Text, OldClient, NewClient>(
+      func(_k, c) { migrateClient(c) }
+    );
+
     {
-      id            = old.id;
-      clientId      = old.clientId;
-      invoiceNumber = old.invoiceNumber;
-      lineItems;
-      subtotal      = old.subtotal;
-      tax           = old.tax;
-      total         = old.total;
-      paymentStatus = migratePaymentStatus(old.paymentStatus);
-      // New upgrade fields — defaults
-      status        = #draft;
-      dueDate       = null;
-      amountPaid    = 0;
-      createdAt     = old.createdAt;
-      createdBy     = old.createdBy;
-      notes         = old.notes;
+      sessions      = newSessions;
+      notifications = newNotifications;
+      announcements = newAnnouncements;
+      clients       = newClients;
     }
-  };
-
-  // ---------------------------------------------------------------------------
-  // run — the migration entry point
-  // ---------------------------------------------------------------------------
-
-  public func run(old : OldActor) : NewActor {
-    // Migrate clients map
-    let clients = old.clients.map<Text, OldClient, ClientTypes.Client>(
-      func(_, c) { migrateClient(c) }
-    );
-
-    // Migrate clientActivities list
-    let clientActivities = old.clientActivities.map<OldClientActivity, ClientTypes.ClientActivity>(
-      func(a) { migrateActivity(a) }
-    );
-
-    // Migrate invoices map
-    let invoices = old.invoices.map<Text, OldInvoice, ClientTypes.Invoice>(
-      func(_, inv) { migrateInvoice(inv) }
-    );
-
-    // Dropped: tasks, sprints, _taskIdCounter,
-    //          attendanceRecords, leaveRequests, qrTokens, _attendanceIdCounter,
-    //          lmsPrograms, lmsCourses, lmsModules, lmsLessons,
-    //          quizQuestions, courseAssignments, lessonProgress,
-    //          quizAttempts, assignmentSubmissions, lmsCertificates, _lmsIdCounter
-    ignore (
-      old.tasks,
-      old.sprints,
-      old._taskIdCounter,
-      old.attendanceRecords,
-      old.leaveRequests,
-      old.qrTokens,
-      old._attendanceIdCounter,
-      old.lmsPrograms,
-      old.lmsCourses,
-      old.lmsModules,
-      old.lmsLessons,
-      old.quizQuestions,
-      old.courseAssignments,
-      old.lessonProgress,
-      old.quizAttempts,
-      old.assignmentSubmissions,
-      old.lmsCertificates,
-      old._lmsIdCounter
-    );
-
-    { clients; clientActivities; invoices }
   };
 
 };

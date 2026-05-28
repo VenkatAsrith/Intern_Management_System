@@ -3,6 +3,7 @@ import Debug "mo:core/Debug";
 module {
 
   public type NotificationType = {
+    // Existing variants
     #taskAssigned;
     #stageChanged;
     #invoiceDue;
@@ -12,6 +13,26 @@ module {
     #leaveApproved;
     #leaveRejected;
     #announcement;
+    #proposalExpiring;
+    #staleDeal;
+    #invoiceOverdue;
+    #dealSLABreached;
+    // V2 event variants
+    #followUpOverdue;
+    #proposalExpiringUrgent;
+    #newClientAssigned;
+    #internDocumentSent;
+    #announcementPosted;
+    #dealClosedWon;
+    #healthScoreLow;
+    #approvalRequestCreated;
+  };
+
+  public type NotificationPriority = {
+    #critical;
+    #high;
+    #medium;
+    #low;
   };
 
   public type Notification = {
@@ -23,6 +44,7 @@ module {
     isRead : Bool;
     relatedId : ?Text;
     createdAt : Int;
+    priority : ?NotificationPriority;
   };
 
   public type Announcement = {
@@ -32,6 +54,15 @@ module {
     createdBy : Text;
     createdAt : Int;
     isActive : Bool;
+    targetSpaces : ?[Text];
+    expiresAt : ?Int;
+  };
+
+  public type NotificationPreference = {
+    userId : Text;
+    eventType : Text;
+    digestEnabled : Bool;
+    digestFrequency : { #immediate; #hourly; #daily };
   };
 
 };

@@ -72,6 +72,20 @@ module {
     addedAt : Int;
   };
 
+  public type SlaStatus = {
+    #notBreached;
+    #breached;
+  };
+
+  public type WorkflowExecution = {
+    id : Text;
+    ruleName : Text;
+    triggeredAt : Int;
+    status : { #success; #failed; #running };
+    recordsProcessed : Nat;
+    errorMessage : ?Text;
+  };
+
   public type Client = {
     id : Text;
     // Basic info
@@ -117,6 +131,11 @@ module {
     proposalVersion : Nat;
     wonLostReason : ?Text;
     closedAt : ?Int;
+    // Automation engine fields
+    stageEnteredAt : ?Int;
+    isStale : ?Bool;
+    slaStatus : ?SlaStatus;
+    slaBreachedAt : ?Int;
     // Meta
     createdAt : Int;
     updatedAt : Int;
@@ -177,6 +196,31 @@ module {
     avgDealCycleDays : Nat;
     conversionRates : [(Text, Nat)];
     wonLostBreakdown : [(Text, Nat)];
+  };
+
+  // --- Pre-aggregated dashboard snapshot ---
+
+  public type DashboardSnapshot = {
+    updatedAt : Int;
+    pipelineVelocity : [(Text, Float)];
+    followUpComplianceRate : [(Text, Float)];
+    slaBreaachRatePerStage : [(Text, Float)];
+    winRateByRep : [(Text, Float)];
+    activeDealsCount : Nat;
+    closedDealsThisMonth : Nat;
+    revenueForecast : Float;
+    totalRevenueYTD : Float;
+  };
+
+  public type RepScorecard = {
+    userId : Text;
+    username : Text;
+    displayName : Text;
+    winRate : Float;
+    activityCount : Nat;
+    avgDealCycleTime : Float;
+    totalDealValueClosed : Float;
+    closedDealsCount : Nat;
   };
 
   // --- Request types ---

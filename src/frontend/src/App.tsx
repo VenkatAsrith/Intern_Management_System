@@ -168,6 +168,61 @@ const clientDetailRoute = createRoute({
   component: () => LazyPage(() => import("@/pages/clients/ClientDetailPage")),
 });
 
+// ─── Admin Routes ─────────────────────────────────────────────────────────────
+
+const adminProtectedRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  id: "adminProtected",
+  component: () => {
+    const AdminProtected = React.lazy(() =>
+      import("@/components/layout/ProtectedRoute").then((m) => ({
+        default: () => <m.ProtectedRoute adminOnly />,
+      })),
+    );
+    return (
+      <React.Suspense fallback={null}>
+        <AdminProtected />
+      </React.Suspense>
+    );
+  },
+});
+
+const adminLayoutRoute = createRoute({
+  getParentRoute: () => adminProtectedRoute,
+  id: "adminLayout",
+  component: AppLayout,
+});
+
+const adminUsersRoute = createRoute({
+  getParentRoute: () => adminLayoutRoute,
+  path: "/admin/users",
+  component: () => LazyPage(() => import("@/pages/admin/UsersPage")),
+});
+
+const adminApprovalsRoute = createRoute({
+  getParentRoute: () => adminLayoutRoute,
+  path: "/admin/approvals",
+  component: () => LazyPage(() => import("@/pages/admin/ApprovalsPage")),
+});
+
+const adminAuditRoute = createRoute({
+  getParentRoute: () => adminLayoutRoute,
+  path: "/admin/audit",
+  component: () => LazyPage(() => import("@/pages/admin/AuditLogPage")),
+});
+
+const adminAutomationsRoute = createRoute({
+  getParentRoute: () => adminLayoutRoute,
+  path: "/admin/automations",
+  component: () => LazyPage(() => import("@/pages/admin/AutomationsPage")),
+});
+
+const adminAnnouncementsRoute = createRoute({
+  getParentRoute: () => adminLayoutRoute,
+  path: "/admin/announcements",
+  component: () => LazyPage(() => import("@/pages/admin/AnnouncementsPage")),
+});
+
 // ─────────────────────────────────────────────────────────────────────────────
 
 const notFoundRoute = createRoute({
@@ -193,6 +248,15 @@ const routeTree = rootRoute.addChildren([
       clientsCalendarRoute,
       clientsAnalyticsRoute,
       clientDetailRoute,
+    ]),
+  ]),
+  adminProtectedRoute.addChildren([
+    adminLayoutRoute.addChildren([
+      adminUsersRoute,
+      adminApprovalsRoute,
+      adminAuditRoute,
+      adminAutomationsRoute,
+      adminAnnouncementsRoute,
     ]),
   ]),
 ]);

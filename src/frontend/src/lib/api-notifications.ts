@@ -1,7 +1,5 @@
-import {
-  type NotificationType as BackendNotificationType,
-  createActor,
-} from "@/backend";
+import { NotificationPriority, createActor } from "@/backend";
+import type { NotificationType as BackendNotificationType } from "@/backend";
 import type {
   Announcement,
   Notification,
@@ -24,6 +22,7 @@ export function useNotificationsApi() {
       const result = await actor.createNotification({
         ...payload,
         notificationType: payload.notificationType as BackendNotificationType,
+        priority: NotificationPriority.medium,
       });
       if (result.__kind__ === "err") throw new Error(result.err);
       return result.ok as Notification;

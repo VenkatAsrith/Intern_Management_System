@@ -41,18 +41,51 @@ export interface Announcement {
   'id' : string,
   'title' : string,
   'content' : string,
+  'expiresAt' : [] | [bigint],
   'createdAt' : bigint,
   'createdBy' : string,
   'isActive' : boolean,
+  'targetSpaces' : [] | [Array<string>],
+}
+export interface ApprovalRequest {
+  'id' : string,
+  'status' : ApprovalStatus,
+  'resourceId' : string,
+  'approverId' : [] | [string],
+  'createdAt' : bigint,
+  'actionType' : string,
+  'requestPayload' : string,
+  'resourceType' : string,
+  'notes' : [] | [string],
+  'requesterRole' : string,
+  'requesterId' : string,
+  'resolvedAt' : [] | [bigint],
+}
+export type ApprovalStatus = { 'pending' : null } |
+  { 'approved' : null } |
+  { 'rejected' : null };
+export interface AuditEvent {
+  'id' : string,
+  'beforeState' : [] | [string],
+  'action' : string,
+  'actorRole' : string,
+  'resourceId' : string,
+  'actorId' : string,
+  'resourceType' : string,
+  'timestamp' : bigint,
+  'afterState' : [] | [string],
+  'ipAddress' : [] | [string],
 }
 export interface Client {
   'id' : string,
   'dealProbability' : bigint,
+  'isStale' : [] | [boolean],
   'contacts' : Array<ContactPerson>,
   'source' : string,
   'serviceInterested' : string,
   'pipelineValue' : [] | [number],
   'gstNumber' : [] | [string],
+  'stageEnteredAt' : [] | [bigint],
   'lastActivity' : [] | [bigint],
   'designation' : string,
   'createdAt' : bigint,
@@ -64,6 +97,7 @@ export interface Client {
   'email' : string,
   'website' : string,
   'proposalExpiry' : [] | [bigint],
+  'slaBreachedAt' : [] | [bigint],
   'proposalVersion' : bigint,
   'whatsappNumber' : string,
   'customFields' : Array<[string, string]>,
@@ -82,6 +116,7 @@ export interface Client {
   'engagementScore' : bigint,
   'industryType' : string,
   'contactPersonName' : string,
+  'slaStatus' : [] | [SlaStatus],
   'assignedTeamMember' : string,
   'location' : string,
   'activityCount' : bigint,
@@ -176,6 +211,17 @@ export interface CreatePerformancePayload {
   'taskScore' : number,
   'communicationScore' : number,
   'adminNotes' : string,
+}
+export interface DashboardSnapshot {
+  'totalRevenueYTD' : number,
+  'closedDealsThisMonth' : bigint,
+  'slaBreaachRatePerStage' : Array<[string, number]>,
+  'pipelineVelocity' : Array<[string, number]>,
+  'revenueForecast' : number,
+  'activeDealsCount' : bigint,
+  'updatedAt' : bigint,
+  'winRateByRep' : Array<[string, number]>,
+  'followUpComplianceRate' : Array<[string, number]>,
 }
 export interface DashboardStats {
   'marketingCount' : bigint,
@@ -299,17 +345,42 @@ export interface Notification {
   'createdAt' : bigint,
   'isRead' : boolean,
   'message' : string,
+  'priority' : [] | [NotificationPriority],
   'relatedId' : [] | [string],
 }
+export interface NotificationPreference {
+  'userId' : string,
+  'digestFrequency' : { 'hourly' : null } |
+    { 'immediate' : null } |
+    { 'daily' : null },
+  'digestEnabled' : boolean,
+  'eventType' : string,
+}
+export type NotificationPriority = { 'low' : null } |
+  { 'high' : null } |
+  { 'critical' : null } |
+  { 'medium' : null };
 export type NotificationType = { 'taskAssigned' : null } |
+  { 'proposalExpiring' : null } |
   { 'invoiceDue' : null } |
   { 'attendanceAnomaly' : null } |
+  { 'announcementPosted' : null } |
+  { 'dealSLABreached' : null } |
+  { 'internDocumentSent' : null } |
   { 'taskOverdue' : null } |
   { 'announcement' : null } |
+  { 'newClientAssigned' : null } |
+  { 'invoiceOverdue' : null } |
   { 'leaveApproved' : null } |
+  { 'approvalRequestCreated' : null } |
   { 'leaveRejected' : null } |
+  { 'healthScoreLow' : null } |
+  { 'followUpOverdue' : null } |
   { 'stageChanged' : null } |
-  { 'overdueFollowUp' : null };
+  { 'proposalExpiringUrgent' : null } |
+  { 'overdueFollowUp' : null } |
+  { 'dealClosedWon' : null } |
+  { 'staleDeal' : null };
 export type PaymentStatus = { 'cancelled' : null } |
   { 'pending' : null } |
   { 'paid' : null } |
@@ -331,6 +402,27 @@ export type PriorityLevel = { 'low' : null } |
   { 'high' : null } |
   { 'urgent' : null } |
   { 'medium' : null };
+export interface RepScorecard {
+  'totalDealValueClosed' : number,
+  'username' : string,
+  'displayName' : string,
+  'userId' : string,
+  'closedDealsCount' : bigint,
+  'avgDealCycleTime' : number,
+  'winRate' : number,
+  'activityCount' : bigint,
+}
+export type Role = { 'hr' : null } |
+  { 'manager' : null } |
+  { 'admin' : null } |
+  { 'finance' : null } |
+  { 'marketing' : null } |
+  { 'sales' : null } |
+  { 'superAdmin' : null } |
+  { 'operations' : null } |
+  { 'viewer' : null };
+export type SlaStatus = { 'notBreached' : null } |
+  { 'breached' : null };
 export type Space = { 'Org' : null } |
   { 'Learning' : null } |
   { 'Marketing' : null };
@@ -387,6 +479,26 @@ export interface UpdatePerformancePayload {
   'communicationScore' : number,
   'adminNotes' : string,
 }
+export interface UserAccount {
+  'id' : string,
+  'username' : string,
+  'displayName' : string,
+  'createdAt' : bigint,
+  'role' : Role,
+  'isActive' : boolean,
+  'passwordHash' : string,
+  'spaces' : Array<string>,
+}
+export interface WorkflowExecution {
+  'id' : string,
+  'ruleName' : string,
+  'status' : { 'success' : null } |
+    { 'failed' : null } |
+    { 'running' : null },
+  'errorMessage' : [] | [string],
+  'recordsProcessed' : bigint,
+  'triggeredAt' : bigint,
+}
 export interface _SERVICE {
   'addClientActivity' : ActorMethod<
     [string, ActivityType, string, [] | [string]],
@@ -408,6 +520,11 @@ export interface _SERVICE {
     { 'ok' : Performance } |
       { 'err' : string }
   >,
+  'approveRequest' : ActorMethod<
+    [string, string, [] | [string]],
+    { 'ok' : ApprovalRequest } |
+      { 'err' : string }
+  >,
   'captureWonLostReason' : ActorMethod<
     [string, string],
     { 'ok' : Client } |
@@ -418,12 +535,27 @@ export interface _SERVICE {
     { 'ok' : Announcement } |
       { 'err' : string }
   >,
+  'createAnnouncementV2' : ActorMethod<
+    [string, string, string, Array<string>, [] | [bigint]],
+    { 'ok' : Announcement } |
+      { 'err' : string }
+  >,
+  'createApprovalRequest' : ActorMethod<
+    [string, string, string, string, string],
+    { 'ok' : ApprovalRequest } |
+      { 'err' : string }
+  >,
   'createClient' : ActorMethod<
     [CreateClientRequest],
     { 'ok' : Client } |
       { 'err' : string }
   >,
   'createIntern' : ActorMethod<
+    [string, CreateInternPayload],
+    { 'ok' : Intern } |
+      { 'err' : string }
+  >,
+  'createInternAudited' : ActorMethod<
     [string, CreateInternPayload],
     { 'ok' : Intern } |
       { 'err' : string }
@@ -440,14 +572,25 @@ export interface _SERVICE {
         'userId' : string,
         'notificationType' : NotificationType,
         'message' : string,
+        'priority' : NotificationPriority,
         'relatedId' : [] | [string],
       },
     ],
     { 'ok' : Notification } |
       { 'err' : string }
   >,
+  'createUser' : ActorMethod<
+    [string, string, string, string, Array<string>, string],
+    { 'ok' : UserAccount } |
+      { 'err' : string }
+  >,
   'deleteAnnouncement' : ActorMethod<
     [string],
+    { 'ok' : null } |
+      { 'err' : string }
+  >,
+  'deleteAnnouncementById' : ActorMethod<
+    [string, string],
     { 'ok' : null } |
       { 'err' : string }
   >,
@@ -457,9 +600,19 @@ export interface _SERVICE {
     { 'ok' : null } |
       { 'err' : string }
   >,
+  'deleteClientWithAudit' : ActorMethod<
+    [string, string],
+    { 'ok' : { 'deleted' : boolean, 'approvalId' : [] | [string] } } |
+      { 'err' : string }
+  >,
   'deleteIntern' : ActorMethod<
     [string, string],
     { 'ok' : boolean } |
+      { 'err' : string }
+  >,
+  'deleteInternWithAudit' : ActorMethod<
+    [string, string],
+    { 'ok' : { 'deleted' : boolean, 'approvalId' : [] | [string] } } |
       { 'err' : string }
   >,
   'deletePerformance' : ActorMethod<
@@ -467,26 +620,96 @@ export interface _SERVICE {
     { 'ok' : boolean } |
       { 'err' : string }
   >,
+  'deleteUser' : ActorMethod<
+    [string, string],
+    { 'ok' : null } |
+      { 'err' : string }
+  >,
   'getActivities' : ActorMethod<[[] | [string]], Array<Activity>>,
   'getAnalyticsDashboard' : ActorMethod<[], AnalyticsData>,
+  'getAnnouncementsBySpace' : ActorMethod<
+    [string, [] | [string]],
+    { 'ok' : Array<Announcement> } |
+      { 'err' : string }
+  >,
+  'getAuditLog' : ActorMethod<
+    [string, bigint, bigint],
+    { 'ok' : Array<AuditEvent> } |
+      { 'err' : string }
+  >,
   'getCRMFunnelData' : ActorMethod<[], Array<[string, bigint]>>,
   'getClient' : ActorMethod<[string], { 'ok' : Client } | { 'err' : string }>,
   'getClientActivities' : ActorMethod<[string], Array<ClientActivity>>,
   'getClientAnalytics' : ActorMethod<[], ClientAnalytics>,
   'getClientComments' : ActorMethod<[string], Array<ClientComment>>,
   'getClientInvoices' : ActorMethod<[string], Array<Invoice>>,
+  'getDashboardSnapshot' : ActorMethod<
+    [string],
+    { 'ok' : DashboardSnapshot } |
+      { 'err' : string }
+  >,
   'getDashboardStats' : ActorMethod<[], DashboardStats>,
   'getDealCycleTime' : ActorMethod<[], bigint>,
+  'getFollowUpComplianceRate' : ActorMethod<
+    [string],
+    { 'ok' : Array<[string, number]> } |
+      { 'err' : string }
+  >,
   'getIntern' : ActorMethod<[string], [] | [Intern]>,
   'getLostDealAnalysis' : ActorMethod<[], Array<[string, bigint, bigint]>>,
+  'getNotificationPreferences' : ActorMethod<
+    [string],
+    { 'ok' : Array<NotificationPreference> } |
+      { 'err' : string }
+  >,
+  'getNotificationsByPriority' : ActorMethod<
+    [string, string],
+    { 'ok' : Array<Notification> } |
+      { 'err' : string }
+  >,
+  'getPipelineVelocity' : ActorMethod<
+    [string],
+    { 'ok' : Array<[string, number]> } |
+      { 'err' : string }
+  >,
+  'getRepScorecards' : ActorMethod<
+    [string],
+    { 'ok' : Array<RepScorecard> } |
+      { 'err' : string }
+  >,
+  'getSLABreachRatePerStage' : ActorMethod<
+    [string],
+    { 'ok' : Array<[string, number]> } |
+      { 'err' : string }
+  >,
+  'getSLARules' : ActorMethod<[], Array<[string, bigint]>>,
   'getStageHistory' : ActorMethod<[string], Array<InternPipelineStageHistory>>,
+  'getUserById' : ActorMethod<
+    [string, string],
+    { 'ok' : UserAccount } |
+      { 'err' : string }
+  >,
   'getWinRateByMember' : ActorMethod<[], Array<[string, bigint, bigint]>>,
   'initSampleData' : ActorMethod<[], bigint>,
   'listAnnouncements' : ActorMethod<[boolean], Array<Announcement>>,
+  'listApprovalRequests' : ActorMethod<
+    [string, [] | [string]],
+    { 'ok' : Array<ApprovalRequest> } |
+      { 'err' : string }
+  >,
   'listClients' : ActorMethod<[], Array<Client>>,
   'listInterns' : ActorMethod<[ListInternsFilter], Array<Intern>>,
   'listNotifications' : ActorMethod<[string], Array<Notification>>,
   'listPerformances' : ActorMethod<[string], Array<Performance>>,
+  'listUsers' : ActorMethod<
+    [string],
+    { 'ok' : Array<UserAccount> } |
+      { 'err' : string }
+  >,
+  'listWorkflowExecutions' : ActorMethod<
+    [[] | [string], bigint],
+    Array<WorkflowExecution>
+  >,
   'logQuickActivity' : ActorMethod<
     [string, string, string],
     { 'ok' : Client } |
@@ -499,7 +722,14 @@ export interface _SERVICE {
   >,
   'login' : ActorMethod<
     [string, string],
-    { 'ok' : { 'displayName' : string, 'sessionToken' : string } } |
+    {
+        'ok' : {
+          'permissions' : Array<string>,
+          'displayName' : string,
+          'role' : string,
+          'sessionToken' : string,
+        }
+      } |
       { 'err' : string }
   >,
   'logout' : ActorMethod<[string], undefined>,
@@ -514,12 +744,29 @@ export interface _SERVICE {
     { 'ok' : ClientComment } |
       { 'err' : string }
   >,
+  'rejectRequest' : ActorMethod<
+    [string, string, [] | [string]],
+    { 'ok' : ApprovalRequest } |
+      { 'err' : string }
+  >,
   'removeContact' : ActorMethod<
     [string, string],
     { 'ok' : Client } |
       { 'err' : string }
   >,
+  'runAllAutomationJobs' : ActorMethod<[], undefined>,
+  'runAutomationJobs' : ActorMethod<[string], undefined>,
   'seedSampleData' : ActorMethod<[], undefined>,
+  'setNotificationPreference' : ActorMethod<
+    [string, string, boolean, string],
+    { 'ok' : null } |
+      { 'err' : string }
+  >,
+  'setSLARule' : ActorMethod<
+    [string, bigint],
+    { 'ok' : null } |
+      { 'err' : string }
+  >,
   'updateClient' : ActorMethod<
     [string, UpdateClientRequest],
     { 'ok' : Client } |
@@ -546,6 +793,11 @@ export interface _SERVICE {
       { 'err' : string }
   >,
   'updateIntern' : ActorMethod<
+    [string, string, UpdateInternPayload],
+    { 'ok' : Intern } |
+      { 'err' : string }
+  >,
+  'updateInternAudited' : ActorMethod<
     [string, string, UpdateInternPayload],
     { 'ok' : Intern } |
       { 'err' : string }
@@ -598,9 +850,21 @@ export interface _SERVICE {
     { 'ok' : Client } |
       { 'err' : string }
   >,
+  'updateUser' : ActorMethod<
+    [string, string, string, Array<string>, boolean],
+    { 'ok' : UserAccount } |
+      { 'err' : string }
+  >,
   'validateSession' : ActorMethod<
     [string],
-    { 'ok' : { 'username' : string, 'displayName' : string } } |
+    {
+        'ok' : {
+          'permissions' : Array<string>,
+          'username' : string,
+          'displayName' : string,
+          'role' : string,
+        }
+      } |
       { 'err' : string }
   >,
 }

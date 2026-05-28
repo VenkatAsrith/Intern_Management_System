@@ -94,6 +94,9 @@ export interface Client {
   proposalVersion: number;
   wonLostReason: string | null;
   closedAt: number | null;
+  isStale?: boolean;
+  slaStatus?: string;
+  stageEnteredAt?: number;
 }
 
 export interface StatusHistoryEntry {

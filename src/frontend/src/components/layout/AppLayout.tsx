@@ -1,10 +1,14 @@
 import { GlobalSearch } from "@/components/GlobalSearch";
+import { KeyboardShortcutPanel } from "@/components/KeyboardShortcutPanel";
+import { MultiTabBanner } from "@/components/MultiTabBanner";
 import { NotificationCenter } from "@/components/NotificationCenter";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
+import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
+import { useMultiTab } from "@/hooks/use-multi-tab";
 import { Outlet, useLocation } from "@tanstack/react-router";
 import { LogOut, Menu } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Sidebar } from "./Sidebar";
 
 const pageTitles: Record<string, string> = {
@@ -24,9 +28,24 @@ function getPageTitle(path: string): string {
 
 export function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [shortcutPanelOpen, setShortcutPanelOpen] = useState(false);
   const { logout, displayName } = useAuth();
   const location = useLocation();
   const pageTitle = getPageTitle(location.pathname);
+  const { showBanner, dismiss } = useMultiTab();
+
+  const shortcuts = useMemo(
+    () => [
+      {
+        key: "?",
+        ctrl: false,
+        handler: () => setShortcutPanelOpen((v) => !v),
+        description: "Toggle keyboard shortcuts panel",
+      },
+    ],
+    [],
+  );
+  useKeyboardShortcuts(shortcuts);
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">
@@ -83,11 +102,20 @@ export function AppLayout() {
           </div>
         </header>
 
+        {/* Multi-tab update banner */}
+        <MultiTabBanner showBanner={showBanner} dismiss={dismiss} />
+
         {/* Page content */}
         <main className="flex-1 overflow-y-auto bg-background">
           <Outlet />
         </main>
       </div>
+
+      <KeyboardShortcutPanel
+        isOpen={shortcutPanelOpen}
+        onClose={() => setShortcutPanelOpen(false)}
+        currentPage={pageTitle}
+      />
     </div>
   );
 }

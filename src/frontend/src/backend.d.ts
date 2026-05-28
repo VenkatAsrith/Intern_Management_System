@@ -7,12 +7,6 @@ export interface None {
     __kind__: "None";
 }
 export type Option<T> = Some<T> | None;
-export interface InvoiceLineItem {
-    rate: number;
-    description: string;
-    quantity: number;
-    amount: number;
-}
 export interface InternPipelineStageHistory {
     changedAt: bigint;
     changedBy: string;
@@ -52,6 +46,16 @@ export interface CreatePerformancePayload {
     taskScore: number;
     communicationScore: number;
     adminNotes: string;
+}
+export interface UserAccount {
+    id: string;
+    username: string;
+    displayName: string;
+    createdAt: bigint;
+    role: Role;
+    isActive: boolean;
+    passwordHash: string;
+    spaces: Array<string>;
 }
 export interface ListInternsFilter {
     status?: Status;
@@ -93,6 +97,44 @@ export interface ClientAnalytics {
     approvedDeals: bigint;
     revenuePipeline: number;
 }
+export interface AuditEvent {
+    id: string;
+    beforeState?: string;
+    action: string;
+    actorRole: string;
+    resourceId: string;
+    actorId: string;
+    resourceType: string;
+    timestamp: bigint;
+    afterState?: string;
+    ipAddress?: string;
+}
+export interface ApprovalRequest {
+    id: string;
+    status: ApprovalStatus;
+    resourceId: string;
+    approverId?: string;
+    createdAt: bigint;
+    actionType: string;
+    requestPayload: string;
+    resourceType: string;
+    notes?: string;
+    requesterRole: string;
+    requesterId: string;
+    resolvedAt?: bigint;
+}
+export interface UpdateInternPayload {
+    status: Status;
+    experienceLevel: ExperienceLevel;
+    profilePicCid?: string;
+    name: string;
+    joiningDate: bigint;
+    email: string;
+    space: Space;
+    phone: string;
+    department: string;
+    adminNotes: string;
+}
 export interface UpdateClientRequest {
     source?: string;
     serviceInterested?: string;
@@ -115,18 +157,6 @@ export interface UpdateClientRequest {
     location?: string;
     followUpDate?: bigint;
 }
-export interface UpdateInternPayload {
-    status: Status;
-    experienceLevel: ExperienceLevel;
-    profilePicCid?: string;
-    name: string;
-    joiningDate: bigint;
-    email: string;
-    space: Space;
-    phone: string;
-    department: string;
-    adminNotes: string;
-}
 export interface ContactPerson {
     id: string;
     name: string;
@@ -140,18 +170,22 @@ export interface Announcement {
     id: string;
     title: string;
     content: string;
+    expiresAt?: bigint;
     createdAt: bigint;
     createdBy: string;
     isActive: boolean;
+    targetSpaces?: Array<string>;
 }
 export interface Client {
     id: string;
     dealProbability: bigint;
+    isStale?: boolean;
     contacts: Array<ContactPerson>;
     source: string;
     serviceInterested: string;
     pipelineValue?: number;
     gstNumber?: string;
+    stageEnteredAt?: bigint;
     lastActivity?: bigint;
     designation: string;
     createdAt: bigint;
@@ -163,6 +197,7 @@ export interface Client {
     email: string;
     website: string;
     proposalExpiry?: bigint;
+    slaBreachedAt?: bigint;
     proposalVersion: bigint;
     whatsappNumber: string;
     customFields: Array<[string, string]>;
@@ -181,6 +216,7 @@ export interface Client {
     engagementScore: bigint;
     industryType: string;
     contactPersonName: string;
+    slaStatus?: SlaStatus;
     assignedTeamMember: string;
     location: string;
     activityCount: bigint;
@@ -233,6 +269,17 @@ export interface Intern {
     startDate?: string;
     internshipType?: string;
 }
+export interface DashboardSnapshot {
+    totalRevenueYTD: number;
+    closedDealsThisMonth: bigint;
+    slaBreaachRatePerStage: Array<[string, number]>;
+    pipelineVelocity: Array<[string, number]>;
+    revenueForecast: number;
+    activeDealsCount: bigint;
+    updatedAt: bigint;
+    winRateByRep: Array<[string, number]>;
+    followUpComplianceRate: Array<[string, number]>;
+}
 export interface CreateInternPayload {
     status: Status;
     experienceLevel: ExperienceLevel;
@@ -244,6 +291,24 @@ export interface CreateInternPayload {
     phone: string;
     department: string;
     adminNotes: string;
+}
+export interface WorkflowExecution {
+    id: string;
+    ruleName: string;
+    status: Variant_success_failed_running;
+    errorMessage?: string;
+    recordsProcessed: bigint;
+    triggeredAt: bigint;
+}
+export interface RepScorecard {
+    totalDealValueClosed: number;
+    username: string;
+    displayName: string;
+    userId: string;
+    closedDealsCount: bigint;
+    avgDealCycleTime: number;
+    winRate: number;
+    activityCount: bigint;
 }
 export interface Performance {
     id: string;
@@ -283,6 +348,12 @@ export interface DashboardStats {
     learningCount: bigint;
     avgPerformance: number;
 }
+export interface NotificationPreference {
+    userId: string;
+    digestFrequency: Variant_hourly_immediate_daily;
+    digestEnabled: boolean;
+    eventType: string;
+}
 export interface ClientComment {
     id: string;
     clientId: string;
@@ -292,14 +363,6 @@ export interface ClientComment {
     parentId?: string;
     isPinned: boolean;
 }
-export interface Activity {
-    id: string;
-    action: string;
-    internId: string;
-    performedBy: string;
-    timestamp: bigint;
-    details: string;
-}
 export interface Notification {
     id: string;
     title: string;
@@ -308,7 +371,16 @@ export interface Notification {
     createdAt: bigint;
     isRead: boolean;
     message: string;
+    priority?: NotificationPriority;
     relatedId?: string;
+}
+export interface Activity {
+    id: string;
+    action: string;
+    internId: string;
+    performedBy: string;
+    timestamp: bigint;
+    details: string;
 }
 export interface UpdatePerformancePayload {
     month: bigint;
@@ -319,6 +391,12 @@ export interface UpdatePerformancePayload {
     taskScore: number;
     communicationScore: number;
     adminNotes: string;
+}
+export interface InvoiceLineItem {
+    rate: number;
+    description: string;
+    quantity: number;
+    amount: number;
 }
 export enum ActivityType {
     whatsappMessage = "whatsappMessage",
@@ -332,6 +410,11 @@ export enum ActivityType {
     quickMeeting = "quickMeeting",
     quickEmail = "quickEmail",
     quickCall = "quickCall"
+}
+export enum ApprovalStatus {
+    pending = "pending",
+    approved = "approved",
+    rejected = "rejected"
 }
 export enum ClientStatus {
     discoveryCallDone = "discoveryCallDone",
@@ -371,16 +454,34 @@ export enum InvoicePaymentStatus {
     viewed = "viewed",
     partial = "partial"
 }
+export enum NotificationPriority {
+    low = "low",
+    high = "high",
+    critical = "critical",
+    medium = "medium"
+}
 export enum NotificationType {
     taskAssigned = "taskAssigned",
+    proposalExpiring = "proposalExpiring",
     invoiceDue = "invoiceDue",
     attendanceAnomaly = "attendanceAnomaly",
+    announcementPosted = "announcementPosted",
+    dealSLABreached = "dealSLABreached",
+    internDocumentSent = "internDocumentSent",
     taskOverdue = "taskOverdue",
     announcement = "announcement",
+    newClientAssigned = "newClientAssigned",
+    invoiceOverdue = "invoiceOverdue",
     leaveApproved = "leaveApproved",
+    approvalRequestCreated = "approvalRequestCreated",
     leaveRejected = "leaveRejected",
+    healthScoreLow = "healthScoreLow",
+    followUpOverdue = "followUpOverdue",
     stageChanged = "stageChanged",
-    overdueFollowUp = "overdueFollowUp"
+    proposalExpiringUrgent = "proposalExpiringUrgent",
+    overdueFollowUp = "overdueFollowUp",
+    dealClosedWon = "dealClosedWon",
+    staleDeal = "staleDeal"
 }
 export enum PaymentStatus {
     cancelled = "cancelled",
@@ -394,6 +495,21 @@ export enum PriorityLevel {
     urgent = "urgent",
     medium = "medium"
 }
+export enum Role {
+    hr = "hr",
+    manager = "manager",
+    admin = "admin",
+    finance = "finance",
+    marketing = "marketing",
+    sales = "sales",
+    superAdmin = "superAdmin",
+    operations = "operations",
+    viewer = "viewer"
+}
+export enum SlaStatus {
+    notBreached = "notBreached",
+    breached = "breached"
+}
 export enum Space {
     Org = "Org",
     Learning = "Learning",
@@ -403,6 +519,16 @@ export enum Status {
     OnHold = "OnHold",
     Active = "Active",
     Completed = "Completed"
+}
+export enum Variant_hourly_immediate_daily {
+    hourly = "hourly",
+    immediate = "immediate",
+    daily = "daily"
+}
+export enum Variant_success_failed_running {
+    success = "success",
+    failed = "failed",
+    running = "running"
 }
 export interface backendInterface {
     addClientActivity(clientId: string, activityType: ActivityType, description: string, metadata: string | null): Promise<{
@@ -433,6 +559,13 @@ export interface backendInterface {
         __kind__: "err";
         err: string;
     }>;
+    approveRequest(sessionToken: string, requestId: string, notes: string | null): Promise<{
+        __kind__: "ok";
+        ok: ApprovalRequest;
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
     captureWonLostReason(clientId: string, reason: string): Promise<{
         __kind__: "ok";
         ok: Client;
@@ -451,6 +584,20 @@ export interface backendInterface {
         __kind__: "err";
         err: string;
     }>;
+    createAnnouncementV2(sessionToken: string, title: string, body: string, targetSpaces: Array<string>, expiresAt: bigint | null): Promise<{
+        __kind__: "ok";
+        ok: Announcement;
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
+    createApprovalRequest(sessionToken: string, actionType: string, resourceType: string, resourceId: string, payload: string): Promise<{
+        __kind__: "ok";
+        ok: ApprovalRequest;
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
     createClient(req: CreateClientRequest): Promise<{
         __kind__: "ok";
         ok: Client;
@@ -459,6 +606,13 @@ export interface backendInterface {
         err: string;
     }>;
     createIntern(sessionToken: string, payload: CreateInternPayload): Promise<{
+        __kind__: "ok";
+        ok: Intern;
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
+    createInternAudited(sessionToken: string, payload: CreateInternPayload): Promise<{
         __kind__: "ok";
         ok: Intern;
     } | {
@@ -477,6 +631,7 @@ export interface backendInterface {
         userId: string;
         notificationType: NotificationType;
         message: string;
+        priority: NotificationPriority;
         relatedId?: string;
     }): Promise<{
         __kind__: "ok";
@@ -485,7 +640,21 @@ export interface backendInterface {
         __kind__: "err";
         err: string;
     }>;
+    createUser(sessionToken: string, username: string, password: string, roleText: string, spaces: Array<string>, displayName: string): Promise<{
+        __kind__: "ok";
+        ok: UserAccount;
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
     deleteAnnouncement(id: string): Promise<{
+        __kind__: "ok";
+        ok: null;
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
+    deleteAnnouncementById(sessionToken: string, announcementId: string): Promise<{
         __kind__: "ok";
         ok: null;
     } | {
@@ -506,9 +675,29 @@ export interface backendInterface {
         __kind__: "err";
         err: string;
     }>;
+    deleteClientWithAudit(sessionToken: string, id: string): Promise<{
+        __kind__: "ok";
+        ok: {
+            deleted: boolean;
+            approvalId?: string;
+        };
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
     deleteIntern(sessionToken: string, id: string): Promise<{
         __kind__: "ok";
         ok: boolean;
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
+    deleteInternWithAudit(sessionToken: string, id: string): Promise<{
+        __kind__: "ok";
+        ok: {
+            deleted: boolean;
+            approvalId?: string;
+        };
     } | {
         __kind__: "err";
         err: string;
@@ -520,8 +709,29 @@ export interface backendInterface {
         __kind__: "err";
         err: string;
     }>;
+    deleteUser(sessionToken: string, userId: string): Promise<{
+        __kind__: "ok";
+        ok: null;
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
     getActivities(internId: string | null): Promise<Array<Activity>>;
     getAnalyticsDashboard(): Promise<AnalyticsData>;
+    getAnnouncementsBySpace(sessionToken: string, space: string | null): Promise<{
+        __kind__: "ok";
+        ok: Array<Announcement>;
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
+    getAuditLog(sessionToken: string, limit: bigint, offset: bigint): Promise<{
+        __kind__: "ok";
+        ok: Array<AuditEvent>;
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
     getCRMFunnelData(): Promise<Array<[string, bigint]>>;
     getClient(id: string): Promise<{
         __kind__: "ok";
@@ -534,18 +744,90 @@ export interface backendInterface {
     getClientAnalytics(): Promise<ClientAnalytics>;
     getClientComments(clientId: string): Promise<Array<ClientComment>>;
     getClientInvoices(clientId: string): Promise<Array<Invoice>>;
+    getDashboardSnapshot(sessionToken: string): Promise<{
+        __kind__: "ok";
+        ok: DashboardSnapshot;
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
     getDashboardStats(): Promise<DashboardStats>;
     getDealCycleTime(): Promise<bigint>;
+    getFollowUpComplianceRate(sessionToken: string): Promise<{
+        __kind__: "ok";
+        ok: Array<[string, number]>;
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
     getIntern(id: string): Promise<Intern | null>;
     getLostDealAnalysis(): Promise<Array<[string, bigint, bigint]>>;
+    getNotificationPreferences(sessionToken: string): Promise<{
+        __kind__: "ok";
+        ok: Array<NotificationPreference>;
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
+    getNotificationsByPriority(sessionToken: string, priority: string): Promise<{
+        __kind__: "ok";
+        ok: Array<Notification>;
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
+    getPipelineVelocity(sessionToken: string): Promise<{
+        __kind__: "ok";
+        ok: Array<[string, number]>;
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
+    getRepScorecards(sessionToken: string): Promise<{
+        __kind__: "ok";
+        ok: Array<RepScorecard>;
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
+    getSLABreachRatePerStage(sessionToken: string): Promise<{
+        __kind__: "ok";
+        ok: Array<[string, number]>;
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
+    getSLARules(): Promise<Array<[string, bigint]>>;
     getStageHistory(internId: string): Promise<Array<InternPipelineStageHistory>>;
+    getUserById(sessionToken: string, userId: string): Promise<{
+        __kind__: "ok";
+        ok: UserAccount;
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
     getWinRateByMember(): Promise<Array<[string, bigint, bigint]>>;
     initSampleData(): Promise<bigint>;
     listAnnouncements(activeOnly: boolean): Promise<Array<Announcement>>;
+    listApprovalRequests(sessionToken: string, statusFilter: string | null): Promise<{
+        __kind__: "ok";
+        ok: Array<ApprovalRequest>;
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
     listClients(): Promise<Array<Client>>;
     listInterns(filter: ListInternsFilter): Promise<Array<Intern>>;
     listNotifications(userId: string): Promise<Array<Notification>>;
     listPerformances(internId: string): Promise<Array<Performance>>;
+    listUsers(sessionToken: string): Promise<{
+        __kind__: "ok";
+        ok: Array<UserAccount>;
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
+    listWorkflowExecutions(ruleName: string | null, limit: bigint): Promise<Array<WorkflowExecution>>;
     logQuickActivity(clientId: string, activityType: string, notes: string): Promise<{
         __kind__: "ok";
         ok: Client;
@@ -563,7 +845,9 @@ export interface backendInterface {
     login(username: string, password: string): Promise<{
         __kind__: "ok";
         ok: {
+            permissions: Array<string>;
             displayName: string;
+            role: string;
             sessionToken: string;
         };
     } | {
@@ -592,6 +876,13 @@ export interface backendInterface {
         __kind__: "err";
         err: string;
     }>;
+    rejectRequest(sessionToken: string, requestId: string, notes: string | null): Promise<{
+        __kind__: "ok";
+        ok: ApprovalRequest;
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
     removeContact(clientId: string, contactId: string): Promise<{
         __kind__: "ok";
         ok: Client;
@@ -599,7 +890,23 @@ export interface backendInterface {
         __kind__: "err";
         err: string;
     }>;
+    runAllAutomationJobs(): Promise<void>;
+    runAutomationJobs(sessionToken: string): Promise<void>;
     seedSampleData(): Promise<void>;
+    setNotificationPreference(sessionToken: string, eventType: string, digestEnabled: boolean, digestFrequency: string): Promise<{
+        __kind__: "ok";
+        ok: null;
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
+    setSLARule(stageName: string, maxHours: bigint): Promise<{
+        __kind__: "ok";
+        ok: null;
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
     updateClient(id: string, req: UpdateClientRequest): Promise<{
         __kind__: "ok";
         ok: Client;
@@ -636,6 +943,13 @@ export interface backendInterface {
         err: string;
     }>;
     updateIntern(sessionToken: string, id: string, payload: UpdateInternPayload): Promise<{
+        __kind__: "ok";
+        ok: Intern;
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
+    updateInternAudited(sessionToken: string, id: string, payload: UpdateInternPayload): Promise<{
         __kind__: "ok";
         ok: Intern;
     } | {
@@ -684,11 +998,20 @@ export interface backendInterface {
         __kind__: "err";
         err: string;
     }>;
+    updateUser(sessionToken: string, userId: string, roleText: string, spaces: Array<string>, isActive: boolean): Promise<{
+        __kind__: "ok";
+        ok: UserAccount;
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
     validateSession(sessionToken: string): Promise<{
         __kind__: "ok";
         ok: {
+            permissions: Array<string>;
             username: string;
             displayName: string;
+            role: string;
         };
     } | {
         __kind__: "err";

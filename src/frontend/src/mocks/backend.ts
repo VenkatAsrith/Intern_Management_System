@@ -364,14 +364,14 @@ export const mockBackend: backendInterface = {
     samplePerformances.filter((p) => p.internId === internId),
   logWhatsApp: async () => ok(true),
   login: async (username, _password) => {
-    if (username === "Venkat") return ok({ sessionToken: "mock-token-venkat", displayName: "Venkat Asrith" });
-    if (username === "Jaychandra") return ok({ sessionToken: "mock-token-jay", displayName: "Jay Chandra" });
+    if (username === "Venkat") return ok({ sessionToken: "mock-token-venkat", displayName: "Venkat Asrith", role: "superAdmin", permissions: [] });
+    if (username === "Jaychandra") return ok({ sessionToken: "mock-token-jay", displayName: "Jay Chandra", role: "superAdmin", permissions: [] });
     return err("Invalid credentials");
   },
   logout: async () => {},
   validateSession: async (token) => {
-    if (token === "mock-token-venkat") return ok({ username: "Venkat", displayName: "Venkat Asrith" });
-    if (token === "mock-token-jay") return ok({ username: "Jaychandra", displayName: "Jay Chandra" });
+    if (token === "mock-token-venkat") return ok({ username: "Venkat", displayName: "Venkat Asrith", role: "superAdmin", permissions: [] });
+    if (token === "mock-token-jay") return ok({ username: "Jaychandra", displayName: "Jay Chandra", role: "superAdmin", permissions: [] });
     return err("Invalid session");
   },
   seedSampleData: async () => {},
@@ -648,4 +648,36 @@ export const mockBackend: backendInterface = {
   getWinRateByMember: async () => [] as [string, bigint, bigint][],
   getDealCycleTime: async () => BigInt(0),
   getLostDealAnalysis: async () => [] as [string, bigint, bigint][],
+
+  // --- Approval/User management stubs ---
+  approveRequest: async (_sessionToken: string, _requestId: string, _notes: string | null) => ok(null as unknown as import('../backend').ApprovalRequest),
+  rejectRequest: async (_sessionToken: string, _requestId: string, _notes: string | null) => ok(null as unknown as import('../backend').ApprovalRequest),
+  createUser: async () => ok(null as unknown as import('../backend').UserAccount),
+  updateUser: async () => ok(null as unknown as import('../backend').UserAccount),
+  deleteUser: async () => ok(null as null),
+  listUsers: async () => ok([] as import('../backend').UserAccount[]),
+  getUserById: async () => ok(null as unknown as import('../backend').UserAccount),
+  createApprovalRequest: async () => ok(null as unknown as import('../backend').ApprovalRequest),
+  listApprovalRequests: async () => ok([] as import('../backend').ApprovalRequest[]),
+  getAuditLog: async () => ok([] as import('../backend').AuditEvent[]),
+  listWorkflowExecutions: async () => [] as import('../backend').WorkflowExecution[],
+  getSLARules: async () => [] as [string, bigint][],
+  setSLARule: async () => ok(null as null),
+  runAutomationJobs: async () => undefined,
+  runAllAutomationJobs: async () => undefined,
+  createAnnouncementV2: async () => ok(null as unknown as import('../backend').Announcement),
+  getAnnouncementsBySpace: async () => ok([] as import('../backend').Announcement[]),
+  deleteAnnouncementById: async () => ok(null as null),
+  getNotificationsByPriority: async () => ok([] as import('../backend').Notification[]),
+  setNotificationPreference: async () => ok(null as null),
+  getNotificationPreferences: async () => ok([] as import('../backend').NotificationPreference[]),
+  getPipelineVelocity: async () => ok([] as [string, number][]),
+  getFollowUpComplianceRate: async () => ok([] as [string, number][]),
+  getSLABreachRatePerStage: async () => ok([] as [string, number][]),
+  getRepScorecards: async () => ok([] as import('../backend').RepScorecard[]),
+  getDashboardSnapshot: async () => ok(null as unknown as import('../backend').DashboardSnapshot),
+  deleteClientWithAudit: async () => ok({ deleted: false } as { deleted: boolean; approvalId?: string }),
+  deleteInternWithAudit: async () => ok({ deleted: false } as { deleted: boolean; approvalId?: string }),
+  createInternAudited: async () => ok(null as unknown as import('../backend').Intern),
+  updateInternAudited: async () => ok(null as unknown as import('../backend').Intern),
 };

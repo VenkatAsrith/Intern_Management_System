@@ -1,3 +1,7 @@
+import { FollowUpComplianceChart } from "@/components/analytics/FollowUpComplianceChart";
+import { PipelineVelocityChart } from "@/components/analytics/PipelineVelocityChart";
+import { RepScorecardGrid } from "@/components/analytics/RepScorecardGrid";
+import { SLABreachChart } from "@/components/analytics/SLABreachChart";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -7,7 +11,11 @@ import {
   useClientAnalytics,
   useClients,
   useDealCycleTime,
+  useFollowUpComplianceRate,
   useLostDealAnalysis,
+  usePipelineVelocity,
+  useRepScorecards,
+  useSLABreachRate,
   useWinRateByMember,
 } from "@/hooks/use-clients";
 import { ClientStatus, STATUS_COLORS, STATUS_LABELS } from "@/types/clients";
@@ -1159,6 +1167,20 @@ export default function ClientsAnalyticsPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Pipeline Velocity */}
+      <AnalyticsChartsSection />
+    </div>
+  );
+}
+
+function AnalyticsChartsSection() {
+  return (
+    <div className="space-y-6">
+      <PipelineVelocityChart />
+      <FollowUpComplianceChart />
+      <SLABreachChart />
+      <RepScorecardGrid />
     </div>
   );
 }

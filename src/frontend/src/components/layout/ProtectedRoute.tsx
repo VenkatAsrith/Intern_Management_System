@@ -1,9 +1,25 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/hooks/use-auth";
 import { Navigate, Outlet } from "@tanstack/react-router";
+import { useEffect, useRef } from "react";
+import { toast } from "sonner";
 
-export function ProtectedRoute() {
-  const { isAuthenticated, isLoading } = useAuth();
+interface ProtectedRouteProps {
+  adminOnly?: boolean;
+}
+
+export function ProtectedRoute({ adminOnly }: ProtectedRouteProps = {}) {
+  const { isAuthenticated, isLoading, isAdmin } = useAuth();
+  const toastFired = useRef(false);
+
+  const adminCheck = adminOnly && isAuthenticated && !isAdmin();
+
+  useEffect(() => {
+    if (adminCheck && !toastFired.current) {
+      toastFired.current = true;
+      toast.error("Access denied — admin only");
+    }
+  }, [adminCheck]);
 
   if (isLoading) {
     return (
@@ -30,6 +46,10 @@ export function ProtectedRoute() {
 
   if (!isAuthenticated) {
     return <Navigate to="/login" />;
+  }
+
+  if (adminCheck) {
+    return <Navigate to="/dashboard" />;
   }
 
   return <Outlet />;

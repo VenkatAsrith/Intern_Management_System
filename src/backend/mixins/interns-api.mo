@@ -138,6 +138,7 @@ mixin (
           isRead           = false;
           relatedId        = ?internId;
           createdAt        = now;
+          priority         = ?#medium;
         };
         notifications.add(notifId, notif);
         #ok(updated)

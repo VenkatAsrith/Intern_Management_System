@@ -936,3 +936,103 @@ export function useKanbanViewMode() {
 
   return { mode, setMode };
 }
+
+// ─── Analytics: Pipeline Velocity ────────────────────────────────────────────
+
+export function usePipelineVelocity() {
+  const { actor, isFetching } = useBackend();
+  return useQuery<{ name: string; value: number }[]>({
+    queryKey: ["pipelineVelocity"],
+    queryFn: async () => {
+      if (!actor) return [];
+      const result = await (
+        actor as unknown as Record<string, (t: string) => Promise<unknown>>
+      ).getPipelineVelocity("");
+      const r = result as { ok?: [string, number][]; err?: string };
+      if (r.err !== undefined) return [];
+      return (r.ok ?? []).map(([name, value]) => ({
+        name,
+        value: Number(value),
+      }));
+    },
+    enabled: !!actor && !isFetching,
+  });
+}
+
+export function useFollowUpComplianceRate() {
+  const { actor, isFetching } = useBackend();
+  return useQuery<{ name: string; value: number }[]>({
+    queryKey: ["followUpComplianceRate"],
+    queryFn: async () => {
+      if (!actor) return [];
+      const result = await (
+        actor as unknown as Record<string, (t: string) => Promise<unknown>>
+      ).getFollowUpComplianceRate("");
+      const r = result as { ok?: [string, number][]; err?: string };
+      if (r.err !== undefined) return [];
+      return (r.ok ?? []).map(([name, value]) => ({
+        name,
+        value: Number(value),
+      }));
+    },
+    enabled: !!actor && !isFetching,
+  });
+}
+
+export function useSLABreachRate() {
+  const { actor, isFetching } = useBackend();
+  return useQuery<{ name: string; breachRate: number; targetRate: number }[]>({
+    queryKey: ["slaBreachRate"],
+    queryFn: async () => {
+      if (!actor) return [];
+      const result = await (
+        actor as unknown as Record<string, (t: string) => Promise<unknown>>
+      ).getSLABreachRatePerStage("");
+      const r = result as { ok?: [string, number][]; err?: string };
+      if (r.err !== undefined) return [];
+      return (r.ok ?? []).map(([name, value]) => ({
+        name,
+        breachRate: Number(value),
+        targetRate: 15,
+      }));
+    },
+    enabled: !!actor && !isFetching,
+  });
+}
+
+export interface RepScorecard {
+  userId: string;
+  username: string;
+  displayName: string;
+  totalDealValueClosed: number;
+  closedDealsCount: number;
+  avgDealCycleTime: number;
+  winRate: number;
+  activityCount: number;
+}
+
+export function useRepScorecards() {
+  const { actor, isFetching } = useBackend();
+  return useQuery<RepScorecard[]>({
+    queryKey: ["repScorecards"],
+    queryFn: async () => {
+      if (!actor) return [];
+      const result = await (
+        actor as unknown as Record<string, (t: string) => Promise<unknown>>
+      ).getRepScorecards("");
+      const r = result as { ok?: Array<Record<string, unknown>>; err?: string };
+      if (r.err !== undefined) return [];
+      return (r.ok ?? []).map((s) => ({
+        userId: String(s.userId ?? ""),
+        username: String(s.username ?? ""),
+        displayName: String(s.displayName ?? ""),
+        totalDealValueClosed: Number(s.totalDealValueClosed ?? 0),
+        closedDealsCount: Number(s.closedDealsCount ?? 0),
+        avgDealCycleTime: Number(s.avgDealCycleTime ?? 0),
+        winRate: Number(s.winRate ?? 0),
+        activityCount: Number(s.activityCount ?? 0),
+      }));
+    },
+    enabled: !!actor && !isFetching,
+  });
+}
