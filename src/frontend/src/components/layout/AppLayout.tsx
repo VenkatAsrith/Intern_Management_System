@@ -42,6 +42,32 @@ export function AppLayout() {
         handler: () => setShortcutPanelOpen((v) => !v),
         description: "Toggle keyboard shortcuts panel",
       },
+      {
+        key: "t",
+        ctrl: false,
+        handler: () => window.dispatchEvent(new CustomEvent("open-new-task")),
+        description: "Open new task modal",
+      },
+      {
+        key: "n",
+        ctrl: false,
+        handler: () => window.dispatchEvent(new CustomEvent("open-new-note")),
+        description: "Open new note modal",
+      },
+      {
+        key: "m",
+        ctrl: false,
+        handler: () =>
+          window.dispatchEvent(new CustomEvent("focus-message-input")),
+        description: "Focus message input",
+      },
+      {
+        key: "a",
+        ctrl: false,
+        handler: () =>
+          window.dispatchEvent(new CustomEvent("open-announcement")),
+        description: "Open announcement modal",
+      },
     ],
     [],
   );

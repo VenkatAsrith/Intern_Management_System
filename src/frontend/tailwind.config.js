@@ -122,6 +122,10 @@ export default {
         "card-hover": '0 12px 24px 0 rgba(0,0,0,0.25)',
         elevated: '0 8px 16px 0 rgba(0,0,0,0.2)',
         pipeline: '0 4px 12px 0 rgba(0,0,0,0.15)',
+        "chat-hover": '0 4px 12px 0 rgba(0,0,0,0.15)',
+        "notes-card": '0 2px 8px 0 rgba(0,0,0,0.12)',
+        "task-card": '0 2px 8px 0 rgba(0,0,0,0.12)',
+        "timeline-node": '0 0 12px 0 rgba(231,21,20,0.1)',
       },
       keyframes: {
         "accordion-down": {

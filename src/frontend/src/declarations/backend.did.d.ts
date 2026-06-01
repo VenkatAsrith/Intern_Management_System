@@ -76,6 +76,23 @@ export interface AuditEvent {
   'afterState' : [] | [string],
   'ipAddress' : [] | [string],
 }
+export interface Channel {
+  'id' : string,
+  'name' : string,
+  'createdAt' : bigint,
+  'createdBy' : string,
+  'spaceId' : string,
+  'memberIds' : Array<string>,
+}
+export interface ChannelMessage {
+  'id' : string,
+  'content' : string,
+  'channelId' : string,
+  'createdAt' : bigint,
+  'senderName' : string,
+  'mentions' : Array<string>,
+  'senderId' : string,
+}
 export interface Client {
   'id' : string,
   'dealProbability' : bigint,
@@ -158,6 +175,16 @@ export type ClientStatus = { 'discoveryCallDone' : null } |
   { 'negotiation' : null } |
   { 'onHold' : null } |
   { 'closedLost' : null };
+export interface CompositePerformanceScore {
+  'learningScore' : bigint,
+  'improvementSuggestions' : Array<string>,
+  'overallScore' : bigint,
+  'internId' : string,
+  'productivityScore' : bigint,
+  'computedAt' : bigint,
+  'attendanceScore' : bigint,
+  'communicationScore' : bigint,
+}
 export interface ContactPerson {
   'id' : string,
   'name' : string,
@@ -189,6 +216,14 @@ export interface CreateClientRequest {
   'location' : string,
   'followUpDate' : [] | [bigint],
 }
+export interface CreateDailyNotePayload {
+  'workedOn' : string,
+  'blockers' : string,
+  'internId' : string,
+  'date' : string,
+  'progress' : string,
+  'learningUpdates' : string,
+}
 export interface CreateInternPayload {
   'status' : Status,
   'experienceLevel' : ExperienceLevel,
@@ -201,6 +236,14 @@ export interface CreateInternPayload {
   'department' : string,
   'adminNotes' : string,
 }
+export interface CreateMeetingPayload {
+  'title' : string,
+  'joinLink' : [] | [string],
+  'meetingType' : string,
+  'durationMinutes' : bigint,
+  'participantIds' : Array<string>,
+  'scheduledAt' : bigint,
+}
 export interface CreatePerformancePayload {
   'month' : bigint,
   'overallScore' : number,
@@ -211,6 +254,35 @@ export interface CreatePerformancePayload {
   'taskScore' : number,
   'communicationScore' : number,
   'adminNotes' : string,
+}
+export interface CreateSubmissionPayload {
+  'title' : string,
+  'githubLink' : [] | [string],
+  'internId' : string,
+  'description' : string,
+  'fileUrls' : Array<string>,
+  'driveLink' : [] | [string],
+  'taskId' : [] | [string],
+}
+export interface CreateTaskPayload {
+  'title' : string,
+  'tags' : Array<string>,
+  'description' : string,
+  'deadline' : [] | [bigint],
+  'assignedInternId' : string,
+  'teamSpace' : string,
+  'priority' : string,
+}
+export interface DailyNote {
+  'id' : string,
+  'workedOn' : string,
+  'adminComments' : Array<NoteComment>,
+  'blockers' : string,
+  'internId' : string,
+  'date' : string,
+  'createdAt' : bigint,
+  'progress' : string,
+  'learningUpdates' : string,
 }
 export interface DashboardSnapshot {
   'totalRevenueYTD' : number,
@@ -231,6 +303,33 @@ export interface DashboardStats {
   'activeInterns' : bigint,
   'learningCount' : bigint,
   'avgPerformance' : number,
+}
+export interface DirectMessage {
+  'id' : string,
+  'content' : string,
+  'createdAt' : bigint,
+  'isRead' : boolean,
+  'toUserId' : string,
+  'fromUserId' : string,
+}
+export interface DocumentRecord {
+  'internId' : string,
+  'fileName' : string,
+  'isArchived' : boolean,
+  'currentVersion' : string,
+  'category' : string,
+  'versions' : Array<DocumentVersion>,
+  'docType' : string,
+  'docId' : string,
+}
+export interface DocumentVersion {
+  'id' : string,
+  'generatedAt' : bigint,
+  'generatedBy' : string,
+  'approvalStatus' : string,
+  'version' : string,
+  'notes' : string,
+  'docType' : string,
 }
 export type ExperienceLevel = { 'Mid' : null } |
   { 'Junior' : null } |
@@ -331,11 +430,31 @@ export interface ListInternsFilter {
   'status' : [] | [Status],
   'space' : [] | [Space],
 }
+export interface Meeting {
+  'id' : string,
+  'title' : string,
+  'joinLink' : [] | [string],
+  'createdAt' : bigint,
+  'createdBy' : string,
+  'meetingType' : string,
+  'durationMinutes' : bigint,
+  'participantIds' : Array<string>,
+  'reminderSentAt' : [] | [bigint],
+  'scheduledAt' : bigint,
+}
 export interface MonthlyAnalyticsEntry {
   'month' : string,
   'approved' : bigint,
   'newLeads' : bigint,
   'rejected' : bigint,
+}
+export interface NoteComment {
+  'id' : string,
+  'status' : string,
+  'content' : string,
+  'authorId' : string,
+  'createdAt' : bigint,
+  'authorName' : string,
 }
 export interface Notification {
   'id' : string,
@@ -402,6 +521,23 @@ export type PriorityLevel = { 'low' : null } |
   { 'high' : null } |
   { 'urgent' : null } |
   { 'medium' : null };
+export interface ProjectMilestone {
+  'id' : string,
+  'status' : string,
+  'completedAt' : [] | [bigint],
+  'name' : string,
+}
+export interface ProjectParticipation {
+  'id' : string,
+  'status' : string,
+  'projectName' : string,
+  'internId' : string,
+  'role' : string,
+  'completionPercent' : bigint,
+  'deliverables' : Array<string>,
+  'startDate' : string,
+  'milestones' : Array<ProjectMilestone>,
+}
 export interface RepScorecard {
   'totalDealValueClosed' : number,
   'username' : string,
@@ -434,6 +570,29 @@ export interface StatusHistoryEntry {
   'note' : string,
   'adminName' : string,
   'timestamp' : bigint,
+}
+export interface Task {
+  'id' : string,
+  'status' : string,
+  'title' : string,
+  'createdAt' : bigint,
+  'createdBy' : string,
+  'tags' : Array<string>,
+  'description' : string,
+  'deadline' : [] | [bigint],
+  'updatedAt' : bigint,
+  'assignedInternId' : string,
+  'teamSpace' : string,
+  'priority' : string,
+}
+export interface TimelineMilestone {
+  'id' : string,
+  'completedAt' : [] | [bigint],
+  'title' : string,
+  'internId' : string,
+  'createdAt' : bigint,
+  'description' : [] | [string],
+  'milestoneType' : string,
 }
 export interface UpdateClientRequest {
   'source' : [] | [string],
@@ -479,6 +638,16 @@ export interface UpdatePerformancePayload {
   'communicationScore' : number,
   'adminNotes' : string,
 }
+export interface UpdateTaskPayload {
+  'status' : [] | [string],
+  'title' : [] | [string],
+  'tags' : [] | [Array<string>],
+  'description' : [] | [string],
+  'deadline' : [] | [bigint],
+  'assignedInternId' : [] | [string],
+  'teamSpace' : [] | [string],
+  'priority' : [] | [string],
+}
 export interface UserAccount {
   'id' : string,
   'username' : string,
@@ -489,6 +658,21 @@ export interface UserAccount {
   'passwordHash' : string,
   'spaces' : Array<string>,
 }
+export interface WorkSubmission {
+  'id' : string,
+  'status' : string,
+  'title' : string,
+  'githubLink' : [] | [string],
+  'internId' : string,
+  'createdAt' : bigint,
+  'description' : string,
+  'fileUrls' : Array<string>,
+  'reviewedAt' : [] | [bigint],
+  'reviewedBy' : [] | [string],
+  'driveLink' : [] | [string],
+  'taskId' : [] | [string],
+  'adminFeedback' : [] | [string],
+}
 export interface WorkflowExecution {
   'id' : string,
   'ruleName' : string,
@@ -498,6 +682,15 @@ export interface WorkflowExecution {
   'errorMessage' : [] | [string],
   'recordsProcessed' : bigint,
   'triggeredAt' : bigint,
+}
+export interface WorkspaceData {
+  'tasks' : Array<Task>,
+  'meetings' : Array<Meeting>,
+  'submissions' : Array<WorkSubmission>,
+  'notes' : Array<DailyNote>,
+  'channelMessages' : Array<ChannelMessage>,
+  'directMessages' : Array<DirectMessage>,
+  'milestones' : Array<TimelineMilestone>,
 }
 export interface _SERVICE {
   'addClientActivity' : ActorMethod<
@@ -515,9 +708,29 @@ export interface _SERVICE {
     { 'ok' : Client } |
       { 'err' : string }
   >,
+  'addDocumentVersion' : ActorMethod<
+    [string, string, string, string],
+    { 'ok' : DocumentRecord } |
+      { 'err' : string }
+  >,
+  'addNoteComment' : ActorMethod<
+    [string, string, string, string],
+    { 'ok' : DailyNote } |
+      { 'err' : string }
+  >,
   'addPerformance' : ActorMethod<
     [string, CreatePerformancePayload],
     { 'ok' : Performance } |
+      { 'err' : string }
+  >,
+  'addProjectMilestone' : ActorMethod<
+    [string, string, string, string],
+    { 'ok' : ProjectParticipation } |
+      { 'err' : string }
+  >,
+  'addTimelineMilestone' : ActorMethod<
+    [string, string, string, [] | [string], string],
+    { 'ok' : TimelineMilestone } |
       { 'err' : string }
   >,
   'approveRequest' : ActorMethod<
@@ -525,9 +738,19 @@ export interface _SERVICE {
     { 'ok' : ApprovalRequest } |
       { 'err' : string }
   >,
+  'archiveDocument' : ActorMethod<
+    [string, string],
+    { 'ok' : boolean } |
+      { 'err' : string }
+  >,
   'captureWonLostReason' : ActorMethod<
     [string, string],
     { 'ok' : Client } |
+      { 'err' : string }
+  >,
+  'computeCompositeScore' : ActorMethod<
+    [string, string],
+    { 'ok' : CompositePerformanceScore } |
       { 'err' : string }
   >,
   'createAnnouncement' : ActorMethod<
@@ -545,9 +768,24 @@ export interface _SERVICE {
     { 'ok' : ApprovalRequest } |
       { 'err' : string }
   >,
+  'createChannel' : ActorMethod<
+    [string, string, string, Array<string>],
+    { 'ok' : Channel } |
+      { 'err' : string }
+  >,
   'createClient' : ActorMethod<
     [CreateClientRequest],
     { 'ok' : Client } |
+      { 'err' : string }
+  >,
+  'createDailyNote' : ActorMethod<
+    [string, CreateDailyNotePayload],
+    { 'ok' : DailyNote } |
+      { 'err' : string }
+  >,
+  'createDocumentRecord' : ActorMethod<
+    [string, string, string, string, string, string, string],
+    { 'ok' : DocumentRecord } |
       { 'err' : string }
   >,
   'createIntern' : ActorMethod<
@@ -579,6 +817,21 @@ export interface _SERVICE {
     { 'ok' : Notification } |
       { 'err' : string }
   >,
+  'createProjectParticipation' : ActorMethod<
+    [string, string, string, string, string, Array<string>],
+    { 'ok' : ProjectParticipation } |
+      { 'err' : string }
+  >,
+  'createSubmission' : ActorMethod<
+    [string, CreateSubmissionPayload],
+    { 'ok' : WorkSubmission } |
+      { 'err' : string }
+  >,
+  'createTask' : ActorMethod<
+    [string, CreateTaskPayload],
+    { 'ok' : Task } |
+      { 'err' : string }
+  >,
   'createUser' : ActorMethod<
     [string, string, string, string, Array<string>, string],
     { 'ok' : UserAccount } |
@@ -605,6 +858,11 @@ export interface _SERVICE {
     { 'ok' : { 'deleted' : boolean, 'approvalId' : [] | [string] } } |
       { 'err' : string }
   >,
+  'deleteDocument' : ActorMethod<
+    [string, string],
+    { 'ok' : boolean } |
+      { 'err' : string }
+  >,
   'deleteIntern' : ActorMethod<
     [string, string],
     { 'ok' : boolean } |
@@ -620,12 +878,18 @@ export interface _SERVICE {
     { 'ok' : boolean } |
       { 'err' : string }
   >,
+  'deleteTask' : ActorMethod<
+    [string, string],
+    { 'ok' : boolean } |
+      { 'err' : string }
+  >,
   'deleteUser' : ActorMethod<
     [string, string],
     { 'ok' : null } |
       { 'err' : string }
   >,
   'getActivities' : ActorMethod<[[] | [string]], Array<Activity>>,
+  'getAllTasks' : ActorMethod<[string], Array<Task>>,
   'getAnalyticsDashboard' : ActorMethod<[], AnalyticsData>,
   'getAnnouncementsBySpace' : ActorMethod<
     [string, [] | [string]],
@@ -638,11 +902,19 @@ export interface _SERVICE {
       { 'err' : string }
   >,
   'getCRMFunnelData' : ActorMethod<[], Array<[string, bigint]>>,
+  'getChannelMessages' : ActorMethod<
+    [string, string],
+    { 'ok' : Array<ChannelMessage> } |
+      { 'err' : string }
+  >,
+  'getChannelsForUser' : ActorMethod<[string], Array<Channel>>,
   'getClient' : ActorMethod<[string], { 'ok' : Client } | { 'err' : string }>,
   'getClientActivities' : ActorMethod<[string], Array<ClientActivity>>,
   'getClientAnalytics' : ActorMethod<[], ClientAnalytics>,
   'getClientComments' : ActorMethod<[string], Array<ClientComment>>,
   'getClientInvoices' : ActorMethod<[string], Array<Invoice>>,
+  'getCompositeScore' : ActorMethod<[string], [] | [CompositePerformanceScore]>,
+  'getDailyNotesByIntern' : ActorMethod<[string, string], Array<DailyNote>>,
   'getDashboardSnapshot' : ActorMethod<
     [string],
     { 'ok' : DashboardSnapshot } |
@@ -650,6 +922,18 @@ export interface _SERVICE {
   >,
   'getDashboardStats' : ActorMethod<[], DashboardStats>,
   'getDealCycleTime' : ActorMethod<[], bigint>,
+  'getDirectMessages' : ActorMethod<
+    [string, string],
+    { 'ok' : Array<DirectMessage> } |
+      { 'err' : string }
+  >,
+  'getDocumentById' : ActorMethod<[string, string], [] | [DocumentRecord]>,
+  'getDocumentVersionHistory' : ActorMethod<
+    [string, string],
+    { 'ok' : Array<DocumentVersion> } |
+      { 'err' : string }
+  >,
+  'getDocumentsByIntern' : ActorMethod<[string, string], Array<DocumentRecord>>,
   'getFollowUpComplianceRate' : ActorMethod<
     [string],
     { 'ok' : Array<[string, number]> } |
@@ -657,6 +941,8 @@ export interface _SERVICE {
   >,
   'getIntern' : ActorMethod<[string], [] | [Intern]>,
   'getLostDealAnalysis' : ActorMethod<[], Array<[string, bigint, bigint]>>,
+  'getMeetingsForIntern' : ActorMethod<[string, string], Array<Meeting>>,
+  'getMeetingsForUser' : ActorMethod<[string], Array<Meeting>>,
   'getNotificationPreferences' : ActorMethod<
     [string],
     { 'ok' : Array<NotificationPreference> } |
@@ -672,6 +958,10 @@ export interface _SERVICE {
     { 'ok' : Array<[string, number]> } |
       { 'err' : string }
   >,
+  'getProjectsByIntern' : ActorMethod<
+    [string, string],
+    Array<ProjectParticipation>
+  >,
   'getRepScorecards' : ActorMethod<
     [string],
     { 'ok' : Array<RepScorecard> } |
@@ -684,12 +974,27 @@ export interface _SERVICE {
   >,
   'getSLARules' : ActorMethod<[], Array<[string, bigint]>>,
   'getStageHistory' : ActorMethod<[string], Array<InternPipelineStageHistory>>,
+  'getSubmissionsByIntern' : ActorMethod<
+    [string, string],
+    Array<WorkSubmission>
+  >,
+  'getTasksByIntern' : ActorMethod<[string, string], Array<Task>>,
+  'getTasksBySpace' : ActorMethod<[string, string], Array<Task>>,
+  'getTimelineForIntern' : ActorMethod<
+    [string, string],
+    Array<TimelineMilestone>
+  >,
   'getUserById' : ActorMethod<
     [string, string],
     { 'ok' : UserAccount } |
       { 'err' : string }
   >,
   'getWinRateByMember' : ActorMethod<[], Array<[string, bigint, bigint]>>,
+  'getWorkspaceData' : ActorMethod<
+    [string, string],
+    { 'ok' : WorkspaceData } |
+      { 'err' : string }
+  >,
   'initSampleData' : ActorMethod<[], bigint>,
   'listAnnouncements' : ActorMethod<[boolean], Array<Announcement>>,
   'listApprovalRequests' : ActorMethod<
@@ -739,6 +1044,11 @@ export interface _SERVICE {
       { 'err' : string }
   >,
   'markAsRead' : ActorMethod<[string], { 'ok' : null } | { 'err' : string }>,
+  'markDirectMessageRead' : ActorMethod<
+    [string, string],
+    { 'ok' : boolean } |
+      { 'err' : string }
+  >,
   'pinClientComment' : ActorMethod<
     [string, boolean],
     { 'ok' : ClientComment } |
@@ -756,7 +1066,22 @@ export interface _SERVICE {
   >,
   'runAllAutomationJobs' : ActorMethod<[], undefined>,
   'runAutomationJobs' : ActorMethod<[string], undefined>,
+  'scheduleMeeting' : ActorMethod<
+    [string, CreateMeetingPayload],
+    { 'ok' : Meeting } |
+      { 'err' : string }
+  >,
   'seedSampleData' : ActorMethod<[], undefined>,
+  'sendChannelMessage' : ActorMethod<
+    [string, string, string, Array<string>],
+    { 'ok' : ChannelMessage } |
+      { 'err' : string }
+  >,
+  'sendDirectMessage' : ActorMethod<
+    [string, string, string],
+    { 'ok' : DirectMessage } |
+      { 'err' : string }
+  >,
   'setNotificationPreference' : ActorMethod<
     [string, string, boolean, string],
     { 'ok' : null } |
@@ -785,6 +1110,11 @@ export interface _SERVICE {
   'updateContact' : ActorMethod<
     [string, string, ContactPerson],
     { 'ok' : Client } |
+      { 'err' : string }
+  >,
+  'updateDocumentApproval' : ActorMethod<
+    [string, string, string, string],
+    { 'ok' : DocumentRecord } |
       { 'err' : string }
   >,
   'updateDocumentState' : ActorMethod<
@@ -840,14 +1170,41 @@ export interface _SERVICE {
     { 'ok' : Invoice } |
       { 'err' : string }
   >,
+  'updateMilestone' : ActorMethod<
+    [string, string, string, string, string],
+    { 'ok' : ProjectParticipation } |
+      { 'err' : string }
+  >,
   'updatePerformance' : ActorMethod<
     [string, string, UpdatePerformancePayload],
     { 'ok' : Performance } |
       { 'err' : string }
   >,
+  'updateProjectParticipation' : ActorMethod<
+    [
+      string,
+      string,
+      string,
+      [] | [string],
+      [] | [bigint],
+      [] | [Array<string>],
+    ],
+    { 'ok' : ProjectParticipation } |
+      { 'err' : string }
+  >,
   'updateProposalStatus' : ActorMethod<
     [string, string, bigint],
     { 'ok' : Client } |
+      { 'err' : string }
+  >,
+  'updateSubmissionStatus' : ActorMethod<
+    [string, string, string, [] | [string]],
+    { 'ok' : WorkSubmission } |
+      { 'err' : string }
+  >,
+  'updateTask' : ActorMethod<
+    [string, string, UpdateTaskPayload],
+    { 'ok' : Task } |
       { 'err' : string }
   >,
   'updateUser' : ActorMethod<

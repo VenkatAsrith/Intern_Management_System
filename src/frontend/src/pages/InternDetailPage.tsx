@@ -1,11 +1,21 @@
 import { ActivityLog } from "@/components/intern-detail/ActivityLog";
+import { downloadDocument } from "@/components/intern-detail/CertificateGenerator";
+import { CommunicationTab } from "@/components/intern-detail/CommunicationTab";
+import { DashboardTab } from "@/components/intern-detail/DashboardTab";
 import { DocumentsTab } from "@/components/intern-detail/DocumentsTab";
 import {
   EmailComposeModal,
   type EmailLogEntry,
 } from "@/components/intern-detail/EmailComposeModal";
+import { EnhancedHeroCard } from "@/components/intern-detail/EnhancedHeroCard";
+import { JournalTab } from "@/components/intern-detail/JournalTab";
+import { MeetingsTab } from "@/components/intern-detail/MeetingsTab";
 import { OverviewTab } from "@/components/intern-detail/OverviewTab";
+import { PerformanceCenterTab } from "@/components/intern-detail/PerformanceCenterTab";
 import { PerformanceTab } from "@/components/intern-detail/PerformanceTab";
+import { ProjectsTab } from "@/components/intern-detail/ProjectsTab";
+import { TaskCenterTab } from "@/components/intern-detail/TaskCenterTab";
+import { TimelineTab } from "@/components/intern-detail/TimelineTab";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,7 +31,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAuth } from "@/hooks/use-auth";
+import { useCompositeScore } from "@/hooks/use-composite-score";
 import { useActivities } from "@/hooks/use-dashboard";
+import { useDocumentRecords } from "@/hooks/use-document-records";
 import {
   useDeleteIntern,
   useIntern,
@@ -40,6 +53,7 @@ import { Link, useNavigate, useParams } from "@tanstack/react-router";
 import {
   ArrowLeft,
   Clock,
+  LayoutDashboard,
   Mail,
   MessageCircle,
   Pencil,
@@ -152,13 +166,13 @@ function EmailHistoryPanel({
   );
 }
 
-const spaceColors: Record<string, string> = {
+const _spaceColors: Record<string, string> = {
   Org: "bg-red-500/20 text-red-400 border-red-500/30",
   Marketing: "bg-blue-500/20 text-blue-400 border-blue-500/30",
   Learning: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
 };
 
-const statusColors: Record<string, string> = {
+const _statusColors: Record<string, string> = {
   Active: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
   Completed: "bg-muted text-muted-foreground border-border",
   OnHold: "bg-amber-500/20 text-amber-400 border-amber-500/30",
@@ -187,7 +201,7 @@ function HeroSkeleton() {
   );
 }
 
-function InternAvatar({ intern }: { intern: Intern }) {
+function _InternAvatar({ intern }: { intern: Intern }) {
   if (intern.profilePicCid) {
     return (
       <img
@@ -217,9 +231,13 @@ function InternAvatar({ intern }: { intern: Intern }) {
 export function InternDetailPage() {
   const { id } = useParams({ from: "/protected/layout/interns/$id" });
   const navigate = useNavigate();
+  const { isAdmin } = useAuth();
   const { data: intern, isLoading } = useIntern(id);
-  const { data: performances = [] } = usePerformances(id);
+  const { data: performances = [], isLoading: performancesLoading } =
+    usePerformances(id);
   const { data: activities = [] } = useActivities(id);
+  const { data: compositeScore = null } = useCompositeScore(id || "");
+  const { data: _documentRecords = [] } = useDocumentRecords(id || "");
   const logWhatsApp = useLogWhatsApp();
   const updateDoc = useUpdateDocumentState();
   const deleteIntern = useDeleteIntern();
@@ -300,130 +318,143 @@ export function InternDetailPage() {
       className="p-4 sm:p-6 space-y-5 max-w-6xl mx-auto"
       data-ocid="intern_detail.page"
     >
-      {/* Hero Card */}
-      <div className="bg-card border border-border rounded-2xl p-5 sm:p-6">
-        <div className="flex flex-col sm:flex-row items-start gap-5">
-          <InternAvatar intern={intern} />
-
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-3 flex-wrap">
-              <h1 className="text-2xl font-bold text-foreground leading-tight">
-                {intern.name}
-              </h1>
-              <Badge className={`text-xs border ${spaceColors[intern.space]}`}>
-                {intern.space}
-              </Badge>
-              <Badge
-                className={`text-xs border ${statusColors[intern.status]}`}
-              >
-                {intern.status}
-              </Badge>
-            </div>
-            <p className="text-sm text-muted-foreground mt-1.5 truncate">
-              {intern.email}
-            </p>
-            <p className="text-sm text-muted-foreground">
-              {intern.phone} &middot; {intern.department}
-            </p>
-          </div>
-
-          <div className="flex items-center gap-2 flex-wrap">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              className="gap-1.5 border-emerald-600/40 text-emerald-400 hover:bg-emerald-500/10"
-              onClick={handleWhatsApp}
-              disabled={logWhatsApp.isPending}
-              data-ocid="intern_detail.whatsapp_button"
-            >
-              <MessageCircle className="h-3.5 w-3.5" /> WhatsApp
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              className="gap-1.5"
-              onClick={() => openEmailModal("Offer Letter")}
-              data-ocid="intern_detail.email_button"
-            >
-              <Mail className="h-3.5 w-3.5" /> Email
-            </Button>
-            <Link to="/interns/$id/edit" params={{ id }}>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="gap-1.5"
-                data-ocid="intern_detail.edit_button"
-              >
-                <Pencil className="h-3.5 w-3.5" /> Edit
-              </Button>
-            </Link>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button
-                  type="button"
-                  variant="destructive"
-                  size="sm"
-                  className="gap-1.5"
-                  data-ocid="intern_detail.delete_button"
-                >
-                  <Trash2 className="h-3.5 w-3.5" /> Delete
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent data-ocid="intern_detail.dialog">
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Delete Intern</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Are you sure you want to delete{" "}
-                    <strong>{intern.name}</strong>? This action cannot be undone
-                    and will remove all performance records and activity logs.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel data-ocid="intern_detail.cancel_button">
-                    Cancel
-                  </AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={handleDelete}
-                    className="bg-destructive hover:bg-destructive/90"
-                    data-ocid="intern_detail.confirm_button"
-                  >
-                    Delete Intern
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </div>
-        </div>
-      </div>
+      {/* Enhanced Hero Card */}
+      <EnhancedHeroCard
+        intern={intern}
+        performances={performances}
+        compositeScore={compositeScore}
+        onWhatsApp={handleWhatsApp}
+        onEmail={() => setEmailModalOpen(true)}
+        onEdit={() => navigate({ to: "/interns/$id/edit", params: { id } })}
+        onDelete={handleDelete}
+        isWhatsAppPending={logWhatsApp.isPending}
+        onGenerateCertificate={() => downloadDocument(intern, "certificate")}
+        onGenerateOfferLetter={() => downloadDocument(intern, "offer")}
+        onGenerateCompletionLetter={() =>
+          downloadDocument(intern, "completion")
+        }
+      />
 
       {/* Tabs */}
       <Tabs defaultValue="overview" data-ocid="intern_detail.tabs">
-        <TabsList className="w-full sm:w-auto bg-card border border-border">
-          <TabsTrigger value="overview" data-ocid="intern_detail.overview_tab">
+        <TabsList className="w-full bg-card border border-border overflow-x-auto whitespace-nowrap flex-nowrap flex">
+          <TabsTrigger
+            value="overview"
+            className="whitespace-nowrap"
+            data-ocid="intern_detail.overview_tab"
+          >
             Overview
           </TabsTrigger>
           <TabsTrigger
+            value="dashboard"
+            className="whitespace-nowrap"
+            data-ocid="intern_detail.dashboard_tab"
+          >
+            Dashboard
+          </TabsTrigger>
+          <TabsTrigger
+            value="tasks"
+            className="whitespace-nowrap"
+            data-ocid="intern_detail.tasks_tab"
+          >
+            Tasks
+          </TabsTrigger>
+          <TabsTrigger
+            value="journal"
+            className="whitespace-nowrap"
+            data-ocid="intern_detail.journal_tab"
+          >
+            Journal
+          </TabsTrigger>
+          <TabsTrigger
+            value="performance"
+            className="whitespace-nowrap"
+            data-ocid="intern_detail.performance_tab"
+          >
+            Performance
+          </TabsTrigger>
+          <TabsTrigger
             value="documents"
+            className="whitespace-nowrap"
             data-ocid="intern_detail.documents_tab"
           >
             Documents
           </TabsTrigger>
           <TabsTrigger
-            value="performance"
-            data-ocid="intern_detail.performance_tab"
+            value="projects"
+            className="whitespace-nowrap"
+            data-ocid="intern_detail.projects_tab"
           >
-            Performance
+            Projects
           </TabsTrigger>
-          <TabsTrigger value="email" data-ocid="intern_detail.email_tab">
+          <TabsTrigger
+            value="meetings"
+            className="whitespace-nowrap"
+            data-ocid="intern_detail.meetings_tab"
+          >
+            Meetings
+          </TabsTrigger>
+          <TabsTrigger
+            value="communication"
+            className="whitespace-nowrap"
+            data-ocid="intern_detail.communication_tab"
+          >
+            Communication
+          </TabsTrigger>
+          <TabsTrigger
+            value="timeline"
+            className="whitespace-nowrap"
+            data-ocid="intern_detail.timeline_tab"
+          >
+            Timeline
+          </TabsTrigger>
+          <TabsTrigger
+            value="email"
+            className="whitespace-nowrap"
+            data-ocid="intern_detail.email_tab"
+          >
             Email History
           </TabsTrigger>
-          <TabsTrigger value="activity" data-ocid="intern_detail.activity_tab">
+          <TabsTrigger
+            value="activity"
+            className="whitespace-nowrap"
+            data-ocid="intern_detail.activity_tab"
+          >
             Activity Log
           </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="dashboard" className="mt-4">
+          <DashboardTab
+            intern={intern}
+            performances={performances}
+            compositeScore={compositeScore}
+          />
+        </TabsContent>
+
+        <TabsContent value="tasks" className="mt-4">
+          <TaskCenterTab internId={id || ""} isAdmin={isAdmin()} />
+        </TabsContent>
+
+        <TabsContent value="journal" className="mt-4">
+          <JournalTab internId={id || ""} />
+        </TabsContent>
+
+        <TabsContent value="projects" className="mt-4">
+          <ProjectsTab internId={id || ""} isAdmin={isAdmin()} />
+        </TabsContent>
+
+        <TabsContent value="meetings" className="mt-4">
+          <MeetingsTab internId={id || ""} isAdmin={isAdmin()} />
+        </TabsContent>
+
+        <TabsContent value="communication" className="mt-4">
+          <CommunicationTab internId={id || ""} internName={intern.name} />
+        </TabsContent>
+
+        <TabsContent value="timeline" className="mt-4">
+          <TimelineTab intern={intern} />
+        </TabsContent>
 
         <TabsContent value="overview" className="mt-4 space-y-4">
           <OverviewTab intern={intern} />
@@ -525,7 +556,13 @@ export function InternDetailPage() {
           />
         </TabsContent>
 
-        <TabsContent value="performance" className="mt-4">
+        <TabsContent value="performance" className="mt-4 space-y-4">
+          <PerformanceCenterTab
+            internId={id || ""}
+            performances={performances}
+            compositeScore={compositeScore}
+            isLoading={performancesLoading}
+          />
           <PerformanceTab
             internId={id}
             performances={performances}

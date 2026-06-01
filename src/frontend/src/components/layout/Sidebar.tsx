@@ -6,14 +6,20 @@ import { cn } from "@/lib/utils";
 import { Link, useLocation } from "@tanstack/react-router";
 import {
   BarChart3,
+  BookOpen,
   Briefcase,
   Calendar,
+  CheckSquare,
   ClipboardList,
+  Hash,
   KanbanSquare,
   LayoutDashboard,
   Megaphone,
+  MessageSquare,
   Settings,
   ShieldCheck,
+  Target,
+  Upload,
   Users,
   X,
 } from "lucide-react";
@@ -27,6 +33,14 @@ interface SidebarProps {
 const coreNavItems = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/interns", label: "Interns", icon: Users },
+];
+
+const workspaceNavItems = [
+  { to: "/channels", label: "Channels", icon: Hash },
+  { to: "/notes", label: "Daily Notes", icon: BookOpen },
+  { to: "/submissions", label: "Submissions", icon: Upload },
+  { to: "/tasks", label: "Tasks", icon: CheckSquare },
+  { to: "/meetings", label: "Meetings", icon: Calendar },
 ];
 
 const crmNavItems = [
@@ -50,6 +64,7 @@ const spaceItems = [
 ];
 
 const adminNavItems = [
+  { to: "/admin/control-center", label: "Control Center", icon: Target },
   { to: "/admin/users", label: "Users", icon: Users },
   { to: "/admin/approvals", label: "Approvals", icon: ClipboardList },
   { to: "/admin/audit", label: "Audit Log", icon: ShieldCheck },
@@ -144,7 +159,6 @@ export function Sidebar({ open, onClose }: SidebarProps) {
               </Link>
             );
           })}
-
           {/* Spaces sub-section under Core */}
           <div className="px-2 pt-1 pb-0.5 flex flex-col gap-1.5">
             {spaceItems.map(({ label, icon: Icon, color }) => (
@@ -166,9 +180,32 @@ export function Sidebar({ open, onClose }: SidebarProps) {
               </Link>
             ))}
           </div>
-
           <Separator className="my-4" />
-
+          {/* Section: WORKSPACE */}
+          <p className="px-2 mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Workspace
+          </p>
+          {workspaceNavItems.map(({ to, label, icon: Icon }) => {
+            const isActive = location.pathname === to;
+            return (
+              <Link
+                key={to}
+                to={to}
+                data-ocid={`sidebar.${label.toLowerCase().replace(/ /g, "_")}_link`}
+                className={cn(
+                  "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+                  isActive
+                    ? "bg-primary/10 text-primary border border-primary/20"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                )}
+              >
+                <Icon className="h-4 w-4 flex-shrink-0" />
+                {label}
+              </Link>
+            );
+          })}
+          <Separator className="my-4" />
+          {/* Section: CRM */} <Separator className="my-4" />
           {/* Section: CRM */}
           <div className="flex items-center justify-between px-2 mb-2">
             <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -178,7 +215,6 @@ export function Sidebar({ open, onClose }: SidebarProps) {
               Clients
             </span>
           </div>
-
           {crmNavItems.map(({ to, label, icon: Icon, shortcut }) => {
             const isActive =
               to === "/clients"
@@ -212,7 +248,6 @@ export function Sidebar({ open, onClose }: SidebarProps) {
               </Link>
             );
           })}
-
           {/* Section: ADMIN */}
           {isAdmin() && (
             <>
@@ -243,7 +278,6 @@ export function Sidebar({ open, onClose }: SidebarProps) {
               ))}
             </>
           )}
-
           {/* Section: SETTINGS */}
           <Separator className="my-4" />
           <p className="px-2 mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">

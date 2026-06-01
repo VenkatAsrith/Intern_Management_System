@@ -28,6 +28,15 @@ const ALL_SHORTCUTS: ShortcutGroup[] = [
     ],
   },
   {
+    section: "IMS / Tasks",
+    rows: [
+      { keys: ["T"], description: "Open new task modal" },
+      { keys: ["N"], description: "Open new daily note modal" },
+      { keys: ["M"], description: "Focus message input in channels" },
+      { keys: ["A"], description: "Open announcement modal" },
+    ],
+  },
+  {
     section: "CRM Table",
     rows: [
       { keys: ["Space"], description: "Preview selected client (split pane)" },

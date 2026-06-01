@@ -125,12 +125,81 @@ const internEditRoute = createRoute({
     ),
 });
 
+const channelsRoute = createRoute({
+  getParentRoute: () => layoutRoute,
+  path: "/channels",
+  component: () =>
+    LazyPage(() =>
+      import("@/pages/ChannelsPage").then((m) => ({ default: m.ChannelsPage })),
+    ),
+});
+
+const dailyNotesRoute = createRoute({
+  getParentRoute: () => layoutRoute,
+  path: "/notes",
+  component: () =>
+    LazyPage(() =>
+      import("@/pages/DailyNotesPage").then((m) => ({
+        default: m.DailyNotesPage,
+      })),
+    ),
+});
+
+const submissionsRoute = createRoute({
+  getParentRoute: () => layoutRoute,
+  path: "/submissions",
+  component: () =>
+    LazyPage(() =>
+      import("@/pages/SubmissionsPage").then((m) => ({
+        default: m.SubmissionsPage,
+      })),
+    ),
+});
+
+const meetingsRoute = createRoute({
+  getParentRoute: () => layoutRoute,
+  path: "/meetings",
+  component: () =>
+    LazyPage(() =>
+      import("@/pages/MeetingsPage").then((m) => ({ default: m.MeetingsPage })),
+    ),
+});
+
+const timelineRoute = createRoute({
+  getParentRoute: () => layoutRoute,
+  path: "/timeline/$internId",
+  component: () =>
+    LazyPage(() =>
+      import("@/pages/TimelinePage").then((m) => ({ default: m.TimelinePage })),
+    ),
+});
+
+const workspaceRoute = createRoute({
+  getParentRoute: () => layoutRoute,
+  path: "/workspace/$internId",
+  component: () =>
+    LazyPage(() =>
+      import("@/pages/WorkspacePage").then((m) => ({
+        default: m.WorkspacePage,
+      })),
+    ),
+});
+
 const settingsRoute = createRoute({
   getParentRoute: () => layoutRoute,
   path: "/settings",
   component: () =>
     LazyPage(() =>
       import("@/pages/SettingsPage").then((m) => ({ default: m.SettingsPage })),
+    ),
+});
+
+const tasksRoute = createRoute({
+  getParentRoute: () => layoutRoute,
+  path: "/tasks",
+  component: () =>
+    LazyPage(() =>
+      import("@/pages/TasksPage").then((m) => ({ default: m.TasksPage })),
     ),
 });
 
@@ -223,6 +292,13 @@ const adminAnnouncementsRoute = createRoute({
   component: () => LazyPage(() => import("@/pages/admin/AnnouncementsPage")),
 });
 
+const adminControlCenterRoute = createRoute({
+  getParentRoute: () => adminLayoutRoute,
+  path: "/admin/control-center",
+  component: () =>
+    LazyPage(() => import("@/pages/admin/AdminControlCenterPage")),
+});
+
 // ─────────────────────────────────────────────────────────────────────────────
 
 const notFoundRoute = createRoute({
@@ -243,11 +319,18 @@ const routeTree = rootRoute.addChildren([
       internDetailRoute,
       internEditRoute,
       settingsRoute,
+      channelsRoute,
+      dailyNotesRoute,
+      submissionsRoute,
+      meetingsRoute,
+      timelineRoute,
+      workspaceRoute,
       clientsRoute,
       clientsKanbanRoute,
       clientsCalendarRoute,
       clientsAnalyticsRoute,
       clientDetailRoute,
+      tasksRoute,
     ]),
   ]),
   adminProtectedRoute.addChildren([
@@ -257,6 +340,7 @@ const routeTree = rootRoute.addChildren([
       adminAuditRoute,
       adminAutomationsRoute,
       adminAnnouncementsRoute,
+      adminControlCenterRoute,
     ]),
   ]),
 ]);

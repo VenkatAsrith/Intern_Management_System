@@ -13,11 +13,15 @@ import Time "mo:core/Time";
 import RbacApi "mixins/rbac-api";
 import AuditApi "mixins/audit-api";
 import RbacTypes "types/rbac";
-import Migration "migration";
+import WorkspaceMixin "mixins/workspace-api";
+import WsTypes "types/workspace";
+import DocumentsMixin "mixins/documents-api";
+import ProjectsMixin "mixins/projects-api";
 
 
 
-(with migration = Migration.run)
+
+
 actor {
 
   // --- Stable state ---
@@ -74,6 +78,24 @@ actor {
   let workflowExecutions = List.empty<ClientTypes.WorkflowExecution>();
   let slaRules = Map.empty<Text, Nat>();
   let automationCounter = { var n : Nat = 0 };
+  // --- Workspace domain state ---
+  let wsTasks = Map.empty<Text, WsTypes.Task>();
+  let wsDailyNotes = Map.empty<Text, WsTypes.DailyNote>();
+  let wsChannels = Map.empty<Text, WsTypes.Channel>();
+  let wsChannelMessages = Map.empty<Text, WsTypes.ChannelMessage>();
+  let wsDirectMessages = Map.empty<Text, WsTypes.DirectMessage>();
+  let wsSubmissions = Map.empty<Text, WsTypes.WorkSubmission>();
+  let wsMeetings = Map.empty<Text, WsTypes.Meeting>();
+  let wsMilestones = Map.empty<Text, WsTypes.TimelineMilestone>();
+  let wsCounter = { var n : Nat = 0 };
+  let notifCounter = { var n : Nat = 0 };
+
+  // V3.5 state: document records, project participations, composite scores
+  let documentRecords       = Map.empty<Text, Types.DocumentRecord>();
+  let projectParticipations = Map.empty<Text, [Types.ProjectParticipation]>();
+  let compositeScores       = Map.empty<Text, Types.CompositePerformanceScore>();
+  let docCounter            = { var n : Nat = 0 };
+  let projCounter           = { var n : Nat = 0 };
 
   // Seed default SLA rules on first init
   slaRules.add("leadCaptured", 48);
@@ -83,7 +105,7 @@ actor {
   slaRules.add("negotiation", 240);
 
   // Include all intern domain API
-  include InternsMixin(interns, performances, activities, idCounter, sessions, stageHistories, notifications);
+  include InternsMixin(interns, performances, activities, idCounter, sessions, stageHistories, notifications, compositeScores, wsTasks, wsDailyNotes, wsSubmissions, wsMeetings);
   // Include all client domain API
   include ClientsMixin(clients, clientActivities, clientComments, invoices, clientIdCounter, invoiceCounter, sessions, dashboardSnapshotState);
   // Include all notifications domain API
@@ -94,6 +116,12 @@ actor {
   include RbacApi(sessions, users, userIdCounter);
   // Include audit + approval API
   include AuditApi(sessions, auditEvents, approvalRequests, approvalCounter);
+  // Include workspace domain API
+  include WorkspaceMixin(wsTasks, wsDailyNotes, wsChannels, wsChannelMessages, wsDirectMessages, wsSubmissions, wsMeetings, wsMilestones, wsCounter, sessions, notifications, notifCounter);
+  // Include documents management API (V3.5)
+  include DocumentsMixin(documentRecords, docCounter, sessions);
+  // Include project participation API (V3.5)
+  include ProjectsMixin(projectParticipations, projCounter, sessions);
 
   // --- Auth endpoints ---
 
@@ -285,6 +313,172 @@ actor {
         #ok intern
       };
     }
+  };
+  // --- Workspace automation timer jobs ---
+
+  // Single heartbeat — Motoko only allows one system func heartbeat.
+  // All periodic workspace automation jobs are called from here.
+  system func heartbeat() : async () {
+    wsJobDeadlineReminder();
+    wsJobInactivityAlert();
+    wsJobOverdueTask();
+    wsJobWeeklySummary();
+  };
+
+  // Deadline reminder helper
+  func wsJobDeadlineReminder() {
+    let now = Time.now();
+    let in24hNs : Int = 24 * 3_600 * 1_000_000_000;
+    for ((_, task) in wsTasks.entries()) {
+      switch (task.deadline) {
+        case null {};
+        case (?dl) {
+          if (task.status != "Completed" and dl > now and dl - now <= in24hNs) {
+            automationCounter.n += 1;
+            let nid = "notif-dl-" # now.toText() # "-" # automationCounter.n.toText();
+            notifications.add(nid, {
+              id               = nid;
+              userId           = task.assignedInternId;
+              notificationType = #taskAssigned;
+              title            = "Deadline Reminder";
+              message          = "Task \"" # task.title # "\" is due within 24 hours";
+              isRead           = false;
+              relatedId        = ?task.id;
+              createdAt        = now;
+              priority         = ?(#high);
+            });
+          };
+        };
+      };
+    };
+  };
+
+  // Inactivity alert helper
+  func wsJobInactivityAlert() {
+    let now = Time.now();
+    let threeDaysNs : Int = 3 * 24 * 3_600 * 1_000_000_000;
+    let internsSeen = Map.empty<Text, Bool>();
+    for ((_, note) in wsDailyNotes.entries()) {
+      if (now - note.createdAt < threeDaysNs) {
+        internsSeen.add(note.internId, true);
+      };
+    };
+    let taskedInterns = Map.empty<Text, Bool>();
+    for ((_, task) in wsTasks.entries()) {
+      if (task.assignedInternId != "") {
+        taskedInterns.add(task.assignedInternId, true);
+      };
+    };
+    for ((iid, _) in taskedInterns.entries()) {
+      if (internsSeen.get(iid) == null) {
+        automationCounter.n += 1;
+        let nid = "notif-ia-" # now.toText() # "-" # automationCounter.n.toText();
+        notifications.add(nid, {
+          id               = nid;
+          userId           = "Venkat";
+          notificationType = #overdueFollowUp;
+          title            = "Intern Inactivity Alert";
+          message          = "Intern " # iid # " has not submitted a daily note in 3+ days";
+          isRead           = false;
+          relatedId        = ?iid;
+          createdAt        = now;
+          priority         = ?(#medium);
+        });
+      };
+    };
+  };
+
+  // Overdue task escalation helper
+  func wsJobOverdueTask() {
+    let now = Time.now();
+    for ((tid, task) in wsTasks.entries()) {
+      switch (task.deadline) {
+        case null {};
+        case (?dl) {
+          if (
+            dl < now and
+            (task.status == "Pending" or task.status == "In Progress")
+          ) {
+            if (task.priority != "High" and task.priority != "Critical") {
+              let escalated : WsTypes.Task = { task with priority = "High"; updatedAt = now };
+              wsTasks.add(tid, escalated);
+            };
+            automationCounter.n += 1;
+            let nid = "notif-ot-" # now.toText() # "-" # automationCounter.n.toText();
+            notifications.add(nid, {
+              id               = nid;
+              userId           = "Venkat";
+              notificationType = #taskOverdue;
+              title            = "Overdue Task Escalated";
+              message          = "Task \"" # task.title # "\" (" # task.assignedInternId # ") is past its deadline";
+              isRead           = false;
+              relatedId        = ?tid;
+              createdAt        = now;
+              priority         = ?(#high);
+            });
+          };
+        };
+      };
+    };
+  };
+
+  // Weekly summary helper
+  func wsJobWeeklySummary() {
+    let now = Time.now();
+    let oneWeekNs : Int = 7 * 24 * 3_600 * 1_000_000_000;
+    let internStats = Map.empty<Text, { var completed : Nat; var total : Nat; var notes : Nat; var subs : Nat }>();
+    for ((_, task) in wsTasks.entries()) {
+      if (task.assignedInternId != "") {
+        let stats = switch (internStats.get(task.assignedInternId)) {
+          case (?s) s;
+          case null {
+            let s = { var completed = 0; var total = 0; var notes = 0; var subs = 0 };
+            internStats.add(task.assignedInternId, s);
+            s;
+          };
+        };
+        stats.total += 1;
+        if (task.status == "Completed") stats.completed += 1;
+      };
+    };
+    for ((_, note) in wsDailyNotes.entries()) {
+      if (now - note.createdAt <= oneWeekNs) {
+        switch (internStats.get(note.internId)) {
+          case (?s) s.notes += 1;
+          case null {
+            let s = { var completed = 0; var total = 0; var notes = 1; var subs = 0 };
+            internStats.add(note.internId, s);
+          };
+        };
+      };
+    };
+    for ((_, sub) in wsSubmissions.entries()) {
+      if (now - sub.createdAt <= oneWeekNs) {
+        switch (internStats.get(sub.internId)) {
+          case (?s) s.subs += 1;
+          case null {
+            let s = { var completed = 0; var total = 0; var notes = 0; var subs = 1 };
+            internStats.add(sub.internId, s);
+          };
+        };
+      };
+    };
+    for ((iid, stats) in internStats.entries()) {
+      let rate = if (stats.total == 0) "N/A" else stats.completed.toText() # "/" # stats.total.toText();
+      automationCounter.n += 1;
+      let nid = "notif-wsum-" # now.toText() # "-" # automationCounter.n.toText();
+      notifications.add(nid, {
+        id               = nid;
+        userId           = "Venkat";
+        notificationType = #announcement;
+        title            = "Weekly Summary: " # iid;
+        message          = "Tasks: " # rate # " | Notes: " # stats.notes.toText() # " | Submissions: " # stats.subs.toText();
+        isRead           = false;
+        relatedId        = ?iid;
+        createdAt        = now;
+        priority         = ?(#low);
+      });
+    };
   };
 };
 

@@ -1,4 +1,4 @@
-// Version: 3.0.0
+// Version: 1.0.0
 type ActivityType__689163928 =
   {
     #callScheduled;
@@ -61,6 +61,25 @@ type AuditEvent__270024353 =
     resourceId : Text;
     resourceType : Text;
     timestamp : Int
+  };
+type ChannelMessage__469919094 =
+  {
+    channelId : Text;
+    content : Text;
+    createdAt : Int;
+    id : Text;
+    mentions : [Text];
+    senderId : Text;
+    senderName : Text
+  };
+type Channel__450269825 =
+  {
+    createdAt : Int;
+    createdBy : Text;
+    id : Text;
+    memberIds : [Text];
+    name : Text;
+    spaceId : Text
   };
 type ClientActivity__557894395 =
   {
@@ -142,6 +161,17 @@ type Client__488727031 =
     whatsappNumber : Text;
     wonLostReason : ?Text
   };
+type CompositePerformanceScore__239231239 =
+  {
+    attendanceScore : Nat;
+    communicationScore : Nat;
+    computedAt : Int;
+    improvementSuggestions : [Text];
+    internId : Text;
+    learningScore : Nat;
+    overallScore : Nat;
+    productivityScore : Nat
+  };
 type ContactPerson__12740296 =
   {
     addedAt : Int;
@@ -151,6 +181,18 @@ type ContactPerson__12740296 =
     name : Text;
     phone : Text;
     role : Text
+  };
+type DailyNote__934196780 =
+  {
+    adminComments : [NoteComment__485884975];
+    blockers : Text;
+    createdAt : Int;
+    date : Text;
+    id : Text;
+    internId : Text;
+    learningUpdates : Text;
+    progress : Text;
+    workedOn : Text
   };
 type DashboardSnapshot__923766974 =
   {
@@ -164,8 +206,38 @@ type DashboardSnapshot__923766974 =
     updatedAt : Int;
     winRateByRep : [(Text, Float)]
   };
-type Data__791452850<K, V> =
-  {var count : Nat__490723111; kvs : [var ?(K, V)]};
+type Data__80296667<K, V> =
+  {var count : Nat__1040412405; kvs : [var ?(K, V)]};
+type DirectMessage__616901426 =
+  {
+    content : Text;
+    createdAt : Int;
+    fromUserId : Text;
+    id : Text;
+    isRead : Bool;
+    toUserId : Text
+  };
+type DocumentRecord__228275040 =
+  {
+    category : Text;
+    currentVersion : Text;
+    docId : Text;
+    docType : Text;
+    fileName : Text;
+    internId : Text;
+    isArchived : Bool;
+    versions : [DocumentVersion__682438439]
+  };
+type DocumentVersion__682438439 =
+  {
+    approvalStatus : Text;
+    docType : Text;
+    generatedAt : Int;
+    generatedBy : Text;
+    id : Text;
+    notes : Text;
+    version : Text
+  };
 type ExperienceLevel__3557808 = {#Junior; #Mid; #Senior};
 type InternPipelineStageHistory__865410801 =
   {
@@ -236,8 +308,8 @@ type Intern__707342932 =
     stipendAmount : ?Float;
     updatedAt : Int
   };
-type Internal__8484328<K, V> =
-  {children : [var ?Node__46230540<K, V>]; data : Data__791452850<K, V>};
+type Internal__41346355<K, V> =
+  {children : [var ?Node__1000929467<K, V>]; data : Data__80296667<K, V>};
 type InvoiceLineItem__560307338 =
   {amount : Float; description : Text; quantity : Float; rate : Float};
 type InvoicePaymentStatus__1049909240 =
@@ -259,15 +331,33 @@ type Invoice__883872038 =
     tax : Float;
     total : Float
   };
-type Leaf__809889148<K, V> = {data : Data__791452850<K, V>};
-type Map__158565046<K, V> = Map__297112838<K, V>;
-type Map__297112838<K, V> =
-  {var root : Node__46230540<K, V>; var size : Nat__490723111};
-type Map__605269027<K, V> = Map__158565046<K, V>;
-type Nat__490723111 = Nat__920180692;
+type Leaf__712614010<K, V> = {data : Data__80296667<K, V>};
+type Meeting__334191430 =
+  {
+    createdAt : Int;
+    createdBy : Text;
+    durationMinutes : Nat;
+    id : Text;
+    joinLink : ?Text;
+    meetingType : Text;
+    participantIds : [Text];
+    reminderSentAt : ?Int;
+    scheduledAt : Int;
+    title : Text
+  };
+type Nat__1040412405 = Nat__920180692;
 type Nat__920180692 = Nat;
-type Node__46230540<K, V> =
-  {#internal : Internal__8484328<K, V>; #leaf : Leaf__809889148<K, V>};
+type Node__1000929467<K, V> =
+  {#internal : Internal__41346355<K, V>; #leaf : Leaf__712614010<K, V>};
+type NoteComment__485884975 =
+  {
+    authorId : Text;
+    authorName : Text;
+    content : Text;
+    createdAt : Int;
+    id : Text;
+    status : Text
+  };
 type NotificationPreference__88878935 =
   {
     digestEnabled : Bool;
@@ -312,113 +402,6 @@ type Notification__264708741 =
     title : Text;
     userId : Text
   };
-type OldAnnouncement__738661299 =
-  {
-    content : Text;
-    createdAt : Int;
-    createdBy : Text;
-    id : Text;
-    isActive : Bool;
-    title : Text
-  };
-type OldClientStatus__682124909 =
-  {
-    #closedLost;
-    #closedWon;
-    #contacted;
-    #discoveryCallDone;
-    #leadCaptured;
-    #negotiation;
-    #onHold;
-    #proposalSent
-  };
-type OldClient__766621721 =
-  {
-    activityCount : Nat;
-    assignedTeamMember : Text;
-    closedAt : ?Int;
-    closedReason : ?Text;
-    companyName : Text;
-    companySize : Text;
-    contactPersonName : Text;
-    contacts : [OldContactPerson__958087238];
-    createdAt : Int;
-    createdBy : Text;
-    currentStatus : OldClientStatus__682124909;
-    customFields : [(Text, Text)];
-    dealProbability : Nat;
-    dealValue : Float;
-    designation : Text;
-    email : Text;
-    engagementScore : Nat;
-    followUpDate : ?Int;
-    gstNumber : ?Text;
-    healthScore : Nat;
-    id : Text;
-    industryType : Text;
-    lastActivity : ?Int;
-    lastActivityDate : ?Int;
-    leadScore : Nat;
-    leadSource : Text;
-    location : Text;
-    nextMeetingDate : ?Int;
-    phone : Text;
-    pipelineValue : ?Float;
-    priorityLevel : OldPriorityLevel__792847477;
-    proposalExpiry : ?Int;
-    proposalStatus : ?Text;
-    proposalVersion : Nat;
-    serviceInterested : Text;
-    source : Text;
-    statusHistory : [OldStatusHistoryEntry__627936534];
-    tags : [Text];
-    updatedAt : Int;
-    website : Text;
-    whatsappNumber : Text;
-    wonLostReason : ?Text
-  };
-type OldContactPerson__958087238 =
-  {
-    addedAt : Int;
-    email : Text;
-    id : Text;
-    isPrimary : Bool;
-    name : Text;
-    phone : Text;
-    role : Text
-  };
-type OldNotificationType__89303409 =
-  {
-    #announcement;
-    #attendanceAnomaly;
-    #invoiceDue;
-    #leaveApproved;
-    #leaveRejected;
-    #overdueFollowUp;
-    #stageChanged;
-    #taskAssigned;
-    #taskOverdue
-  };
-type OldNotification__868316919 =
-  {
-    createdAt : Int;
-    id : Text;
-    isRead : Bool;
-    message : Text;
-    notificationType : OldNotificationType__89303409;
-    relatedId : ?Text;
-    title : Text;
-    userId : Text
-  };
-type OldPriorityLevel__792847477 = {#high; #low; #medium; #urgent};
-type OldSessionInfo__1022863956 = {displayName : Text; username : Text};
-type OldStatusHistoryEntry__627936534 =
-  {
-    adminName : Text;
-    note : Text;
-    status : OldClientStatus__682124909;
-    timestamp : Int
-  };
 type PaymentStatus__654846221 = {#cancelled; #overdue; #paid; #pending};
 type Performance__767774655 =
   {
@@ -435,6 +418,20 @@ type Performance__767774655 =
     year : Nat
   };
 type PriorityLevel__309216396 = {#high; #low; #medium; #urgent};
+type ProjectMilestone__631610125 =
+  {completedAt : ?Int; id : Text; name : Text; status : Text};
+type ProjectParticipation__47049199 =
+  {
+    completionPercent : Nat;
+    deliverables : [Text];
+    id : Text;
+    internId : Text;
+    milestones : [ProjectMilestone__631610125];
+    projectName : Text;
+    role : Text;
+    startDate : Text;
+    status : Text
+  };
 type Role__16373641 =
   {
     #admin;
@@ -459,6 +456,31 @@ type StatusHistoryEntry__143951834 =
     timestamp : Int
   };
 type Status__802400896 = {#Active; #Completed; #OnHold};
+type Task__499000904 =
+  {
+    assignedInternId : Text;
+    createdAt : Int;
+    createdBy : Text;
+    deadline : ?Int;
+    description : Text;
+    id : Text;
+    priority : Text;
+    status : Text;
+    tags : [Text];
+    teamSpace : Text;
+    title : Text;
+    updatedAt : Int
+  };
+type TimelineMilestone__954422434 =
+  {
+    completedAt : ?Int;
+    createdAt : Int;
+    description : ?Text;
+    id : Text;
+    internId : Text;
+    milestoneType : Text;
+    title : Text
+  };
 type UserAccount__6897730 =
   {
     createdAt : Int;
@@ -470,6 +492,22 @@ type UserAccount__6897730 =
     spaces : [Text];
     username : Text
   };
+type WorkSubmission__361089063 =
+  {
+    adminFeedback : ?Text;
+    createdAt : Int;
+    description : Text;
+    driveLink : ?Text;
+    fileUrls : [Text];
+    githubLink : ?Text;
+    id : Text;
+    internId : Text;
+    reviewedAt : ?Int;
+    reviewedBy : ?Text;
+    status : Text;
+    taskId : ?Text;
+    title : Text
+  };
 type WorkflowExecution__543759753 =
   {
     errorMessage : ?Text;
@@ -479,180 +517,159 @@ type WorkflowExecution__543759753 =
     status : {#failed; #running; #success};
     triggeredAt : Int
   };
-actor ({
+actor {
   stable activities :
     {
-      var blockIndex : Nat__490723111;
+      var blockIndex : Nat__1040412405;
       var blocks : [var [var ?Activity__891213489]];
-      var elementIndex : Nat__490723111
-    };
-  in announcements : Map__605269027<Text, OldAnnouncement__738661299>;
-  stable approvalCounter : {var n : Nat};
-  stable approvalRequests :
-    {
-      var root : Node__46230540<Text, ApprovalRequest__250116666>;
-      var size : Nat__490723111
-    };
-  stable auditEvents :
-    {
-      var blockIndex : Nat__490723111;
-      var blocks : [var [var ?AuditEvent__270024353]];
-      var elementIndex : Nat__490723111
-    };
-  stable auditIdCounter : {var n : Nat};
-  stable automationCounter : {var n : Nat};
-  stable clientActivities :
-    {
-      var blockIndex : Nat__490723111;
-      var blocks : [var [var ?ClientActivity__557894395]];
-      var elementIndex : Nat__490723111
-    };
-  stable clientComments :
-    {
-      var root : Node__46230540<Text, ClientComment__561139874>;
-      var size : Nat__490723111
-    };
-  stable clientIdCounter : {var n : Nat};
-  in clients : Map__605269027<Text, OldClient__766621721>;
-  stable dashboardSnapshotState : {var snap : ?DashboardSnapshot__923766974};
-  stable idCounter : {var n : Nat};
-  stable interns :
-    {
-      var root : Node__46230540<Text, Intern__707342932>;
-      var size : Nat__490723111
-    };
-  stable invoiceCounter : {var n : Nat};
-  stable invoices :
-    {
-      var root : Node__46230540<Text, Invoice__883872038>;
-      var size : Nat__490723111
-    };
-  stable notificationPreferences :
-    {
-      var root : Node__46230540<Text, NotificationPreference__88878935>;
-      var size : Nat__490723111
-    };
-  in notifications : Map__605269027<Text, OldNotification__868316919>;
-  stable performances :
-    {
-      var root : Node__46230540<Text, Performance__767774655>;
-      var size : Nat__490723111
-    };
-  stable var seeded : Bool;
-  in sessions : Map__605269027<Text, OldSessionInfo__1022863956>;
-  stable slaRules :
-    {var root : Node__46230540<Text, Nat>; var size : Nat__490723111};
-  stable stageHistories :
-    {
-      var root : Node__46230540<Text, InternPipelineStageHistory__865410801>;
-      var size : Nat__490723111
-    };
-  stable userIdCounter : {var n : Nat};
-  stable users :
-    {
-      var root : Node__46230540<Text, UserAccount__6897730>;
-      var size : Nat__490723111
-    };
-  stable workflowExecutions :
-    {
-      var blockIndex : Nat__490723111;
-      var blocks : [var [var ?WorkflowExecution__543759753]];
-      var elementIndex : Nat__490723111
-    }
-}, {
-  stable activities :
-    {
-      var blockIndex : Nat__490723111;
-      var blocks : [var [var ?Activity__891213489]];
-      var elementIndex : Nat__490723111
+      var elementIndex : Nat__1040412405
     };
   stable announcements :
     {
-      var root : Node__46230540<Text, Announcement__372525041>;
-      var size : Nat__490723111
+      var root : Node__1000929467<Text, Announcement__372525041>;
+      var size : Nat__1040412405
     };
   stable approvalCounter : {var n : Nat};
   stable approvalRequests :
     {
-      var root : Node__46230540<Text, ApprovalRequest__250116666>;
-      var size : Nat__490723111
+      var root : Node__1000929467<Text, ApprovalRequest__250116666>;
+      var size : Nat__1040412405
     };
   stable auditEvents :
     {
-      var blockIndex : Nat__490723111;
+      var blockIndex : Nat__1040412405;
       var blocks : [var [var ?AuditEvent__270024353]];
-      var elementIndex : Nat__490723111
+      var elementIndex : Nat__1040412405
     };
   stable auditIdCounter : {var n : Nat};
   stable automationCounter : {var n : Nat};
   stable clientActivities :
     {
-      var blockIndex : Nat__490723111;
+      var blockIndex : Nat__1040412405;
       var blocks : [var [var ?ClientActivity__557894395]];
-      var elementIndex : Nat__490723111
+      var elementIndex : Nat__1040412405
     };
   stable clientComments :
     {
-      var root : Node__46230540<Text, ClientComment__561139874>;
-      var size : Nat__490723111
+      var root : Node__1000929467<Text, ClientComment__561139874>;
+      var size : Nat__1040412405
     };
   stable clientIdCounter : {var n : Nat};
   stable clients :
     {
-      var root : Node__46230540<Text, Client__488727031>;
-      var size : Nat__490723111
+      var root : Node__1000929467<Text, Client__488727031>;
+      var size : Nat__1040412405
+    };
+  stable compositeScores :
+    {
+      var root : Node__1000929467<Text, CompositePerformanceScore__239231239>;
+      var size : Nat__1040412405
     };
   stable dashboardSnapshotState : {var snap : ?DashboardSnapshot__923766974};
+  stable docCounter : {var n : Nat};
+  stable documentRecords :
+    {
+      var root : Node__1000929467<Text, DocumentRecord__228275040>;
+      var size : Nat__1040412405
+    };
   stable idCounter : {var n : Nat};
   stable interns :
     {
-      var root : Node__46230540<Text, Intern__707342932>;
-      var size : Nat__490723111
+      var root : Node__1000929467<Text, Intern__707342932>;
+      var size : Nat__1040412405
     };
   stable invoiceCounter : {var n : Nat};
   stable invoices :
     {
-      var root : Node__46230540<Text, Invoice__883872038>;
-      var size : Nat__490723111
+      var root : Node__1000929467<Text, Invoice__883872038>;
+      var size : Nat__1040412405
     };
+  stable notifCounter : {var n : Nat};
   stable notificationPreferences :
     {
-      var root : Node__46230540<Text, NotificationPreference__88878935>;
-      var size : Nat__490723111
+      var root : Node__1000929467<Text, NotificationPreference__88878935>;
+      var size : Nat__1040412405
     };
   stable notifications :
     {
-      var root : Node__46230540<Text, Notification__264708741>;
-      var size : Nat__490723111
+      var root : Node__1000929467<Text, Notification__264708741>;
+      var size : Nat__1040412405
     };
   stable performances :
     {
-      var root : Node__46230540<Text, Performance__767774655>;
-      var size : Nat__490723111
+      var root : Node__1000929467<Text, Performance__767774655>;
+      var size : Nat__1040412405
+    };
+  stable projCounter : {var n : Nat};
+  stable projectParticipations :
+    {
+      var root : Node__1000929467<Text, [ProjectParticipation__47049199]>;
+      var size : Nat__1040412405
     };
   stable var seeded : Bool;
   stable sessions :
     {
-      var root : Node__46230540<Text, SessionInfo__536145658>;
-      var size : Nat__490723111
+      var root : Node__1000929467<Text, SessionInfo__536145658>;
+      var size : Nat__1040412405
     };
   stable slaRules :
-    {var root : Node__46230540<Text, Nat>; var size : Nat__490723111};
+    {var root : Node__1000929467<Text, Nat>; var size : Nat__1040412405};
   stable stageHistories :
     {
-      var root : Node__46230540<Text, InternPipelineStageHistory__865410801>;
-      var size : Nat__490723111
+      var root : Node__1000929467<Text, InternPipelineStageHistory__865410801>;
+      var size : Nat__1040412405
     };
   stable userIdCounter : {var n : Nat};
   stable users :
     {
-      var root : Node__46230540<Text, UserAccount__6897730>;
-      var size : Nat__490723111
+      var root : Node__1000929467<Text, UserAccount__6897730>;
+      var size : Nat__1040412405
     };
   stable workflowExecutions :
     {
-      var blockIndex : Nat__490723111;
+      var blockIndex : Nat__1040412405;
       var blocks : [var [var ?WorkflowExecution__543759753]];
-      var elementIndex : Nat__490723111
+      var elementIndex : Nat__1040412405
+    };
+  stable wsChannelMessages :
+    {
+      var root : Node__1000929467<Text, ChannelMessage__469919094>;
+      var size : Nat__1040412405
+    };
+  stable wsChannels :
+    {
+      var root : Node__1000929467<Text, Channel__450269825>;
+      var size : Nat__1040412405
+    };
+  stable wsCounter : {var n : Nat};
+  stable wsDailyNotes :
+    {
+      var root : Node__1000929467<Text, DailyNote__934196780>;
+      var size : Nat__1040412405
+    };
+  stable wsDirectMessages :
+    {
+      var root : Node__1000929467<Text, DirectMessage__616901426>;
+      var size : Nat__1040412405
+    };
+  stable wsMeetings :
+    {
+      var root : Node__1000929467<Text, Meeting__334191430>;
+      var size : Nat__1040412405
+    };
+  stable wsMilestones :
+    {
+      var root : Node__1000929467<Text, TimelineMilestone__954422434>;
+      var size : Nat__1040412405
+    };
+  stable wsSubmissions :
+    {
+      var root : Node__1000929467<Text, WorkSubmission__361089063>;
+      var size : Nat__1040412405
+    };
+  stable wsTasks :
+    {
+      var root : Node__1000929467<Text, Task__499000904>;
+      var size : Nat__1040412405
     }
-});
+};

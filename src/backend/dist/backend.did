@@ -1,3 +1,13 @@
+type WorkspaceData = 
+ record {
+   channelMessages: vec ChannelMessage;
+   directMessages: vec DirectMessage;
+   meetings: vec Meeting;
+   milestones: vec TimelineMilestone;
+   notes: vec DailyNote;
+   submissions: vec WorkSubmission;
+   tasks: vec Task;
+ };
 type WorkflowExecution = 
  record {
    errorMessage: opt text;
@@ -11,6 +21,22 @@ type WorkflowExecution =
            };
    triggeredAt: int;
  };
+type WorkSubmission = 
+ record {
+   adminFeedback: opt text;
+   createdAt: int;
+   description: text;
+   driveLink: opt text;
+   fileUrls: vec text;
+   githubLink: opt text;
+   id: text;
+   internId: text;
+   reviewedAt: opt int;
+   reviewedBy: opt text;
+   status: text;
+   taskId: opt text;
+   title: text;
+ };
 type UserAccount = 
  record {
    createdAt: int;
@@ -21,6 +47,17 @@ type UserAccount =
    role: Role;
    spaces: vec text;
    username: text;
+ };
+type UpdateTaskPayload = 
+ record {
+   assignedInternId: opt text;
+   deadline: opt int;
+   description: opt text;
+   priority: opt text;
+   status: opt text;
+   tags: opt vec text;
+   teamSpace: opt text;
+   title: opt text;
  };
 type UpdatePerformancePayload = 
  record {
@@ -69,6 +106,31 @@ type UpdateClientRequest =
    website: opt text;
    whatsappNumber: opt text;
  };
+type TimelineMilestone = 
+ record {
+   completedAt: opt int;
+   createdAt: int;
+   description: opt text;
+   id: text;
+   internId: text;
+   milestoneType: text;
+   title: text;
+ };
+type Task = 
+ record {
+   assignedInternId: text;
+   createdAt: int;
+   createdBy: text;
+   deadline: opt int;
+   description: text;
+   id: text;
+   priority: text;
+   status: text;
+   tags: vec text;
+   teamSpace: text;
+   title: text;
+   updatedAt: int;
+ };
 type StatusHistoryEntry = 
  record {
    adminName: text;
@@ -115,6 +177,25 @@ type RepScorecard =
    userId: text;
    username: text;
    winRate: float64;
+ };
+type ProjectParticipation = 
+ record {
+   completionPercent: nat;
+   deliverables: vec text;
+   id: text;
+   internId: text;
+   milestones: vec ProjectMilestone;
+   projectName: text;
+   role: text;
+   startDate: text;
+   status: text;
+ };
+type ProjectMilestone = 
+ record {
+   completedAt: opt int;
+   id: text;
+   name: text;
+   status: text;
  };
 type PriorityLevel = 
  variant {
@@ -198,12 +279,34 @@ type Notification =
    title: text;
    userId: text;
  };
+type NoteComment = 
+ record {
+   authorId: text;
+   authorName: text;
+   content: text;
+   createdAt: int;
+   id: text;
+   status: text;
+ };
 type MonthlyAnalyticsEntry = 
  record {
    approved: nat;
    month: text;
    newLeads: nat;
    rejected: nat;
+ };
+type Meeting = 
+ record {
+   createdAt: int;
+   createdBy: text;
+   durationMinutes: nat;
+   id: text;
+   joinLink: opt text;
+   meetingType: text;
+   participantIds: vec text;
+   reminderSentAt: opt int;
+   scheduledAt: int;
+   title: text;
  };
 type ListInternsFilter = 
  record {
@@ -318,6 +421,36 @@ type ExperienceLevel =
    Mid;
    Senior;
  };
+type DocumentVersion = 
+ record {
+   approvalStatus: text;
+   docType: text;
+   generatedAt: int;
+   generatedBy: text;
+   id: text;
+   notes: text;
+   version: text;
+ };
+type DocumentRecord = 
+ record {
+   category: text;
+   currentVersion: text;
+   docId: text;
+   docType: text;
+   fileName: text;
+   internId: text;
+   isArchived: bool;
+   versions: vec DocumentVersion;
+ };
+type DirectMessage = 
+ record {
+   content: text;
+   createdAt: int;
+   fromUserId: text;
+   id: text;
+   isRead: bool;
+   toUserId: text;
+ };
 type DashboardStats = 
  record {
    activeInterns: nat;
@@ -352,6 +485,38 @@ type DashboardSnapshot =
                        float64;
                      };
  };
+type DailyNote = 
+ record {
+   adminComments: vec NoteComment;
+   blockers: text;
+   createdAt: int;
+   date: text;
+   id: text;
+   internId: text;
+   learningUpdates: text;
+   progress: text;
+   workedOn: text;
+ };
+type CreateTaskPayload = 
+ record {
+   assignedInternId: text;
+   deadline: opt int;
+   description: text;
+   priority: text;
+   tags: vec text;
+   teamSpace: text;
+   title: text;
+ };
+type CreateSubmissionPayload = 
+ record {
+   description: text;
+   driveLink: opt text;
+   fileUrls: vec text;
+   githubLink: opt text;
+   internId: text;
+   taskId: opt text;
+   title: text;
+ };
 type CreatePerformancePayload = 
  record {
    adminNotes: text;
@@ -363,6 +528,15 @@ type CreatePerformancePayload =
    overallScore: float64;
    taskScore: float64;
    year: nat;
+ };
+type CreateMeetingPayload = 
+ record {
+   durationMinutes: nat;
+   joinLink: opt text;
+   meetingType: text;
+   participantIds: vec text;
+   scheduledAt: int;
+   title: text;
  };
 type CreateInternPayload = 
  record {
@@ -376,6 +550,15 @@ type CreateInternPayload =
    profilePicCid: opt text;
    space: Space;
    status: Status;
+ };
+type CreateDailyNotePayload = 
+ record {
+   blockers: text;
+   date: text;
+   internId: text;
+   learningUpdates: text;
+   progress: text;
+   workedOn: text;
  };
 type CreateClientRequest = 
  record {
@@ -409,6 +592,17 @@ type ContactPerson =
    name: text;
    phone: text;
    role: text;
+ };
+type CompositePerformanceScore = 
+ record {
+   attendanceScore: nat;
+   communicationScore: nat;
+   computedAt: int;
+   improvementSuggestions: vec text;
+   internId: text;
+   learningScore: nat;
+   overallScore: nat;
+   productivityScore: nat;
  };
 type ClientStatus = 
  variant {
@@ -501,6 +695,25 @@ type Client =
    website: text;
    whatsappNumber: text;
    wonLostReason: opt text;
+ };
+type ChannelMessage = 
+ record {
+   channelId: text;
+   content: text;
+   createdAt: int;
+   id: text;
+   mentions: vec text;
+   senderId: text;
+   senderName: text;
+ };
+type Channel = 
+ record {
+   createdAt: int;
+   createdBy: text;
+   id: text;
+   memberIds: vec text;
+   name: text;
+   spaceId: text;
  };
 type AuditEvent = 
  record {
@@ -602,20 +815,51 @@ service : {
       err: text;
       ok: Client;
     });
+  addDocumentVersion: (sessionToken: text, docId: text, versionLabel: 
+   text, notes: text) -> (variant {
+                            err: text;
+                            ok: DocumentRecord;
+                          });
+  addNoteComment: (sessionToken: text, noteId: text, content: text, status:
+   text) -> (variant {
+               err: text;
+               ok: DailyNote;
+             });
   addPerformance: (sessionToken: text, payload: CreatePerformancePayload) ->
    (variant {
       err: text;
       ok: Performance;
+    });
+  addProjectMilestone: (sessionToken: text, internId: text, projId: text,
+   milestoneName: text) -> (variant {
+                              err: text;
+                              ok: ProjectParticipation;
+                            });
+  addTimelineMilestone: (sessionToken: text, internId: text, title: text,
+   description: opt text, milestoneType: text) ->
+   (variant {
+      err: text;
+      ok: TimelineMilestone;
     });
   approveRequest: (sessionToken: text, requestId: text, notes: opt text) ->
    (variant {
       err: text;
       ok: ApprovalRequest;
     });
+  archiveDocument: (sessionToken: text, docId: text) ->
+   (variant {
+      err: text;
+      ok: bool;
+    });
   captureWonLostReason: (clientId: text, reason: text) ->
    (variant {
       err: text;
       ok: Client;
+    });
+  computeCompositeScore: (sessionToken: text, internId: text) ->
+   (variant {
+      err: text;
+      ok: CompositePerformanceScore;
     });
   createAnnouncement: (payload:
    record {
@@ -638,10 +882,26 @@ service : {
       err: text;
       ok: ApprovalRequest;
     });
+  createChannel: (sessionToken: text, name: text, spaceId: text, memberIds:
+   vec text) -> (variant {
+                   err: text;
+                   ok: Channel;
+                 });
   createClient: (req: CreateClientRequest) ->
    (variant {
       err: text;
       ok: Client;
+    });
+  createDailyNote: (sessionToken: text, payload: CreateDailyNotePayload) ->
+   (variant {
+      err: text;
+      ok: DailyNote;
+    });
+  createDocumentRecord: (sessionToken: text, internId: text, category: 
+   text, docType: text, fileName: text, versionLabel: text, notes: text) ->
+   (variant {
+      err: text;
+      ok: DocumentRecord;
     });
   createIntern: (sessionToken: text, payload: CreateInternPayload) ->
    (variant {
@@ -670,6 +930,22 @@ service : {
             err: text;
             ok: Notification;
           });
+  createProjectParticipation: (sessionToken: text, internId: text,
+   projectName: text, role: text, startDate: text, deliverables: vec text) ->
+   (variant {
+      err: text;
+      ok: ProjectParticipation;
+    });
+  createSubmission: (sessionToken: text, payload: CreateSubmissionPayload) ->
+   (variant {
+      err: text;
+      ok: WorkSubmission;
+    });
+  createTask: (sessionToken: text, payload: CreateTaskPayload) ->
+   (variant {
+      err: text;
+      ok: Task;
+    });
   createUser: (sessionToken: text, username: text, password: text, roleText:
    text, spaces: vec text, displayName: text) ->
    (variant {
@@ -701,6 +977,11 @@ service : {
             deleted: bool;
           };
     });
+  deleteDocument: (sessionToken: text, docId: text) ->
+   (variant {
+      err: text;
+      ok: bool;
+    });
   deleteIntern: (sessionToken: text, id: text) ->
    (variant {
       err: text;
@@ -719,11 +1000,17 @@ service : {
       err: text;
       ok: bool;
     });
+  deleteTask: (sessionToken: text, id: text) ->
+   (variant {
+      err: text;
+      ok: bool;
+    });
   deleteUser: (sessionToken: text, userId: text) -> (variant {
                                                        err: text;
                                                        ok;
                                                      });
   getActivities: (internId: opt text) -> (vec Activity) query;
+  getAllTasks: (sessionToken: text) -> (vec Task) query;
   getAnalyticsDashboard: () -> (AnalyticsData) query;
   getAnnouncementsBySpace: (sessionToken: text, space: opt text) ->
    (variant {
@@ -739,6 +1026,12 @@ service : {
                                  text;
                                  nat;
                                }) query;
+  getChannelMessages: (sessionToken: text, channelId: text) ->
+   (variant {
+      err: text;
+      ok: vec ChannelMessage;
+    }) query;
+  getChannelsForUser: (sessionToken: text) -> (vec Channel) query;
   getClient: (id: text) -> (variant {
                               err: text;
                               ok: Client;
@@ -747,6 +1040,10 @@ service : {
   getClientAnalytics: () -> (ClientAnalytics) query;
   getClientComments: (clientId: text) -> (vec ClientComment) query;
   getClientInvoices: (clientId: text) -> (vec Invoice) query;
+  getCompositeScore: (internId: text) ->
+   (opt CompositePerformanceScore) query;
+  getDailyNotesByIntern: (sessionToken: text, internId: text) ->
+   (vec DailyNote) query;
   getDashboardSnapshot: (sessionToken: text) ->
    (variant {
       err: text;
@@ -754,6 +1051,20 @@ service : {
     });
   getDashboardStats: () -> (DashboardStats) query;
   getDealCycleTime: () -> (nat) query;
+  getDirectMessages: (sessionToken: text, peerId: text) ->
+   (variant {
+      err: text;
+      ok: vec DirectMessage;
+    }) query;
+  getDocumentById: (sessionToken: text, docId: text) ->
+   (opt DocumentRecord) query;
+  getDocumentVersionHistory: (sessionToken: text, docId: text) ->
+   (variant {
+      err: text;
+      ok: vec DocumentVersion;
+    }) query;
+  getDocumentsByIntern: (sessionToken: text, internId: text) ->
+   (vec DocumentRecord) query;
   getFollowUpComplianceRate: (sessionToken: text) ->
    (variant {
       err: text;
@@ -768,6 +1079,9 @@ service : {
                                     nat;
                                     nat;
                                   }) query;
+  getMeetingsForIntern: (sessionToken: text, internId: text) ->
+   (vec Meeting) query;
+  getMeetingsForUser: (sessionToken: text) -> (vec Meeting) query;
   getNotificationPreferences: (sessionToken: text) ->
    (variant {
       err: text;
@@ -786,6 +1100,8 @@ service : {
                 float64;
               };
     });
+  getProjectsByIntern: (sessionToken: text, internId: text) ->
+   (vec ProjectParticipation) query;
   getRepScorecards: (sessionToken: text) ->
    (variant {
       err: text;
@@ -804,6 +1120,12 @@ service : {
                             nat;
                           }) query;
   getStageHistory: (internId: text) -> (vec InternPipelineStageHistory) query;
+  getSubmissionsByIntern: (sessionToken: text, internId: text) ->
+   (vec WorkSubmission) query;
+  getTasksByIntern: (sessionToken: text, internId: text) -> (vec Task) query;
+  getTasksBySpace: (sessionToken: text, spaceId: text) -> (vec Task) query;
+  getTimelineForIntern: (sessionToken: text, internId: text) ->
+   (vec TimelineMilestone) query;
   getUserById: (sessionToken: text, userId: text) ->
    (variant {
       err: text;
@@ -814,6 +1136,11 @@ service : {
                                    nat;
                                    nat;
                                  }) query;
+  getWorkspaceData: (sessionToken: text, internId: text) ->
+   (variant {
+      err: text;
+      ok: WorkspaceData;
+    }) query;
   initSampleData: () -> (nat);
   listAnnouncements: (activeOnly: bool) -> (vec Announcement) query;
   listApprovalRequests: (sessionToken: text, statusFilter: opt text) ->
@@ -862,6 +1189,11 @@ service : {
                                err: text;
                                ok;
                              });
+  markDirectMessageRead: (sessionToken: text, dmId: text) ->
+   (variant {
+      err: text;
+      ok: bool;
+    });
   pinClientComment: (commentId: text, isPinned: bool) ->
    (variant {
       err: text;
@@ -879,7 +1211,22 @@ service : {
     });
   runAllAutomationJobs: () -> () oneway;
   runAutomationJobs: (sessionToken: text) -> ();
+  scheduleMeeting: (sessionToken: text, payload: CreateMeetingPayload) ->
+   (variant {
+      err: text;
+      ok: Meeting;
+    });
   seedSampleData: () -> ();
+  sendChannelMessage: (sessionToken: text, channelId: text, content: 
+   text, mentions: vec text) -> (variant {
+                                   err: text;
+                                   ok: ChannelMessage;
+                                 });
+  sendDirectMessage: (sessionToken: text, toUserId: text, content: text) ->
+   (variant {
+      err: text;
+      ok: DirectMessage;
+    });
   setNotificationPreference: (sessionToken: text, eventType: text,
    digestEnabled: bool, digestFrequency: text) -> (variant {
                                                      err: text;
@@ -909,6 +1256,11 @@ service : {
       err: text;
       ok: Client;
     });
+  updateDocumentApproval: (sessionToken: text, docId: text, versionLabel:
+   text, approvalStatus: text) -> (variant {
+                                     err: text;
+                                     ok: DocumentRecord;
+                                   });
   updateDocumentState: (sessionToken: text, internId: text, docType: 
    text, action: text) -> (variant {
                              err: text;
@@ -950,15 +1302,37 @@ service : {
       err: text;
       ok: Invoice;
     });
+  updateMilestone: (sessionToken: text, internId: text, projId: text,
+   milestoneId: text, status: text) ->
+   (variant {
+      err: text;
+      ok: ProjectParticipation;
+    });
   updatePerformance: (sessionToken: text, id: text, payload:
    UpdatePerformancePayload) -> (variant {
                                    err: text;
                                    ok: Performance;
                                  });
+  updateProjectParticipation: (sessionToken: text, internId: text, projId:
+   text, status: opt text, completionPercent: opt nat, deliverables:
+   opt vec text) -> (variant {
+                       err: text;
+                       ok: ProjectParticipation;
+                     });
   updateProposalStatus: (clientId: text, status: text, version: nat) ->
    (variant {
       err: text;
       ok: Client;
+    });
+  updateSubmissionStatus: (sessionToken: text, id: text, status: text,
+   feedback: opt text) -> (variant {
+                             err: text;
+                             ok: WorkSubmission;
+                           });
+  updateTask: (sessionToken: text, id: text, payload: UpdateTaskPayload) ->
+   (variant {
+      err: text;
+      ok: Task;
     });
   updateUser: (sessionToken: text, userId: text, roleText: text, spaces:
    vec text, isActive: bool) -> (variant {

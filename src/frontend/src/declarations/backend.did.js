@@ -122,6 +122,44 @@ export const Client = IDL.Record({
   'closedReason' : IDL.Opt(IDL.Text),
   'followUpDate' : IDL.Opt(IDL.Int),
 });
+export const DocumentVersion = IDL.Record({
+  'id' : IDL.Text,
+  'generatedAt' : IDL.Int,
+  'generatedBy' : IDL.Text,
+  'approvalStatus' : IDL.Text,
+  'version' : IDL.Text,
+  'notes' : IDL.Text,
+  'docType' : IDL.Text,
+});
+export const DocumentRecord = IDL.Record({
+  'internId' : IDL.Text,
+  'fileName' : IDL.Text,
+  'isArchived' : IDL.Bool,
+  'currentVersion' : IDL.Text,
+  'category' : IDL.Text,
+  'versions' : IDL.Vec(DocumentVersion),
+  'docType' : IDL.Text,
+  'docId' : IDL.Text,
+});
+export const NoteComment = IDL.Record({
+  'id' : IDL.Text,
+  'status' : IDL.Text,
+  'content' : IDL.Text,
+  'authorId' : IDL.Text,
+  'createdAt' : IDL.Int,
+  'authorName' : IDL.Text,
+});
+export const DailyNote = IDL.Record({
+  'id' : IDL.Text,
+  'workedOn' : IDL.Text,
+  'adminComments' : IDL.Vec(NoteComment),
+  'blockers' : IDL.Text,
+  'internId' : IDL.Text,
+  'date' : IDL.Text,
+  'createdAt' : IDL.Int,
+  'progress' : IDL.Text,
+  'learningUpdates' : IDL.Text,
+});
 export const CreatePerformancePayload = IDL.Record({
   'month' : IDL.Nat,
   'overallScore' : IDL.Float64,
@@ -146,6 +184,32 @@ export const Performance = IDL.Record({
   'communicationScore' : IDL.Float64,
   'adminNotes' : IDL.Text,
 });
+export const ProjectMilestone = IDL.Record({
+  'id' : IDL.Text,
+  'status' : IDL.Text,
+  'completedAt' : IDL.Opt(IDL.Int),
+  'name' : IDL.Text,
+});
+export const ProjectParticipation = IDL.Record({
+  'id' : IDL.Text,
+  'status' : IDL.Text,
+  'projectName' : IDL.Text,
+  'internId' : IDL.Text,
+  'role' : IDL.Text,
+  'completionPercent' : IDL.Nat,
+  'deliverables' : IDL.Vec(IDL.Text),
+  'startDate' : IDL.Text,
+  'milestones' : IDL.Vec(ProjectMilestone),
+});
+export const TimelineMilestone = IDL.Record({
+  'id' : IDL.Text,
+  'completedAt' : IDL.Opt(IDL.Int),
+  'title' : IDL.Text,
+  'internId' : IDL.Text,
+  'createdAt' : IDL.Int,
+  'description' : IDL.Opt(IDL.Text),
+  'milestoneType' : IDL.Text,
+});
 export const ApprovalStatus = IDL.Variant({
   'pending' : IDL.Null,
   'approved' : IDL.Null,
@@ -165,6 +229,16 @@ export const ApprovalRequest = IDL.Record({
   'requesterId' : IDL.Text,
   'resolvedAt' : IDL.Opt(IDL.Int),
 });
+export const CompositePerformanceScore = IDL.Record({
+  'learningScore' : IDL.Nat,
+  'improvementSuggestions' : IDL.Vec(IDL.Text),
+  'overallScore' : IDL.Nat,
+  'internId' : IDL.Text,
+  'productivityScore' : IDL.Nat,
+  'computedAt' : IDL.Int,
+  'attendanceScore' : IDL.Nat,
+  'communicationScore' : IDL.Nat,
+});
 export const Announcement = IDL.Record({
   'id' : IDL.Text,
   'title' : IDL.Text,
@@ -174,6 +248,14 @@ export const Announcement = IDL.Record({
   'createdBy' : IDL.Text,
   'isActive' : IDL.Bool,
   'targetSpaces' : IDL.Opt(IDL.Vec(IDL.Text)),
+});
+export const Channel = IDL.Record({
+  'id' : IDL.Text,
+  'name' : IDL.Text,
+  'createdAt' : IDL.Int,
+  'createdBy' : IDL.Text,
+  'spaceId' : IDL.Text,
+  'memberIds' : IDL.Vec(IDL.Text),
 });
 export const CreateClientRequest = IDL.Record({
   'source' : IDL.Text,
@@ -196,6 +278,14 @@ export const CreateClientRequest = IDL.Record({
   'assignedTeamMember' : IDL.Text,
   'location' : IDL.Text,
   'followUpDate' : IDL.Opt(IDL.Int),
+});
+export const CreateDailyNotePayload = IDL.Record({
+  'workedOn' : IDL.Text,
+  'blockers' : IDL.Text,
+  'internId' : IDL.Text,
+  'date' : IDL.Text,
+  'progress' : IDL.Text,
+  'learningUpdates' : IDL.Text,
 });
 export const Status = IDL.Variant({
   'OnHold' : IDL.Null,
@@ -360,6 +450,53 @@ export const Notification = IDL.Record({
   'priority' : IDL.Opt(NotificationPriority),
   'relatedId' : IDL.Opt(IDL.Text),
 });
+export const CreateSubmissionPayload = IDL.Record({
+  'title' : IDL.Text,
+  'githubLink' : IDL.Opt(IDL.Text),
+  'internId' : IDL.Text,
+  'description' : IDL.Text,
+  'fileUrls' : IDL.Vec(IDL.Text),
+  'driveLink' : IDL.Opt(IDL.Text),
+  'taskId' : IDL.Opt(IDL.Text),
+});
+export const WorkSubmission = IDL.Record({
+  'id' : IDL.Text,
+  'status' : IDL.Text,
+  'title' : IDL.Text,
+  'githubLink' : IDL.Opt(IDL.Text),
+  'internId' : IDL.Text,
+  'createdAt' : IDL.Int,
+  'description' : IDL.Text,
+  'fileUrls' : IDL.Vec(IDL.Text),
+  'reviewedAt' : IDL.Opt(IDL.Int),
+  'reviewedBy' : IDL.Opt(IDL.Text),
+  'driveLink' : IDL.Opt(IDL.Text),
+  'taskId' : IDL.Opt(IDL.Text),
+  'adminFeedback' : IDL.Opt(IDL.Text),
+});
+export const CreateTaskPayload = IDL.Record({
+  'title' : IDL.Text,
+  'tags' : IDL.Vec(IDL.Text),
+  'description' : IDL.Text,
+  'deadline' : IDL.Opt(IDL.Int),
+  'assignedInternId' : IDL.Text,
+  'teamSpace' : IDL.Text,
+  'priority' : IDL.Text,
+});
+export const Task = IDL.Record({
+  'id' : IDL.Text,
+  'status' : IDL.Text,
+  'title' : IDL.Text,
+  'createdAt' : IDL.Int,
+  'createdBy' : IDL.Text,
+  'tags' : IDL.Vec(IDL.Text),
+  'description' : IDL.Text,
+  'deadline' : IDL.Opt(IDL.Int),
+  'updatedAt' : IDL.Int,
+  'assignedInternId' : IDL.Text,
+  'teamSpace' : IDL.Text,
+  'priority' : IDL.Text,
+});
 export const Role = IDL.Variant({
   'hr' : IDL.Null,
   'manager' : IDL.Null,
@@ -409,6 +546,15 @@ export const AuditEvent = IDL.Record({
   'afterState' : IDL.Opt(IDL.Text),
   'ipAddress' : IDL.Opt(IDL.Text),
 });
+export const ChannelMessage = IDL.Record({
+  'id' : IDL.Text,
+  'content' : IDL.Text,
+  'channelId' : IDL.Text,
+  'createdAt' : IDL.Int,
+  'senderName' : IDL.Text,
+  'mentions' : IDL.Vec(IDL.Text),
+  'senderId' : IDL.Text,
+});
 export const MonthlyAnalyticsEntry = IDL.Record({
   'month' : IDL.Text,
   'approved' : IDL.Nat,
@@ -443,6 +589,26 @@ export const DashboardStats = IDL.Record({
   'learningCount' : IDL.Nat,
   'avgPerformance' : IDL.Float64,
 });
+export const DirectMessage = IDL.Record({
+  'id' : IDL.Text,
+  'content' : IDL.Text,
+  'createdAt' : IDL.Int,
+  'isRead' : IDL.Bool,
+  'toUserId' : IDL.Text,
+  'fromUserId' : IDL.Text,
+});
+export const Meeting = IDL.Record({
+  'id' : IDL.Text,
+  'title' : IDL.Text,
+  'joinLink' : IDL.Opt(IDL.Text),
+  'createdAt' : IDL.Int,
+  'createdBy' : IDL.Text,
+  'meetingType' : IDL.Text,
+  'durationMinutes' : IDL.Nat,
+  'participantIds' : IDL.Vec(IDL.Text),
+  'reminderSentAt' : IDL.Opt(IDL.Int),
+  'scheduledAt' : IDL.Int,
+});
 export const NotificationPreference = IDL.Record({
   'userId' : IDL.Text,
   'digestFrequency' : IDL.Variant({
@@ -469,6 +635,15 @@ export const InternPipelineStageHistory = IDL.Record({
   'stage' : InternPipelineStage,
   'notes' : IDL.Text,
 });
+export const WorkspaceData = IDL.Record({
+  'tasks' : IDL.Vec(Task),
+  'meetings' : IDL.Vec(Meeting),
+  'submissions' : IDL.Vec(WorkSubmission),
+  'notes' : IDL.Vec(DailyNote),
+  'channelMessages' : IDL.Vec(ChannelMessage),
+  'directMessages' : IDL.Vec(DirectMessage),
+  'milestones' : IDL.Vec(TimelineMilestone),
+});
 export const ListInternsFilter = IDL.Record({
   'status' : IDL.Opt(Status),
   'space' : IDL.Opt(Space),
@@ -484,6 +659,14 @@ export const WorkflowExecution = IDL.Record({
   'errorMessage' : IDL.Opt(IDL.Text),
   'recordsProcessed' : IDL.Nat,
   'triggeredAt' : IDL.Int,
+});
+export const CreateMeetingPayload = IDL.Record({
+  'title' : IDL.Text,
+  'joinLink' : IDL.Opt(IDL.Text),
+  'meetingType' : IDL.Text,
+  'durationMinutes' : IDL.Nat,
+  'participantIds' : IDL.Vec(IDL.Text),
+  'scheduledAt' : IDL.Int,
 });
 export const UpdateClientRequest = IDL.Record({
   'source' : IDL.Opt(IDL.Text),
@@ -529,6 +712,16 @@ export const UpdatePerformancePayload = IDL.Record({
   'communicationScore' : IDL.Float64,
   'adminNotes' : IDL.Text,
 });
+export const UpdateTaskPayload = IDL.Record({
+  'status' : IDL.Opt(IDL.Text),
+  'title' : IDL.Opt(IDL.Text),
+  'tags' : IDL.Opt(IDL.Vec(IDL.Text)),
+  'description' : IDL.Opt(IDL.Text),
+  'deadline' : IDL.Opt(IDL.Int),
+  'assignedInternId' : IDL.Opt(IDL.Text),
+  'teamSpace' : IDL.Opt(IDL.Text),
+  'priority' : IDL.Opt(IDL.Text),
+});
 
 export const idlService = IDL.Service({
   'addClientActivity' : IDL.Func(
@@ -546,9 +739,29 @@ export const idlService = IDL.Service({
       [IDL.Variant({ 'ok' : Client, 'err' : IDL.Text })],
       [],
     ),
+  'addDocumentVersion' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+      [IDL.Variant({ 'ok' : DocumentRecord, 'err' : IDL.Text })],
+      [],
+    ),
+  'addNoteComment' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+      [IDL.Variant({ 'ok' : DailyNote, 'err' : IDL.Text })],
+      [],
+    ),
   'addPerformance' : IDL.Func(
       [IDL.Text, CreatePerformancePayload],
       [IDL.Variant({ 'ok' : Performance, 'err' : IDL.Text })],
+      [],
+    ),
+  'addProjectMilestone' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+      [IDL.Variant({ 'ok' : ProjectParticipation, 'err' : IDL.Text })],
+      [],
+    ),
+  'addTimelineMilestone' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, IDL.Opt(IDL.Text), IDL.Text],
+      [IDL.Variant({ 'ok' : TimelineMilestone, 'err' : IDL.Text })],
       [],
     ),
   'approveRequest' : IDL.Func(
@@ -556,9 +769,19 @@ export const idlService = IDL.Service({
       [IDL.Variant({ 'ok' : ApprovalRequest, 'err' : IDL.Text })],
       [],
     ),
+  'archiveDocument' : IDL.Func(
+      [IDL.Text, IDL.Text],
+      [IDL.Variant({ 'ok' : IDL.Bool, 'err' : IDL.Text })],
+      [],
+    ),
   'captureWonLostReason' : IDL.Func(
       [IDL.Text, IDL.Text],
       [IDL.Variant({ 'ok' : Client, 'err' : IDL.Text })],
+      [],
+    ),
+  'computeCompositeScore' : IDL.Func(
+      [IDL.Text, IDL.Text],
+      [IDL.Variant({ 'ok' : CompositePerformanceScore, 'err' : IDL.Text })],
       [],
     ),
   'createAnnouncement' : IDL.Func(
@@ -582,9 +805,24 @@ export const idlService = IDL.Service({
       [IDL.Variant({ 'ok' : ApprovalRequest, 'err' : IDL.Text })],
       [],
     ),
+  'createChannel' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, IDL.Vec(IDL.Text)],
+      [IDL.Variant({ 'ok' : Channel, 'err' : IDL.Text })],
+      [],
+    ),
   'createClient' : IDL.Func(
       [CreateClientRequest],
       [IDL.Variant({ 'ok' : Client, 'err' : IDL.Text })],
+      [],
+    ),
+  'createDailyNote' : IDL.Func(
+      [IDL.Text, CreateDailyNotePayload],
+      [IDL.Variant({ 'ok' : DailyNote, 'err' : IDL.Text })],
+      [],
+    ),
+  'createDocumentRecord' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+      [IDL.Variant({ 'ok' : DocumentRecord, 'err' : IDL.Text })],
       [],
     ),
   'createIntern' : IDL.Func(
@@ -614,6 +852,21 @@ export const idlService = IDL.Service({
         }),
       ],
       [IDL.Variant({ 'ok' : Notification, 'err' : IDL.Text })],
+      [],
+    ),
+  'createProjectParticipation' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Vec(IDL.Text)],
+      [IDL.Variant({ 'ok' : ProjectParticipation, 'err' : IDL.Text })],
+      [],
+    ),
+  'createSubmission' : IDL.Func(
+      [IDL.Text, CreateSubmissionPayload],
+      [IDL.Variant({ 'ok' : WorkSubmission, 'err' : IDL.Text })],
+      [],
+    ),
+  'createTask' : IDL.Func(
+      [IDL.Text, CreateTaskPayload],
+      [IDL.Variant({ 'ok' : Task, 'err' : IDL.Text })],
       [],
     ),
   'createUser' : IDL.Func(
@@ -654,6 +907,11 @@ export const idlService = IDL.Service({
       ],
       [],
     ),
+  'deleteDocument' : IDL.Func(
+      [IDL.Text, IDL.Text],
+      [IDL.Variant({ 'ok' : IDL.Bool, 'err' : IDL.Text })],
+      [],
+    ),
   'deleteIntern' : IDL.Func(
       [IDL.Text, IDL.Text],
       [IDL.Variant({ 'ok' : IDL.Bool, 'err' : IDL.Text })],
@@ -677,6 +935,11 @@ export const idlService = IDL.Service({
       [IDL.Variant({ 'ok' : IDL.Bool, 'err' : IDL.Text })],
       [],
     ),
+  'deleteTask' : IDL.Func(
+      [IDL.Text, IDL.Text],
+      [IDL.Variant({ 'ok' : IDL.Bool, 'err' : IDL.Text })],
+      [],
+    ),
   'deleteUser' : IDL.Func(
       [IDL.Text, IDL.Text],
       [IDL.Variant({ 'ok' : IDL.Null, 'err' : IDL.Text })],
@@ -687,6 +950,7 @@ export const idlService = IDL.Service({
       [IDL.Vec(Activity)],
       ['query'],
     ),
+  'getAllTasks' : IDL.Func([IDL.Text], [IDL.Vec(Task)], ['query']),
   'getAnalyticsDashboard' : IDL.Func([], [AnalyticsData], ['query']),
   'getAnnouncementsBySpace' : IDL.Func(
       [IDL.Text, IDL.Opt(IDL.Text)],
@@ -703,6 +967,12 @@ export const idlService = IDL.Service({
       [IDL.Vec(IDL.Tuple(IDL.Text, IDL.Nat))],
       ['query'],
     ),
+  'getChannelMessages' : IDL.Func(
+      [IDL.Text, IDL.Text],
+      [IDL.Variant({ 'ok' : IDL.Vec(ChannelMessage), 'err' : IDL.Text })],
+      ['query'],
+    ),
+  'getChannelsForUser' : IDL.Func([IDL.Text], [IDL.Vec(Channel)], ['query']),
   'getClient' : IDL.Func(
       [IDL.Text],
       [IDL.Variant({ 'ok' : Client, 'err' : IDL.Text })],
@@ -720,6 +990,16 @@ export const idlService = IDL.Service({
       ['query'],
     ),
   'getClientInvoices' : IDL.Func([IDL.Text], [IDL.Vec(Invoice)], ['query']),
+  'getCompositeScore' : IDL.Func(
+      [IDL.Text],
+      [IDL.Opt(CompositePerformanceScore)],
+      ['query'],
+    ),
+  'getDailyNotesByIntern' : IDL.Func(
+      [IDL.Text, IDL.Text],
+      [IDL.Vec(DailyNote)],
+      ['query'],
+    ),
   'getDashboardSnapshot' : IDL.Func(
       [IDL.Text],
       [IDL.Variant({ 'ok' : DashboardSnapshot, 'err' : IDL.Text })],
@@ -727,6 +1007,26 @@ export const idlService = IDL.Service({
     ),
   'getDashboardStats' : IDL.Func([], [DashboardStats], ['query']),
   'getDealCycleTime' : IDL.Func([], [IDL.Nat], ['query']),
+  'getDirectMessages' : IDL.Func(
+      [IDL.Text, IDL.Text],
+      [IDL.Variant({ 'ok' : IDL.Vec(DirectMessage), 'err' : IDL.Text })],
+      ['query'],
+    ),
+  'getDocumentById' : IDL.Func(
+      [IDL.Text, IDL.Text],
+      [IDL.Opt(DocumentRecord)],
+      ['query'],
+    ),
+  'getDocumentVersionHistory' : IDL.Func(
+      [IDL.Text, IDL.Text],
+      [IDL.Variant({ 'ok' : IDL.Vec(DocumentVersion), 'err' : IDL.Text })],
+      ['query'],
+    ),
+  'getDocumentsByIntern' : IDL.Func(
+      [IDL.Text, IDL.Text],
+      [IDL.Vec(DocumentRecord)],
+      ['query'],
+    ),
   'getFollowUpComplianceRate' : IDL.Func(
       [IDL.Text],
       [
@@ -743,6 +1043,12 @@ export const idlService = IDL.Service({
       [IDL.Vec(IDL.Tuple(IDL.Text, IDL.Nat, IDL.Nat))],
       ['query'],
     ),
+  'getMeetingsForIntern' : IDL.Func(
+      [IDL.Text, IDL.Text],
+      [IDL.Vec(Meeting)],
+      ['query'],
+    ),
+  'getMeetingsForUser' : IDL.Func([IDL.Text], [IDL.Vec(Meeting)], ['query']),
   'getNotificationPreferences' : IDL.Func(
       [IDL.Text],
       [
@@ -767,6 +1073,11 @@ export const idlService = IDL.Service({
         }),
       ],
       [],
+    ),
+  'getProjectsByIntern' : IDL.Func(
+      [IDL.Text, IDL.Text],
+      [IDL.Vec(ProjectParticipation)],
+      ['query'],
     ),
   'getRepScorecards' : IDL.Func(
       [IDL.Text],
@@ -793,6 +1104,26 @@ export const idlService = IDL.Service({
       [IDL.Vec(InternPipelineStageHistory)],
       ['query'],
     ),
+  'getSubmissionsByIntern' : IDL.Func(
+      [IDL.Text, IDL.Text],
+      [IDL.Vec(WorkSubmission)],
+      ['query'],
+    ),
+  'getTasksByIntern' : IDL.Func(
+      [IDL.Text, IDL.Text],
+      [IDL.Vec(Task)],
+      ['query'],
+    ),
+  'getTasksBySpace' : IDL.Func(
+      [IDL.Text, IDL.Text],
+      [IDL.Vec(Task)],
+      ['query'],
+    ),
+  'getTimelineForIntern' : IDL.Func(
+      [IDL.Text, IDL.Text],
+      [IDL.Vec(TimelineMilestone)],
+      ['query'],
+    ),
   'getUserById' : IDL.Func(
       [IDL.Text, IDL.Text],
       [IDL.Variant({ 'ok' : UserAccount, 'err' : IDL.Text })],
@@ -801,6 +1132,11 @@ export const idlService = IDL.Service({
   'getWinRateByMember' : IDL.Func(
       [],
       [IDL.Vec(IDL.Tuple(IDL.Text, IDL.Nat, IDL.Nat))],
+      ['query'],
+    ),
+  'getWorkspaceData' : IDL.Func(
+      [IDL.Text, IDL.Text],
+      [IDL.Variant({ 'ok' : WorkspaceData, 'err' : IDL.Text })],
       ['query'],
     ),
   'initSampleData' : IDL.Func([], [IDL.Nat], []),
@@ -868,6 +1204,11 @@ export const idlService = IDL.Service({
       [IDL.Variant({ 'ok' : IDL.Null, 'err' : IDL.Text })],
       [],
     ),
+  'markDirectMessageRead' : IDL.Func(
+      [IDL.Text, IDL.Text],
+      [IDL.Variant({ 'ok' : IDL.Bool, 'err' : IDL.Text })],
+      [],
+    ),
   'pinClientComment' : IDL.Func(
       [IDL.Text, IDL.Bool],
       [IDL.Variant({ 'ok' : ClientComment, 'err' : IDL.Text })],
@@ -885,7 +1226,22 @@ export const idlService = IDL.Service({
     ),
   'runAllAutomationJobs' : IDL.Func([], [], ['oneway']),
   'runAutomationJobs' : IDL.Func([IDL.Text], [], []),
+  'scheduleMeeting' : IDL.Func(
+      [IDL.Text, CreateMeetingPayload],
+      [IDL.Variant({ 'ok' : Meeting, 'err' : IDL.Text })],
+      [],
+    ),
   'seedSampleData' : IDL.Func([], [], []),
+  'sendChannelMessage' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, IDL.Vec(IDL.Text)],
+      [IDL.Variant({ 'ok' : ChannelMessage, 'err' : IDL.Text })],
+      [],
+    ),
+  'sendDirectMessage' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text],
+      [IDL.Variant({ 'ok' : DirectMessage, 'err' : IDL.Text })],
+      [],
+    ),
   'setNotificationPreference' : IDL.Func(
       [IDL.Text, IDL.Text, IDL.Bool, IDL.Text],
       [IDL.Variant({ 'ok' : IDL.Null, 'err' : IDL.Text })],
@@ -914,6 +1270,11 @@ export const idlService = IDL.Service({
   'updateContact' : IDL.Func(
       [IDL.Text, IDL.Text, ContactPerson],
       [IDL.Variant({ 'ok' : Client, 'err' : IDL.Text })],
+      [],
+    ),
+  'updateDocumentApproval' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+      [IDL.Variant({ 'ok' : DocumentRecord, 'err' : IDL.Text })],
       [],
     ),
   'updateDocumentState' : IDL.Func(
@@ -969,14 +1330,41 @@ export const idlService = IDL.Service({
       [IDL.Variant({ 'ok' : Invoice, 'err' : IDL.Text })],
       [],
     ),
+  'updateMilestone' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+      [IDL.Variant({ 'ok' : ProjectParticipation, 'err' : IDL.Text })],
+      [],
+    ),
   'updatePerformance' : IDL.Func(
       [IDL.Text, IDL.Text, UpdatePerformancePayload],
       [IDL.Variant({ 'ok' : Performance, 'err' : IDL.Text })],
       [],
     ),
+  'updateProjectParticipation' : IDL.Func(
+      [
+        IDL.Text,
+        IDL.Text,
+        IDL.Text,
+        IDL.Opt(IDL.Text),
+        IDL.Opt(IDL.Nat),
+        IDL.Opt(IDL.Vec(IDL.Text)),
+      ],
+      [IDL.Variant({ 'ok' : ProjectParticipation, 'err' : IDL.Text })],
+      [],
+    ),
   'updateProposalStatus' : IDL.Func(
       [IDL.Text, IDL.Text, IDL.Nat],
       [IDL.Variant({ 'ok' : Client, 'err' : IDL.Text })],
+      [],
+    ),
+  'updateSubmissionStatus' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, IDL.Opt(IDL.Text)],
+      [IDL.Variant({ 'ok' : WorkSubmission, 'err' : IDL.Text })],
+      [],
+    ),
+  'updateTask' : IDL.Func(
+      [IDL.Text, IDL.Text, UpdateTaskPayload],
+      [IDL.Variant({ 'ok' : Task, 'err' : IDL.Text })],
       [],
     ),
   'updateUser' : IDL.Func(
@@ -1118,6 +1506,44 @@ export const idlFactory = ({ IDL }) => {
     'closedReason' : IDL.Opt(IDL.Text),
     'followUpDate' : IDL.Opt(IDL.Int),
   });
+  const DocumentVersion = IDL.Record({
+    'id' : IDL.Text,
+    'generatedAt' : IDL.Int,
+    'generatedBy' : IDL.Text,
+    'approvalStatus' : IDL.Text,
+    'version' : IDL.Text,
+    'notes' : IDL.Text,
+    'docType' : IDL.Text,
+  });
+  const DocumentRecord = IDL.Record({
+    'internId' : IDL.Text,
+    'fileName' : IDL.Text,
+    'isArchived' : IDL.Bool,
+    'currentVersion' : IDL.Text,
+    'category' : IDL.Text,
+    'versions' : IDL.Vec(DocumentVersion),
+    'docType' : IDL.Text,
+    'docId' : IDL.Text,
+  });
+  const NoteComment = IDL.Record({
+    'id' : IDL.Text,
+    'status' : IDL.Text,
+    'content' : IDL.Text,
+    'authorId' : IDL.Text,
+    'createdAt' : IDL.Int,
+    'authorName' : IDL.Text,
+  });
+  const DailyNote = IDL.Record({
+    'id' : IDL.Text,
+    'workedOn' : IDL.Text,
+    'adminComments' : IDL.Vec(NoteComment),
+    'blockers' : IDL.Text,
+    'internId' : IDL.Text,
+    'date' : IDL.Text,
+    'createdAt' : IDL.Int,
+    'progress' : IDL.Text,
+    'learningUpdates' : IDL.Text,
+  });
   const CreatePerformancePayload = IDL.Record({
     'month' : IDL.Nat,
     'overallScore' : IDL.Float64,
@@ -1142,6 +1568,32 @@ export const idlFactory = ({ IDL }) => {
     'communicationScore' : IDL.Float64,
     'adminNotes' : IDL.Text,
   });
+  const ProjectMilestone = IDL.Record({
+    'id' : IDL.Text,
+    'status' : IDL.Text,
+    'completedAt' : IDL.Opt(IDL.Int),
+    'name' : IDL.Text,
+  });
+  const ProjectParticipation = IDL.Record({
+    'id' : IDL.Text,
+    'status' : IDL.Text,
+    'projectName' : IDL.Text,
+    'internId' : IDL.Text,
+    'role' : IDL.Text,
+    'completionPercent' : IDL.Nat,
+    'deliverables' : IDL.Vec(IDL.Text),
+    'startDate' : IDL.Text,
+    'milestones' : IDL.Vec(ProjectMilestone),
+  });
+  const TimelineMilestone = IDL.Record({
+    'id' : IDL.Text,
+    'completedAt' : IDL.Opt(IDL.Int),
+    'title' : IDL.Text,
+    'internId' : IDL.Text,
+    'createdAt' : IDL.Int,
+    'description' : IDL.Opt(IDL.Text),
+    'milestoneType' : IDL.Text,
+  });
   const ApprovalStatus = IDL.Variant({
     'pending' : IDL.Null,
     'approved' : IDL.Null,
@@ -1161,6 +1613,16 @@ export const idlFactory = ({ IDL }) => {
     'requesterId' : IDL.Text,
     'resolvedAt' : IDL.Opt(IDL.Int),
   });
+  const CompositePerformanceScore = IDL.Record({
+    'learningScore' : IDL.Nat,
+    'improvementSuggestions' : IDL.Vec(IDL.Text),
+    'overallScore' : IDL.Nat,
+    'internId' : IDL.Text,
+    'productivityScore' : IDL.Nat,
+    'computedAt' : IDL.Int,
+    'attendanceScore' : IDL.Nat,
+    'communicationScore' : IDL.Nat,
+  });
   const Announcement = IDL.Record({
     'id' : IDL.Text,
     'title' : IDL.Text,
@@ -1170,6 +1632,14 @@ export const idlFactory = ({ IDL }) => {
     'createdBy' : IDL.Text,
     'isActive' : IDL.Bool,
     'targetSpaces' : IDL.Opt(IDL.Vec(IDL.Text)),
+  });
+  const Channel = IDL.Record({
+    'id' : IDL.Text,
+    'name' : IDL.Text,
+    'createdAt' : IDL.Int,
+    'createdBy' : IDL.Text,
+    'spaceId' : IDL.Text,
+    'memberIds' : IDL.Vec(IDL.Text),
   });
   const CreateClientRequest = IDL.Record({
     'source' : IDL.Text,
@@ -1192,6 +1662,14 @@ export const idlFactory = ({ IDL }) => {
     'assignedTeamMember' : IDL.Text,
     'location' : IDL.Text,
     'followUpDate' : IDL.Opt(IDL.Int),
+  });
+  const CreateDailyNotePayload = IDL.Record({
+    'workedOn' : IDL.Text,
+    'blockers' : IDL.Text,
+    'internId' : IDL.Text,
+    'date' : IDL.Text,
+    'progress' : IDL.Text,
+    'learningUpdates' : IDL.Text,
   });
   const Status = IDL.Variant({
     'OnHold' : IDL.Null,
@@ -1356,6 +1834,53 @@ export const idlFactory = ({ IDL }) => {
     'priority' : IDL.Opt(NotificationPriority),
     'relatedId' : IDL.Opt(IDL.Text),
   });
+  const CreateSubmissionPayload = IDL.Record({
+    'title' : IDL.Text,
+    'githubLink' : IDL.Opt(IDL.Text),
+    'internId' : IDL.Text,
+    'description' : IDL.Text,
+    'fileUrls' : IDL.Vec(IDL.Text),
+    'driveLink' : IDL.Opt(IDL.Text),
+    'taskId' : IDL.Opt(IDL.Text),
+  });
+  const WorkSubmission = IDL.Record({
+    'id' : IDL.Text,
+    'status' : IDL.Text,
+    'title' : IDL.Text,
+    'githubLink' : IDL.Opt(IDL.Text),
+    'internId' : IDL.Text,
+    'createdAt' : IDL.Int,
+    'description' : IDL.Text,
+    'fileUrls' : IDL.Vec(IDL.Text),
+    'reviewedAt' : IDL.Opt(IDL.Int),
+    'reviewedBy' : IDL.Opt(IDL.Text),
+    'driveLink' : IDL.Opt(IDL.Text),
+    'taskId' : IDL.Opt(IDL.Text),
+    'adminFeedback' : IDL.Opt(IDL.Text),
+  });
+  const CreateTaskPayload = IDL.Record({
+    'title' : IDL.Text,
+    'tags' : IDL.Vec(IDL.Text),
+    'description' : IDL.Text,
+    'deadline' : IDL.Opt(IDL.Int),
+    'assignedInternId' : IDL.Text,
+    'teamSpace' : IDL.Text,
+    'priority' : IDL.Text,
+  });
+  const Task = IDL.Record({
+    'id' : IDL.Text,
+    'status' : IDL.Text,
+    'title' : IDL.Text,
+    'createdAt' : IDL.Int,
+    'createdBy' : IDL.Text,
+    'tags' : IDL.Vec(IDL.Text),
+    'description' : IDL.Text,
+    'deadline' : IDL.Opt(IDL.Int),
+    'updatedAt' : IDL.Int,
+    'assignedInternId' : IDL.Text,
+    'teamSpace' : IDL.Text,
+    'priority' : IDL.Text,
+  });
   const Role = IDL.Variant({
     'hr' : IDL.Null,
     'manager' : IDL.Null,
@@ -1405,6 +1930,15 @@ export const idlFactory = ({ IDL }) => {
     'afterState' : IDL.Opt(IDL.Text),
     'ipAddress' : IDL.Opt(IDL.Text),
   });
+  const ChannelMessage = IDL.Record({
+    'id' : IDL.Text,
+    'content' : IDL.Text,
+    'channelId' : IDL.Text,
+    'createdAt' : IDL.Int,
+    'senderName' : IDL.Text,
+    'mentions' : IDL.Vec(IDL.Text),
+    'senderId' : IDL.Text,
+  });
   const MonthlyAnalyticsEntry = IDL.Record({
     'month' : IDL.Text,
     'approved' : IDL.Nat,
@@ -1439,6 +1973,26 @@ export const idlFactory = ({ IDL }) => {
     'learningCount' : IDL.Nat,
     'avgPerformance' : IDL.Float64,
   });
+  const DirectMessage = IDL.Record({
+    'id' : IDL.Text,
+    'content' : IDL.Text,
+    'createdAt' : IDL.Int,
+    'isRead' : IDL.Bool,
+    'toUserId' : IDL.Text,
+    'fromUserId' : IDL.Text,
+  });
+  const Meeting = IDL.Record({
+    'id' : IDL.Text,
+    'title' : IDL.Text,
+    'joinLink' : IDL.Opt(IDL.Text),
+    'createdAt' : IDL.Int,
+    'createdBy' : IDL.Text,
+    'meetingType' : IDL.Text,
+    'durationMinutes' : IDL.Nat,
+    'participantIds' : IDL.Vec(IDL.Text),
+    'reminderSentAt' : IDL.Opt(IDL.Int),
+    'scheduledAt' : IDL.Int,
+  });
   const NotificationPreference = IDL.Record({
     'userId' : IDL.Text,
     'digestFrequency' : IDL.Variant({
@@ -1465,6 +2019,15 @@ export const idlFactory = ({ IDL }) => {
     'stage' : InternPipelineStage,
     'notes' : IDL.Text,
   });
+  const WorkspaceData = IDL.Record({
+    'tasks' : IDL.Vec(Task),
+    'meetings' : IDL.Vec(Meeting),
+    'submissions' : IDL.Vec(WorkSubmission),
+    'notes' : IDL.Vec(DailyNote),
+    'channelMessages' : IDL.Vec(ChannelMessage),
+    'directMessages' : IDL.Vec(DirectMessage),
+    'milestones' : IDL.Vec(TimelineMilestone),
+  });
   const ListInternsFilter = IDL.Record({
     'status' : IDL.Opt(Status),
     'space' : IDL.Opt(Space),
@@ -1480,6 +2043,14 @@ export const idlFactory = ({ IDL }) => {
     'errorMessage' : IDL.Opt(IDL.Text),
     'recordsProcessed' : IDL.Nat,
     'triggeredAt' : IDL.Int,
+  });
+  const CreateMeetingPayload = IDL.Record({
+    'title' : IDL.Text,
+    'joinLink' : IDL.Opt(IDL.Text),
+    'meetingType' : IDL.Text,
+    'durationMinutes' : IDL.Nat,
+    'participantIds' : IDL.Vec(IDL.Text),
+    'scheduledAt' : IDL.Int,
   });
   const UpdateClientRequest = IDL.Record({
     'source' : IDL.Opt(IDL.Text),
@@ -1525,6 +2096,16 @@ export const idlFactory = ({ IDL }) => {
     'communicationScore' : IDL.Float64,
     'adminNotes' : IDL.Text,
   });
+  const UpdateTaskPayload = IDL.Record({
+    'status' : IDL.Opt(IDL.Text),
+    'title' : IDL.Opt(IDL.Text),
+    'tags' : IDL.Opt(IDL.Vec(IDL.Text)),
+    'description' : IDL.Opt(IDL.Text),
+    'deadline' : IDL.Opt(IDL.Int),
+    'assignedInternId' : IDL.Opt(IDL.Text),
+    'teamSpace' : IDL.Opt(IDL.Text),
+    'priority' : IDL.Opt(IDL.Text),
+  });
   
   return IDL.Service({
     'addClientActivity' : IDL.Func(
@@ -1542,9 +2123,29 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Variant({ 'ok' : Client, 'err' : IDL.Text })],
         [],
       ),
+    'addDocumentVersion' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+        [IDL.Variant({ 'ok' : DocumentRecord, 'err' : IDL.Text })],
+        [],
+      ),
+    'addNoteComment' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+        [IDL.Variant({ 'ok' : DailyNote, 'err' : IDL.Text })],
+        [],
+      ),
     'addPerformance' : IDL.Func(
         [IDL.Text, CreatePerformancePayload],
         [IDL.Variant({ 'ok' : Performance, 'err' : IDL.Text })],
+        [],
+      ),
+    'addProjectMilestone' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+        [IDL.Variant({ 'ok' : ProjectParticipation, 'err' : IDL.Text })],
+        [],
+      ),
+    'addTimelineMilestone' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text, IDL.Opt(IDL.Text), IDL.Text],
+        [IDL.Variant({ 'ok' : TimelineMilestone, 'err' : IDL.Text })],
         [],
       ),
     'approveRequest' : IDL.Func(
@@ -1552,9 +2153,19 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Variant({ 'ok' : ApprovalRequest, 'err' : IDL.Text })],
         [],
       ),
+    'archiveDocument' : IDL.Func(
+        [IDL.Text, IDL.Text],
+        [IDL.Variant({ 'ok' : IDL.Bool, 'err' : IDL.Text })],
+        [],
+      ),
     'captureWonLostReason' : IDL.Func(
         [IDL.Text, IDL.Text],
         [IDL.Variant({ 'ok' : Client, 'err' : IDL.Text })],
+        [],
+      ),
+    'computeCompositeScore' : IDL.Func(
+        [IDL.Text, IDL.Text],
+        [IDL.Variant({ 'ok' : CompositePerformanceScore, 'err' : IDL.Text })],
         [],
       ),
     'createAnnouncement' : IDL.Func(
@@ -1578,9 +2189,24 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Variant({ 'ok' : ApprovalRequest, 'err' : IDL.Text })],
         [],
       ),
+    'createChannel' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text, IDL.Vec(IDL.Text)],
+        [IDL.Variant({ 'ok' : Channel, 'err' : IDL.Text })],
+        [],
+      ),
     'createClient' : IDL.Func(
         [CreateClientRequest],
         [IDL.Variant({ 'ok' : Client, 'err' : IDL.Text })],
+        [],
+      ),
+    'createDailyNote' : IDL.Func(
+        [IDL.Text, CreateDailyNotePayload],
+        [IDL.Variant({ 'ok' : DailyNote, 'err' : IDL.Text })],
+        [],
+      ),
+    'createDocumentRecord' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+        [IDL.Variant({ 'ok' : DocumentRecord, 'err' : IDL.Text })],
         [],
       ),
     'createIntern' : IDL.Func(
@@ -1610,6 +2236,21 @@ export const idlFactory = ({ IDL }) => {
           }),
         ],
         [IDL.Variant({ 'ok' : Notification, 'err' : IDL.Text })],
+        [],
+      ),
+    'createProjectParticipation' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Vec(IDL.Text)],
+        [IDL.Variant({ 'ok' : ProjectParticipation, 'err' : IDL.Text })],
+        [],
+      ),
+    'createSubmission' : IDL.Func(
+        [IDL.Text, CreateSubmissionPayload],
+        [IDL.Variant({ 'ok' : WorkSubmission, 'err' : IDL.Text })],
+        [],
+      ),
+    'createTask' : IDL.Func(
+        [IDL.Text, CreateTaskPayload],
+        [IDL.Variant({ 'ok' : Task, 'err' : IDL.Text })],
         [],
       ),
     'createUser' : IDL.Func(
@@ -1650,6 +2291,11 @@ export const idlFactory = ({ IDL }) => {
         ],
         [],
       ),
+    'deleteDocument' : IDL.Func(
+        [IDL.Text, IDL.Text],
+        [IDL.Variant({ 'ok' : IDL.Bool, 'err' : IDL.Text })],
+        [],
+      ),
     'deleteIntern' : IDL.Func(
         [IDL.Text, IDL.Text],
         [IDL.Variant({ 'ok' : IDL.Bool, 'err' : IDL.Text })],
@@ -1673,6 +2319,11 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Variant({ 'ok' : IDL.Bool, 'err' : IDL.Text })],
         [],
       ),
+    'deleteTask' : IDL.Func(
+        [IDL.Text, IDL.Text],
+        [IDL.Variant({ 'ok' : IDL.Bool, 'err' : IDL.Text })],
+        [],
+      ),
     'deleteUser' : IDL.Func(
         [IDL.Text, IDL.Text],
         [IDL.Variant({ 'ok' : IDL.Null, 'err' : IDL.Text })],
@@ -1683,6 +2334,7 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(Activity)],
         ['query'],
       ),
+    'getAllTasks' : IDL.Func([IDL.Text], [IDL.Vec(Task)], ['query']),
     'getAnalyticsDashboard' : IDL.Func([], [AnalyticsData], ['query']),
     'getAnnouncementsBySpace' : IDL.Func(
         [IDL.Text, IDL.Opt(IDL.Text)],
@@ -1699,6 +2351,12 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(IDL.Tuple(IDL.Text, IDL.Nat))],
         ['query'],
       ),
+    'getChannelMessages' : IDL.Func(
+        [IDL.Text, IDL.Text],
+        [IDL.Variant({ 'ok' : IDL.Vec(ChannelMessage), 'err' : IDL.Text })],
+        ['query'],
+      ),
+    'getChannelsForUser' : IDL.Func([IDL.Text], [IDL.Vec(Channel)], ['query']),
     'getClient' : IDL.Func(
         [IDL.Text],
         [IDL.Variant({ 'ok' : Client, 'err' : IDL.Text })],
@@ -1716,6 +2374,16 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'getClientInvoices' : IDL.Func([IDL.Text], [IDL.Vec(Invoice)], ['query']),
+    'getCompositeScore' : IDL.Func(
+        [IDL.Text],
+        [IDL.Opt(CompositePerformanceScore)],
+        ['query'],
+      ),
+    'getDailyNotesByIntern' : IDL.Func(
+        [IDL.Text, IDL.Text],
+        [IDL.Vec(DailyNote)],
+        ['query'],
+      ),
     'getDashboardSnapshot' : IDL.Func(
         [IDL.Text],
         [IDL.Variant({ 'ok' : DashboardSnapshot, 'err' : IDL.Text })],
@@ -1723,6 +2391,26 @@ export const idlFactory = ({ IDL }) => {
       ),
     'getDashboardStats' : IDL.Func([], [DashboardStats], ['query']),
     'getDealCycleTime' : IDL.Func([], [IDL.Nat], ['query']),
+    'getDirectMessages' : IDL.Func(
+        [IDL.Text, IDL.Text],
+        [IDL.Variant({ 'ok' : IDL.Vec(DirectMessage), 'err' : IDL.Text })],
+        ['query'],
+      ),
+    'getDocumentById' : IDL.Func(
+        [IDL.Text, IDL.Text],
+        [IDL.Opt(DocumentRecord)],
+        ['query'],
+      ),
+    'getDocumentVersionHistory' : IDL.Func(
+        [IDL.Text, IDL.Text],
+        [IDL.Variant({ 'ok' : IDL.Vec(DocumentVersion), 'err' : IDL.Text })],
+        ['query'],
+      ),
+    'getDocumentsByIntern' : IDL.Func(
+        [IDL.Text, IDL.Text],
+        [IDL.Vec(DocumentRecord)],
+        ['query'],
+      ),
     'getFollowUpComplianceRate' : IDL.Func(
         [IDL.Text],
         [
@@ -1739,6 +2427,12 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(IDL.Tuple(IDL.Text, IDL.Nat, IDL.Nat))],
         ['query'],
       ),
+    'getMeetingsForIntern' : IDL.Func(
+        [IDL.Text, IDL.Text],
+        [IDL.Vec(Meeting)],
+        ['query'],
+      ),
+    'getMeetingsForUser' : IDL.Func([IDL.Text], [IDL.Vec(Meeting)], ['query']),
     'getNotificationPreferences' : IDL.Func(
         [IDL.Text],
         [
@@ -1763,6 +2457,11 @@ export const idlFactory = ({ IDL }) => {
           }),
         ],
         [],
+      ),
+    'getProjectsByIntern' : IDL.Func(
+        [IDL.Text, IDL.Text],
+        [IDL.Vec(ProjectParticipation)],
+        ['query'],
       ),
     'getRepScorecards' : IDL.Func(
         [IDL.Text],
@@ -1789,6 +2488,26 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(InternPipelineStageHistory)],
         ['query'],
       ),
+    'getSubmissionsByIntern' : IDL.Func(
+        [IDL.Text, IDL.Text],
+        [IDL.Vec(WorkSubmission)],
+        ['query'],
+      ),
+    'getTasksByIntern' : IDL.Func(
+        [IDL.Text, IDL.Text],
+        [IDL.Vec(Task)],
+        ['query'],
+      ),
+    'getTasksBySpace' : IDL.Func(
+        [IDL.Text, IDL.Text],
+        [IDL.Vec(Task)],
+        ['query'],
+      ),
+    'getTimelineForIntern' : IDL.Func(
+        [IDL.Text, IDL.Text],
+        [IDL.Vec(TimelineMilestone)],
+        ['query'],
+      ),
     'getUserById' : IDL.Func(
         [IDL.Text, IDL.Text],
         [IDL.Variant({ 'ok' : UserAccount, 'err' : IDL.Text })],
@@ -1797,6 +2516,11 @@ export const idlFactory = ({ IDL }) => {
     'getWinRateByMember' : IDL.Func(
         [],
         [IDL.Vec(IDL.Tuple(IDL.Text, IDL.Nat, IDL.Nat))],
+        ['query'],
+      ),
+    'getWorkspaceData' : IDL.Func(
+        [IDL.Text, IDL.Text],
+        [IDL.Variant({ 'ok' : WorkspaceData, 'err' : IDL.Text })],
         ['query'],
       ),
     'initSampleData' : IDL.Func([], [IDL.Nat], []),
@@ -1868,6 +2592,11 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Variant({ 'ok' : IDL.Null, 'err' : IDL.Text })],
         [],
       ),
+    'markDirectMessageRead' : IDL.Func(
+        [IDL.Text, IDL.Text],
+        [IDL.Variant({ 'ok' : IDL.Bool, 'err' : IDL.Text })],
+        [],
+      ),
     'pinClientComment' : IDL.Func(
         [IDL.Text, IDL.Bool],
         [IDL.Variant({ 'ok' : ClientComment, 'err' : IDL.Text })],
@@ -1885,7 +2614,22 @@ export const idlFactory = ({ IDL }) => {
       ),
     'runAllAutomationJobs' : IDL.Func([], [], ['oneway']),
     'runAutomationJobs' : IDL.Func([IDL.Text], [], []),
+    'scheduleMeeting' : IDL.Func(
+        [IDL.Text, CreateMeetingPayload],
+        [IDL.Variant({ 'ok' : Meeting, 'err' : IDL.Text })],
+        [],
+      ),
     'seedSampleData' : IDL.Func([], [], []),
+    'sendChannelMessage' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text, IDL.Vec(IDL.Text)],
+        [IDL.Variant({ 'ok' : ChannelMessage, 'err' : IDL.Text })],
+        [],
+      ),
+    'sendDirectMessage' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text],
+        [IDL.Variant({ 'ok' : DirectMessage, 'err' : IDL.Text })],
+        [],
+      ),
     'setNotificationPreference' : IDL.Func(
         [IDL.Text, IDL.Text, IDL.Bool, IDL.Text],
         [IDL.Variant({ 'ok' : IDL.Null, 'err' : IDL.Text })],
@@ -1914,6 +2658,11 @@ export const idlFactory = ({ IDL }) => {
     'updateContact' : IDL.Func(
         [IDL.Text, IDL.Text, ContactPerson],
         [IDL.Variant({ 'ok' : Client, 'err' : IDL.Text })],
+        [],
+      ),
+    'updateDocumentApproval' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+        [IDL.Variant({ 'ok' : DocumentRecord, 'err' : IDL.Text })],
         [],
       ),
     'updateDocumentState' : IDL.Func(
@@ -1969,14 +2718,41 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Variant({ 'ok' : Invoice, 'err' : IDL.Text })],
         [],
       ),
+    'updateMilestone' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+        [IDL.Variant({ 'ok' : ProjectParticipation, 'err' : IDL.Text })],
+        [],
+      ),
     'updatePerformance' : IDL.Func(
         [IDL.Text, IDL.Text, UpdatePerformancePayload],
         [IDL.Variant({ 'ok' : Performance, 'err' : IDL.Text })],
         [],
       ),
+    'updateProjectParticipation' : IDL.Func(
+        [
+          IDL.Text,
+          IDL.Text,
+          IDL.Text,
+          IDL.Opt(IDL.Text),
+          IDL.Opt(IDL.Nat),
+          IDL.Opt(IDL.Vec(IDL.Text)),
+        ],
+        [IDL.Variant({ 'ok' : ProjectParticipation, 'err' : IDL.Text })],
+        [],
+      ),
     'updateProposalStatus' : IDL.Func(
         [IDL.Text, IDL.Text, IDL.Nat],
         [IDL.Variant({ 'ok' : Client, 'err' : IDL.Text })],
+        [],
+      ),
+    'updateSubmissionStatus' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text, IDL.Opt(IDL.Text)],
+        [IDL.Variant({ 'ok' : WorkSubmission, 'err' : IDL.Text })],
+        [],
+      ),
+    'updateTask' : IDL.Func(
+        [IDL.Text, IDL.Text, UpdateTaskPayload],
+        [IDL.Variant({ 'ok' : Task, 'err' : IDL.Text })],
         [],
       ),
     'updateUser' : IDL.Func(
